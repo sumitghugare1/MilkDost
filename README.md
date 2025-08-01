@@ -1,36 +1,175 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MilkDost - Smart Milk Business Assistant 🥛
 
-## Getting Started
+A comprehensive mobile-first web application designed for small-scale milk distribution businesses. Built with Next.js, TypeScript, Firebase, and Tailwind CSS.
 
-First, run the development server:
+## 🚀 Features
 
+### Core Modules
+1. **Client Management System**
+   - Add, edit, and manage clients
+   - Set delivery schedules and quantities
+   - Track delivery history
+   - Client contact management
+
+2. **Smart Billing Module**
+   - Auto-calculate monthly bills
+   - Generate PDF invoices
+   - Track payment status
+   - Payment reminders
+
+3. **Buffalo Care Tracker**
+   - Buffalo health monitoring
+   - Feeding schedule management
+   - Vaccination reminders
+   - Veterinary appointment tracking
+
+4. **Milk Inventory Dashboard**
+   - Daily milk production tracking
+   - Distribution vs waste monitoring
+   - Stock level alerts
+   - Production analytics
+
+5. **Analytics & Reports**
+   - Revenue tracking
+   - Client profitability analysis
+   - Production trends
+   - Business insights
+
+## 🛠️ Tech Stack
+
+- **Frontend**: Next.js 15 with TypeScript
+- **Styling**: Tailwind CSS
+- **Database**: Firebase Firestore
+- **Authentication**: Firebase Auth
+- **PDF Generation**: jsPDF
+- **Charts**: Chart.js with react-chartjs-2
+- **Icons**: Lucide React
+- **Forms**: React Hook Form with Zod validation
+- **Notifications**: React Hot Toast
+
+## 📱 Design Philosophy
+
+- **Mobile-First**: Optimized for smartphone usage
+- **Tab-Based Navigation**: Easy one-handed operation
+- **Offline-Ready**: Progressive Web App capabilities
+- **Indian Context**: Rupee formatting, local time zones
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd milkdost
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Firebase**
+   - Create a new Firebase project at [Firebase Console](https://console.firebase.google.com)
+   - Enable Firestore Database
+   - Enable Authentication (Email/Password)
+   - Copy your Firebase config
+
+4. **Environment Setup**
+   ```bash
+   cp .env.example .env.local
+   ```
+   Fill in your Firebase configuration in `.env.local`
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
+vercel --prod
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Other Platforms
+```bash
+npm run build
+npm run start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📊 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                 # Next.js App Router
+├── components/          # React components
+│   ├── dashboard/       # Dashboard components
+│   ├── layout/          # Layout components
+│   └── navigation/      # Navigation components
+├── lib/                 # Utilities and configurations
+│   ├── firebase.ts      # Firebase configuration
+│   └── utils.ts         # Utility functions
+└── types/               # TypeScript type definitions
+```
 
-## Learn More
+## 🔑 Key Features Implemented
 
-To learn more about Next.js, take a look at the following resources:
+### Dashboard
+- ✅ Daily delivery overview
+- ✅ Monthly revenue tracking
+- ✅ Quick action buttons
+- ✅ Today's summary
+- ✅ Pending payments alert
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Mobile Navigation
+- ✅ Bottom tab navigation
+- ✅ Active state indicators
+- ✅ Responsive design
+- ✅ Touch-friendly interface
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Layout System
+- ✅ Consistent header design
+- ✅ Mobile-optimized spacing
+- ✅ Toast notifications
+- ✅ Loading states
 
-## Deploy on Vercel
+## 🎯 Upcoming Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [ ] Client CRUD operations
+- [ ] Delivery tracking
+- [ ] Bill generation
+- [ ] Payment management
+- [ ] Buffalo health records
+- [ ] Milk production logs
+- [ ] PDF invoice generation
+- [ ] WhatsApp integration
+- [ ] Push notifications
+- [ ] Offline data sync
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Developer
+
+Built with ❤️ for the milk business community.
+
+## 📞 Support
+
+For support, email [your-email] or create an issue in this repository.
+
+---
+
+**MilkDost** - Making milk business management smart and simple! 🐄✨
