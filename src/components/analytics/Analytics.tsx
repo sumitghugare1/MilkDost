@@ -5,6 +5,8 @@ import { Calendar, TrendingUp, Users, IndianRupee, Milk, BarChart3 } from 'lucid
 import { Client, Bill, MilkProduction, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { clientService, billService, productionService, deliveryService } from '@/lib/firebaseServices';
+import toast from 'react-hot-toast';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -31,45 +33,63 @@ ChartJS.register(
   Legend
 );
 
-// Mock data for analytics
-const mockData = {
-  clients: [
-    { id: '1', name: 'Rajesh Kumar', milkQuantity: 2, rate: 45, isActive: true },
-    { id: '2', name: 'Priya Sharma', milkQuantity: 1.5, rate: 45, isActive: true },
-    { id: '3', name: 'Amit Patel', milkQuantity: 3, rate: 45, isActive: true },
-  ],
-  monthlyRevenue: [
-    { month: 'Jan', revenue: 42000, deliveries: 850 },
-    { month: 'Feb', revenue: 45000, deliveries: 900 },
-    { month: 'Mar', revenue: 48000, deliveries: 950 },
-    { month: 'Apr', revenue: 47000, deliveries: 920 },
-    { month: 'May', revenue: 52000, deliveries: 1020 },
-    { month: 'Jun', revenue: 55000, deliveries: 1100 },
-  ],
-  milkProduction: [
-    { date: '2024-01-01', produced: 85, sold: 80, wasted: 2, home: 3 },
-    { date: '2024-01-02', produced: 88, sold: 82, wasted: 3, home: 3 },
-    { date: '2024-01-03', produced: 90, sold: 85, wasted: 2, home: 3 },
-    { date: '2024-01-04', produced: 87, sold: 81, wasted: 3, home: 3 },
-    { date: '2024-01-05', produced: 92, sold: 88, wasted: 1, home: 3 },
-  ]
-};
-
 export default function Analytics() {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [productions, setProductions] = useState<MilkProduction[]>([]);
+  const [deliveries, setDeliveries] = useState<Delivery[]>([]);
 
-  // Calculate analytics data
-  const totalClients = mockData.clients.length;
-  const activeClients = mockData.clients.filter(c => c.isActive).length;
-  const totalMonthlyRevenue = mockData.monthlyRevenue.reduce((sum, item) => sum + item.revenue, 0);
-  const avgMonthlyRevenue = totalMonthlyRevenue / mockData.monthlyRevenue.length;
-  const totalMilkProduced = mockData.milkProduction.reduce((sum, item) => sum + item.produced, 0);
-  const totalMilkSold = mockData.milkProduction.reduce((sum, item) => sum + item.sold, 0);
-  const efficiency = (totalMilkSold / totalMilkProduced) * 100;
+  useEffect(() => {
+    loadAnalyticsData();
+  }, []);
 
-  // Top clients by revenue
-  const topClients = mockData.clients
+  const loadAnalyticsData = async () => {
+    try {
+      setLoading(true);
+      
+      // Get date range for the last 6 months
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 6);
+
+      const [clientsData, billsData, productionsData, deliveriesData] = await Promise.all([
+        clientService.getAll(),
+        billService.getAll(),
+        productionService.getByDateRange(startDate, endDate),
+        deliveryService.getAll()
+      ]);
+
+      setClients(clientsData);
+      setBills(billsData);
+      setProductions(productionsData);
+      setDeliveries(deliveriesData);
+    } catch (error) {
+      console.error('Error loading analytics data:', error);
+      toast.error('Failed to load analytics data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate analytics data from real Firebase data
+  const totalClients = clients.length;
+  const activeClients = clients.filter(c => c.isActive).length;
+  
+  // Calculate revenue from bills
+  const paidBills = bills.filter(bill => bill.isPaid);
+  const totalRevenue = paidBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
+  const avgMonthlyRevenue = totalRevenue / Math.max(1, paidBills.length);
+  
+  // Calculate milk production stats
+  const totalMilkProduced = productions.reduce((sum, prod) => sum + prod.totalProduced, 0);
+  const totalMilkSold = productions.reduce((sum, prod) => sum + prod.totalSold, 0);
+  const efficiency = totalMilkProduced > 0 ? (totalMilkSold / totalMilkProduced) * 100 : 0;
+
+  // Top clients by monthly revenue
+  const topClients = clients
+    .filter(client => client.isActive)
     .map(client => ({
       ...client,
       monthlyRevenue: client.milkQuantity * client.rate * 30
@@ -77,13 +97,39 @@ export default function Analytics() {
     .sort((a, b) => b.monthlyRevenue - a.monthlyRevenue)
     .slice(0, 5);
 
+  // Group bills by month for revenue trend
+  const monthlyStats = bills.reduce((acc, bill) => {
+    const monthKey = `${bill.year}-${bill.month.toString().padStart(2, '0')}`;
+    if (!acc[monthKey]) {
+      acc[monthKey] = {
+        month: new Date(bill.year, bill.month).toLocaleDateString('en-US', { month: 'short' }),
+        revenue: 0,
+        deliveryCount: 0
+      };
+    }
+    if (bill.isPaid) {
+      acc[monthKey].revenue += bill.totalAmount;
+    }
+    return acc;
+  }, {} as Record<string, { month: string; revenue: number; deliveryCount: number }>);
+
+  // Add delivery counts to monthly stats
+  deliveries.forEach(delivery => {
+    const monthKey = `${delivery.date.getFullYear()}-${(delivery.date.getMonth()).toString().padStart(2, '0')}`;
+    if (monthlyStats[monthKey]) {
+      monthlyStats[monthKey].deliveryCount++;
+    }
+  });
+
+  const monthlyData = Object.values(monthlyStats).slice(-6); // Last 6 months
+
   // Revenue trend chart
   const revenueChartData = {
-    labels: mockData.monthlyRevenue.map(item => item.month),
+    labels: monthlyData.map(item => item.month),
     datasets: [
       {
         label: 'Revenue (₹)',
-        data: mockData.monthlyRevenue.map(item => item.revenue),
+        data: monthlyData.map(item => item.revenue),
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         tension: 0.4,
@@ -91,38 +137,39 @@ export default function Analytics() {
     ],
   };
 
-  // Milk production chart
+  // Milk production chart (last 7 days)
+  const recentProductions = productions.slice(-7);
   const productionChartData = {
-    labels: mockData.milkProduction.map(item => new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+    labels: recentProductions.map(item => item.date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
     datasets: [
       {
         label: 'Produced',
-        data: mockData.milkProduction.map(item => item.produced),
+        data: recentProductions.map(item => item.totalProduced),
         backgroundColor: 'rgba(59, 130, 246, 0.8)',
       },
       {
         label: 'Sold',
-        data: mockData.milkProduction.map(item => item.sold),
+        data: recentProductions.map(item => item.totalSold),
         backgroundColor: 'rgba(34, 197, 94, 0.8)',
       },
       {
         label: 'Wasted',
-        data: mockData.milkProduction.map(item => item.wasted),
+        data: recentProductions.map(item => item.totalWasted),
         backgroundColor: 'rgba(239, 68, 68, 0.8)',
       },
     ],
   };
 
-  // Milk distribution pie chart
+  // Milk distribution pie chart (total from all productions)
+  const totalSold = productions.reduce((sum, item) => sum + item.totalSold, 0);
+  const totalHomeCons = productions.reduce((sum, item) => sum + item.totalHomeCons, 0);
+  const totalWasted = productions.reduce((sum, item) => sum + item.totalWasted, 0);
+  
   const distributionChartData = {
     labels: ['Sold', 'Home Use', 'Wasted'],
     datasets: [
       {
-        data: [
-          mockData.milkProduction.reduce((sum, item) => sum + item.sold, 0),
-          mockData.milkProduction.reduce((sum, item) => sum + item.home, 0),
-          mockData.milkProduction.reduce((sum, item) => sum + item.wasted, 0),
-        ],
+        data: [totalSold, totalHomeCons, totalWasted],
         backgroundColor: [
           'rgba(34, 197, 94, 0.8)',
           'rgba(168, 85, 247, 0.8)',
@@ -159,6 +206,13 @@ export default function Analytics() {
 
   return (
     <div className="p-4 space-y-6">
+      {loading ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-3 text-gray-600">Loading analytics...</span>
+        </div>
+      ) : (
+        <>
       {/* Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -318,11 +372,11 @@ export default function Analytics() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Daily Avg. Production</span>
-              <span className="font-semibold">{(totalMilkProduced / mockData.milkProduction.length).toFixed(1)}L</span>
+              <span className="font-semibold">{productions.length > 0 ? (totalMilkProduced / productions.length).toFixed(1) : '0.0'}L</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Daily Avg. Sales</span>
-              <span className="font-semibold">{(totalMilkSold / mockData.milkProduction.length).toFixed(1)}L</span>
+              <span className="font-semibold">{productions.length > 0 ? (totalMilkSold / productions.length).toFixed(1) : '0.0'}L</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Best Client</span>
@@ -335,6 +389,8 @@ export default function Analytics() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 }

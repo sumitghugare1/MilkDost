@@ -4,56 +4,41 @@ import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, User, MapPin, Phone, Clock, IndianRupee } from 'lucide-react';
 import { Client } from '@/types';
 import { formatCurrency } from '@/lib/utils';
+import { clientService } from '@/lib/firebaseServices';
 import ClientForm from './ClientForm';
 import toast from 'react-hot-toast';
 
-// Mock data - replace with Firebase calls
-const mockClients: Client[] = [
-  {
-    id: '1',
-    name: 'Rajesh Kumar',
-    address: '123 Gandhi Road, Sector 15',
-    phone: '+91 98765 43210',
-    email: 'rajesh@email.com',
-    milkQuantity: 2,
-    deliveryTime: '07:00 AM',
-    rate: 45,
-    isActive: true,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: '2',
-    name: 'Priya Sharma',
-    address: '456 Market Street, Old City',
-    phone: '+91 87654 32109',
-    milkQuantity: 1.5,
-    deliveryTime: '08:30 AM',
-    rate: 45,
-    isActive: true,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10')
-  },
-  {
-    id: '3',
-    name: 'Amit Patel',
-    address: '789 Park Avenue, Green Colony',
-    phone: '+91 76543 21098',
-    milkQuantity: 3,
-    deliveryTime: '06:30 AM',
-    rate: 45,
-    isActive: false,
-    createdAt: new Date('2024-01-05'),
-    updatedAt: new Date('2024-01-20')
-  }
-];
-
 export default function ClientManagement() {
-  const [clients, setClients] = useState<Client[]>(mockClients);
+  const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Load clients on component mount
+  useEffect(() => {
+    loadClients();
+    
+    // Set up real-time listener
+    const unsubscribe = clientService.onSnapshot((clients) => {
+      setClients(clients);
+    });
+
+    return unsubscribe; // Cleanup listener on unmount
+  }, []);
+
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const clientsData = await clientService.getAll();
+      setClients(clientsData);
+    } catch (error) {
+      toast.error('Failed to load clients');
+      console.error('Error loading clients:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredClients = clients.filter(client =>
     client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,8 +64,7 @@ export default function ClientManagement() {
     
     try {
       setLoading(true);
-      // TODO: Replace with Firebase delete
-      setClients(prev => prev.filter(client => client.id !== clientId));
+      await clientService.delete(clientId);
       toast.success('Client deleted successfully');
     } catch (error) {
       toast.error('Failed to delete client');
@@ -93,13 +77,11 @@ export default function ClientManagement() {
   const handleToggleStatus = async (clientId: string) => {
     try {
       setLoading(true);
-      // TODO: Replace with Firebase update
-      setClients(prev => prev.map(client => 
-        client.id === clientId 
-          ? { ...client, isActive: !client.isActive, updatedAt: new Date() }
-          : client
-      ));
-      toast.success('Client status updated');
+      const client = clients.find(c => c.id === clientId);
+      if (client) {
+        await clientService.update(clientId, { isActive: !client.isActive });
+        toast.success('Client status updated');
+      }
     } catch (error) {
       toast.error('Failed to update client status');
       console.error('Error updating client:', error);
@@ -114,24 +96,11 @@ export default function ClientManagement() {
       
       if (editingClient) {
         // Update existing client
-        const updatedClient: Client = {
-          ...editingClient,
-          ...clientData,
-          updatedAt: new Date()
-        };
-        setClients(prev => prev.map(client => 
-          client.id === editingClient.id ? updatedClient : client
-        ));
+        await clientService.update(editingClient.id, clientData);
         toast.success('Client updated successfully');
       } else {
         // Add new client
-        const newClient: Client = {
-          id: Date.now().toString(), // Replace with proper ID generation
-          ...clientData,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        setClients(prev => [...prev, newClient]);
+        await clientService.add(clientData);
         toast.success('Client added successfully');
       }
       

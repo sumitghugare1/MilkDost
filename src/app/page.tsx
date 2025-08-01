@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import AuthForm from '@/components/auth/AuthForm';
 import Layout from '@/components/layout/Layout';
 import Header from '@/components/layout/Header';
 import MobileTabNavigation from '@/components/navigation/MobileTabNavigation';
@@ -14,6 +16,24 @@ import Analytics from '@/components/analytics/Analytics';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { user, loading } = useAuth();
+
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading MilkDost...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show authentication form if user is not logged in
+  if (!user) {
+    return <AuthForm />;
+  }
 
   const getPageTitle = () => {
     switch (activeTab) {

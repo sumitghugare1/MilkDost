@@ -1,69 +1,106 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Heart, Calendar, Camera, AlertCircle, CheckCircle } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Clock } from 'lucide-react';
 import { Buffalo, BuffaloFeeding } from '@/types';
+import { buffaloService, feedingService } from '@/lib/firebaseServices';
 import BuffaloForm from './BuffaloForm';
 import FeedingTracker from './FeedingTracker';
 import toast from 'react-hot-toast';
 
-// Mock data - replace with Firebase calls
-const mockBuffaloes: Buffalo[] = [
-  {
-    id: '1',
-    name: 'Ganga',
-    age: 5,
-    breed: 'Murrah',
-    healthStatus: 'healthy',
-    lastVetVisit: new Date('2024-01-15'),
-    nextVetVisit: new Date('2024-04-15'),
-    feedingSchedule: {
-      morning: true,
-      evening: true
-    },
-    notes: 'Good milk producer',
-    createdAt: new Date('2023-01-01'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: '2',
-    name: 'Lakshmi',
-    age: 3,
-    breed: 'Holstein',
-    healthStatus: 'pregnant',
-    lastVetVisit: new Date('2024-01-10'),
-    nextVetVisit: new Date('2024-02-10'),
-    feedingSchedule: {
-      morning: true,
-      evening: true
-    },
-    notes: 'Expecting calf in March',
-    createdAt: new Date('2023-06-01'),
-    updatedAt: new Date('2024-01-10')
-  }
-];
-
-const mockFeedings: BuffaloFeeding[] = [
-  {
-    id: '1',
-    buffaloId: '1',
-    date: new Date(),
-    time: 'morning',
-    feedType: 'Green Fodder + Concentrate',
-    quantity: 5,
-    isCompleted: true,
-    createdAt: new Date()
-  }
-];
-
 export default function BuffaloManagement() {
-  const [buffaloes, setBuffaloes] = useState<Buffalo[]>(mockBuffaloes);
-  const [feedings, setFeedings] = useState<BuffaloFeeding[]>(mockFeedings);
+  const [buffaloes, setBuffaloes] = useState<Buffalo[]>([]);
+  const [feedings, setFeedings] = useState<BuffaloFeeding[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showBuffaloForm, setShowBuffaloForm] = useState(false);
   const [showFeedingTracker, setShowFeedingTracker] = useState(false);
   const [editingBuffalo, setEditingBuffalo] = useState<Buffalo | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Load data on component mount
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      const [buffaloesData, feedingsData] = await Promise.all([
+        buffaloService.getAll(),
+        feedingService.getByDate(new Date())
+      ]);
+      
+      setBuffaloes(buffaloesData);
+      setFeedings(feedingsData);
+      
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast.error('Failed to load buffalo data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      setLoading(true);
+      await buffaloService.add(buffaloData);
+      await loadData();
+      setShowBuffaloForm(false);
+      toast.success('Buffalo added successfully');
+    } catch (error) {
+      console.error('Error adding buffalo:', error);
+      toast.error('Failed to add buffalo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      if (!editingBuffalo) return;
+      
+      setLoading(true);
+      await buffaloService.update(editingBuffalo.id, buffaloData);
+      await loadData();
+      setShowBuffaloForm(false);
+      setEditingBuffalo(null);
+      toast.success('Buffalo updated successfully');
+    } catch (error) {
+      console.error('Error updating buffalo:', error);
+      toast.error('Failed to update buffalo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteBuffalo = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this buffalo?')) return;
+    
+    try {
+      setLoading(true);
+      await buffaloService.delete(id);
+      await loadData();
+      toast.success('Buffalo deleted successfully');
+    } catch (error) {
+      console.error('Error deleting buffalo:', error);
+      toast.error('Failed to delete buffalo');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateFeeding = async (feeding: BuffaloFeeding) => {
+    try {
+      await feedingService.update(feeding.id, feeding);
+      await loadData();
+      toast.success('Feeding updated successfully');
+    } catch (error) {
+      console.error('Error updating feeding:', error);
+      toast.error('Failed to update feeding');
+    }
+  };
 
   const filteredBuffaloes = buffaloes.filter(buffalo =>
     buffalo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,29 +119,14 @@ export default function BuffaloManagement() {
     return sum + (buffalo.feedingSchedule.morning ? 1 : 0) + (buffalo.feedingSchedule.evening ? 1 : 0);
   }, 0);
 
-  const handleAddBuffalo = () => {
+  const handleAddBuffaloClick = () => {
     setEditingBuffalo(null);
     setShowBuffaloForm(true);
   };
 
-  const handleEditBuffalo = (buffalo: Buffalo) => {
+  const handleEditBuffaloClick = (buffalo: Buffalo) => {
     setEditingBuffalo(buffalo);
     setShowBuffaloForm(true);
-  };
-
-  const handleDeleteBuffalo = async (buffaloId: string) => {
-    if (!confirm('Are you sure you want to delete this buffalo record?')) return;
-    
-    try {
-      setLoading(true);
-      setBuffaloes(prev => prev.filter(buffalo => buffalo.id !== buffaloId));
-      toast.success('Buffalo record deleted successfully');
-    } catch (error) {
-      toast.error('Failed to delete buffalo record');
-      console.error('Error deleting buffalo:', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleSaveBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -207,7 +229,7 @@ export default function BuffaloManagement() {
             </p>
           </div>
           <button
-            onClick={handleAddBuffalo}
+            onClick={handleAddBuffaloClick}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
           >
             <Plus size={20} />
@@ -324,7 +346,7 @@ export default function BuffaloManagement() {
             </p>
             {!searchTerm && (
               <button
-                onClick={handleAddBuffalo}
+                onClick={handleAddBuffaloClick}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Add First Buffalo

@@ -14,20 +14,10 @@ import {
 } from 'lucide-react';
 import type { DashboardStats } from '@/types';
 import { formatCurrency } from '@/lib/utils';
+import { clientService, deliveryService, billService, buffaloService, productionService } from '@/lib/firebaseServices';
+import toast from 'react-hot-toast';
 
-// Mock data - replace with actual API calls
-const mockStats: DashboardStats = {
-  todayDeliveries: {
-    total: 15,
-    completed: 12,
-    pending: 3
-  },
-  monthlyRevenue: 45000,
-  pendingPayments: 8500,
-  totalClients: 28,
-  activeBuffaloes: 6,
-  todayMilkProduction: 85
-};
+// Remove mock data - using Firebase now
 
 interface StatCardProps {
   title: string;
@@ -88,22 +78,69 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ onNavigate }: DashboardProps) {
-  const [stats, setStats] = useState<DashboardStats>(mockStats);
-  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load dashboard data
     loadDashboardData();
   }, []);
 
   const loadDashboardData = async () => {
-    setLoading(true);
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setStats(mockStats);
+      setLoading(true);
+      
+      const today = new Date();
+      
+      // Load all necessary data
+      const [
+        clientsData,
+        todayDeliveries,
+        monthlyBills,
+        buffaloesData,
+        todayProduction
+      ] = await Promise.all([
+        clientService.getAll(),
+        deliveryService.getByDate(today),
+        billService.getByMonth(today.getMonth(), today.getFullYear()),
+        buffaloService.getAll(),
+        productionService.getByDateRange(today, today)
+      ]);
+
+      // Calculate stats
+      const completedDeliveries = todayDeliveries.filter(d => d.isDelivered).length;
+      const pendingDeliveries = todayDeliveries.length - completedDeliveries;
+      const totalClients = clientsData.length;
+      const activeBuffaloes = buffaloesData.filter(b => b.healthStatus !== 'dry').length;
+      
+      const monthlyRevenue = monthlyBills
+        .filter(bill => bill.isPaid)
+        .reduce((sum, bill) => sum + bill.totalAmount, 0);
+      
+      const pendingPayments = monthlyBills
+        .filter(bill => !bill.isPaid)
+        .reduce((sum, bill) => sum + bill.totalAmount, 0);
+      
+      const todayMilkProduction = todayProduction.length > 0 
+        ? todayProduction[0].totalProduced 
+        : 0;
+
+      const dashboardStats: DashboardStats = {
+        todayDeliveries: {
+          total: todayDeliveries.length,
+          completed: completedDeliveries,
+          pending: pendingDeliveries
+        },
+        monthlyRevenue,
+        pendingPayments,
+        totalClients,
+        activeBuffaloes,
+        todayMilkProduction
+      };
+
+      setStats(dashboardStats);
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+      toast.error('Failed to load dashboard data');
     } finally {
       setLoading(false);
     }
@@ -156,6 +193,22 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               <div key={i} className="bg-gray-200 h-24 rounded-lg"></div>
             ))}
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="p-4">
+        <div className="text-center py-8">
+          <p className="text-gray-500">Failed to load dashboard data</p>
+          <button
+            onClick={loadDashboardData}
+            className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Retry
+          </button>
         </div>
       </div>
     );

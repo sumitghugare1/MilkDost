@@ -4,72 +4,14 @@ import { useState, useEffect } from 'react';
 import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText } from 'lucide-react';
 import { Client, Bill, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
+import { clientService, billService, deliveryService } from '@/lib/firebaseServices';
 import BillForm from './BillForm';
 import BillPreview from './BillPreview';
 import toast from 'react-hot-toast';
 
-// Mock data - replace with Firebase calls
-const mockClients: Client[] = [
-  {
-    id: '1',
-    name: 'Rajesh Kumar',
-    address: '123 Gandhi Road, Sector 15',
-    phone: '+91 98765 43210',
-    email: 'rajesh@email.com',
-    milkQuantity: 2,
-    deliveryTime: '07:00 AM',
-    rate: 45,
-    isActive: true,
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: '2',
-    name: 'Priya Sharma',
-    address: '456 Market Street, Old City',
-    phone: '+91 87654 32109',
-    milkQuantity: 1.5,
-    deliveryTime: '08:30 AM',
-    rate: 45,
-    isActive: true,
-    createdAt: new Date('2024-01-10'),
-    updatedAt: new Date('2024-01-10')
-  }
-];
-
-const mockBills: Bill[] = [
-  {
-    id: '1',
-    clientId: '1',
-    month: 0, // January (0-indexed)
-    year: 2024,
-    totalQuantity: 60,
-    totalAmount: 2700,
-    isPaid: true,
-    paidDate: new Date('2024-02-05'),
-    dueDate: new Date('2024-02-10'),
-    deliveries: ['d1', 'd2', 'd3'],
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-05')
-  },
-  {
-    id: '2',
-    clientId: '2',
-    month: 0, // January (0-indexed)
-    year: 2024,
-    totalQuantity: 45,
-    totalAmount: 2025,
-    isPaid: false,
-    dueDate: new Date('2024-02-10'),
-    deliveries: ['d4', 'd5'],
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-01')
-  }
-];
-
 export default function BillingManagement() {
-  const [bills, setBills] = useState<Bill[]>(mockBills);
-  const [clients] = useState<Client[]>(mockClients);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'paid' | 'unpaid'>('all');
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
@@ -78,6 +20,32 @@ export default function BillingManagement() {
   const [showBillPreview, setShowBillPreview] = useState(false);
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // Load data on component mount and when month/year changes
+  useEffect(() => {
+    loadData();
+  }, [selectedMonth, selectedYear]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      // Load clients and bills for selected month/year
+      const [clientsData, billsData] = await Promise.all([
+        clientService.getAll(),
+        billService.getByMonth(selectedMonth, selectedYear)
+      ]);
+      
+      setClients(clientsData);
+      setBills(billsData);
+      
+    } catch (error) {
+      console.error('Error loading data:', error);
+      toast.error('Failed to load billing data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -106,9 +74,10 @@ export default function BillingManagement() {
       setLoading(true);
       
       // Generate bills for all active clients for the selected month/year
-      const newBills: Bill[] = [];
+      const activeClients = clients.filter(c => c.isActive);
+      let generatedCount = 0;
       
-      for (const client of clients.filter(c => c.isActive)) {
+      for (const client of activeClients) {
         // Check if bill already exists for this client and month
         const existingBill = bills.find(b => 
           b.clientId === client.id && 
@@ -117,35 +86,38 @@ export default function BillingManagement() {
         );
         
         if (!existingBill) {
-          // Calculate deliveries for the month (mock calculation)
-          const daysInMonth = new Date(selectedYear, selectedMonth + 1, 0).getDate();
-          const expectedDeliveries = daysInMonth; // Assuming daily delivery
-          const totalQuantity = expectedDeliveries * client.milkQuantity;
-          const totalAmount = totalQuantity * client.rate;
+          // Get deliveries for the month to calculate actual quantities and amounts
+          const startDate = new Date(selectedYear, selectedMonth, 1);
+          const endDate = new Date(selectedYear, selectedMonth + 1, 0);
           
-          const newBill: Bill = {
-            id: Date.now().toString() + '-' + client.id,
+          // For now, estimate based on days in month (in real app, you'd get actual deliveries)
+          const daysInMonth = endDate.getDate();
+          const estimatedQuantity = daysInMonth * client.milkQuantity * 0.9; // 90% delivery rate estimate
+          const totalAmount = estimatedQuantity * client.rate;
+          
+          const billData = {
             clientId: client.id,
             month: selectedMonth,
             year: selectedYear,
-            totalQuantity,
-            totalAmount,
+            totalQuantity: estimatedQuantity,
+            totalAmount: totalAmount,
             isPaid: false,
             dueDate: new Date(selectedYear, selectedMonth + 1, 10), // 10th of next month
-            deliveries: [], // Would be populated from actual delivery records
-            createdAt: new Date(),
-            updatedAt: new Date()
+            deliveries: [] // Would be populated from actual delivery records
           };
           
-          newBills.push(newBill);
+          await billService.add(billData);
+          generatedCount++;
         }
       }
       
-      if (newBills.length > 0) {
-        setBills(prev => [...prev, ...newBills]);
-        toast.success(`Generated ${newBills.length} new bills`);
+      if (generatedCount > 0) {
+        toast.success(`Generated ${generatedCount} bills successfully`);
+        await loadData(); // Reload to show new bills
       } else {
-        toast('Bills already exist for all clients in this month', { icon: 'ℹ️' });
+        toast('All bills for this month have already been generated', {
+          icon: 'ℹ️',
+        });
       }
     } catch (error) {
       toast.error('Failed to generate bills');
@@ -158,12 +130,13 @@ export default function BillingManagement() {
   const handleMarkAsPaid = async (billId: string) => {
     try {
       setLoading(true);
-      setBills(prev => prev.map(bill => 
-        bill.id === billId 
-          ? { ...bill, isPaid: true, paidDate: new Date(), updatedAt: new Date() }
-          : bill
-      ));
+      await billService.update(billId, {
+        isPaid: true,
+        paidDate: new Date(),
+        updatedAt: new Date()
+      });
       toast.success('Bill marked as paid');
+      await loadData(); // Reload to show updated status
     } catch (error) {
       toast.error('Failed to update bill');
       console.error('Error updating bill:', error);
@@ -175,12 +148,13 @@ export default function BillingManagement() {
   const handleMarkAsUnpaid = async (billId: string) => {
     try {
       setLoading(true);
-      setBills(prev => prev.map(bill => 
-        bill.id === billId 
-          ? { ...bill, isPaid: false, paidDate: undefined, updatedAt: new Date() }
-          : bill
-      ));
+      await billService.update(billId, {
+        isPaid: false,
+        paidDate: undefined,
+        updatedAt: new Date()
+      });
       toast.success('Bill marked as unpaid');
+      await loadData(); // Reload to show updated status
     } catch (error) {
       toast.error('Failed to update bill');
       console.error('Error updating bill:', error);
@@ -210,8 +184,8 @@ export default function BillingManagement() {
         month={selectedMonth}
         year={selectedYear}
         clients={clients}
-        onSave={(billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>) => {
-          // Handle bill creation
+        onSave={async (billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>) => {
+          // Handle bill creation (add logic as needed)
           setShowBillForm(false);
         }}
         onCancel={() => setShowBillForm(false)}

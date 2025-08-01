@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Calendar, TrendingUp, TrendingDown, Milk, Home, Trash2, BarChart3 } from 'lucide-react';
 import { MilkProduction } from '@/types';
 import { formatCurrency } from '@/lib/utils';
+import { productionService } from '@/lib/firebaseServices';
 import { Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -28,40 +29,8 @@ ChartJS.register(
   Legend
 );
 
-// Mock data - replace with Firebase calls
-const mockMilkProductions: MilkProduction[] = [
-  {
-    id: '1',
-    date: new Date(),
-    totalProduced: 85,
-    totalSold: 75,
-    totalWasted: 2,
-    totalHomeCons: 8,
-    notes: 'Good production day',
-    createdAt: new Date()
-  },
-  {
-    id: '2',
-    date: new Date(Date.now() - 24 * 60 * 60 * 1000), // Yesterday
-    totalProduced: 82,
-    totalSold: 78,
-    totalWasted: 1,
-    totalHomeCons: 3,
-    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
-  },
-  {
-    id: '3',
-    date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-    totalProduced: 88,
-    totalSold: 80,
-    totalWasted: 3,
-    totalHomeCons: 5,
-    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-  }
-];
-
 export default function InventoryManagement() {
-  const [milkRecords, setMilkRecords] = useState<MilkProduction[]>(mockMilkProductions);
+  const [milkRecords, setMilkRecords] = useState<MilkProduction[]>([]);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showAddRecord, setShowAddRecord] = useState(false);
   const [newRecord, setNewRecord] = useState({
@@ -71,7 +40,31 @@ export default function InventoryManagement() {
     totalHomeCons: 0,
     notes: ''
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, [selectedDate]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      
+      // Load data for the last 30 days to show trends
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      
+      const productionsData = await productionService.getByDateRange(startDate, endDate);
+      setMilkRecords(productionsData);
+      
+    } catch (error) {
+      console.error('Error loading production data:', error);
+      toast.error('Failed to load production data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const today = new Date();
   const isToday = selectedDate.toDateString() === today.toDateString();
@@ -167,29 +160,25 @@ export default function InventoryManagement() {
         return;
       }
 
-      const recordData: MilkProduction = {
-        id: Date.now().toString(),
-        date: selectedDate,
-        ...newRecord,
-        createdAt: new Date()
-      };
-
       if (selectedDateRecord) {
         // Update existing record
-        setMilkRecords(prev => prev.map(record => 
-          record.id === selectedDateRecord.id 
-            ? { ...recordData, id: selectedDateRecord.id }
-            : record
-        ));
+        await productionService.update(selectedDateRecord.id, {
+          ...newRecord,
+          date: selectedDate
+        });
         toast.success('Milk record updated successfully');
       } else {
         // Add new record
-        setMilkRecords(prev => [...prev, recordData]);
+        await productionService.add({
+          date: selectedDate,
+          ...newRecord
+        });
         toast.success('Milk record added successfully');
       }
 
       setShowAddRecord(false);
       resetForm();
+      await loadData(); // Reload data after save
     } catch (error) {
       toast.error('Failed to save milk record');
       console.error('Error saving record:', error);
@@ -213,7 +202,8 @@ export default function InventoryManagement() {
 
     try {
       setLoading(true);
-      setMilkRecords(prev => prev.filter(record => record.id !== recordId));
+      await productionService.delete(recordId);
+      await loadData(); // Reload data after delete
       toast.success('Record deleted successfully');
     } catch (error) {
       toast.error('Failed to delete record');
