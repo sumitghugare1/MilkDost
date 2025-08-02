@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MilkDost - Smart Milk Business Assistant",
+  title: "DairyMate - Smart Milk Business Assistant",
   description: "Manage your milk delivery business with ease - track clients, deliveries, billing, and buffalo care",
 };
 

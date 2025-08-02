@@ -4,7 +4,7 @@
 
 ### Step 1: Enable Authentication in Firebase Console
 1. Go to https://console.firebase.google.com
-2. Select your "milkdost" project
+2. Select your "dairymate" project
 3. Go to Authentication → Sign-in method
 4. Enable "Email/Password" provider
 5. **Important**: Enable "Email link (passwordless sign-in)" if needed
@@ -12,7 +12,7 @@
 ### Step 2: Create Test User Account
 1. Go to Authentication → Users
 2. Click "Add user"
-3. Email: demo@milkdost.com
+3. Email: demo@dairymate.com
 4. Password: demo123456
 5. Click "Add user"
 

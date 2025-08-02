@@ -1,4 +1,4 @@
-// Authentication service for MilkDost
+// Authentication service for DairyMate
 
 import { 
   createUserWithEmailAndPassword,

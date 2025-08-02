@@ -1,4 +1,4 @@
-// Types for the MilkDost application
+// Types for the DairyMate application
 
 export interface Client {
   id: string;

@@ -1,4 +1,4 @@
-// Firebase service functions for MilkDost
+// Firebase service functions for DairyMate
 
 import { 
   collection, 

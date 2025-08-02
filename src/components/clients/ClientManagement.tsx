@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, User, MapPin, Phone, Clock, IndianRupee } from 'lucide-react';
 import { Client } from '@/types';
-import { formatCurrency } from '@/lib/utils';
 import { clientService } from '@/lib/firebaseServices';
+import { formatCurrency } from '@/lib/utils';
 import ClientForm from './ClientForm';
 import toast from 'react-hot-toast';
 

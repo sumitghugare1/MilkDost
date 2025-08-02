@@ -1,4 +1,4 @@
-# MilkDost - Smart Milk Business Assistant 🥛
+# DairyMate - Smart Milk Business Assistant 🥛
 
 A comprehensive mobile-first web application designed for small-scale milk distribution businesses. Built with Next.js, TypeScript, Firebase, and Tailwind CSS.
 
@@ -59,7 +59,7 @@ A comprehensive mobile-first web application designed for small-scale milk distr
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd milkdost
+   cd dairymate
    ```
 
 2. **Install dependencies**
@@ -172,4 +172,4 @@ For support, email [your-email] or create an issue in this repository.
 
 ---
 
-**MilkDost** - Making milk business management smart and simple! 🐄✨
+**DairyMate** - Making milk business management smart and simple! 🐄✨

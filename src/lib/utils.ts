@@ -1,4 +1,4 @@
-// Utility functions for the MilkDost application
+// Utility functions for the DairyMate application
 
 import { format, startOfMonth, endOfMonth, isToday, parseISO } from 'date-fns';
 

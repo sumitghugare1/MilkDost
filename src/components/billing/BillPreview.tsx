@@ -66,7 +66,7 @@ export default function BillPreview({ bill, client, onClose, onDownload }: BillP
         <div className="p-8 print:p-4" id="bill-content">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">MilkDost</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">DairyMate</h1>
             <p className="text-lg text-gray-600">Fresh Milk Delivery Service</p>
             <div className="w-24 h-1 bg-blue-600 mx-auto mt-4"></div>
           </div>
@@ -206,7 +206,7 @@ export default function BillPreview({ bill, client, onClose, onDownload }: BillP
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Email:</span>
-                  <span className="font-medium">info@milkdost.com</span>
+                  <span className="font-medium">info@dairymate.com</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Address:</span>
@@ -231,7 +231,7 @@ export default function BillPreview({ bill, client, onClose, onDownload }: BillP
           {/* Footer */}
           <div className="text-center mt-8 pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-600">
-              Thank you for choosing MilkDost for your fresh milk delivery needs!
+              Thank you for choosing DairyMate for your fresh milk delivery needs!
             </p>
             <p className="text-xs text-gray-500 mt-2">
               This is a computer-generated bill. No signature required.
