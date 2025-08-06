@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, TrendingUp, AlertCircle } from 'lucide-react';
 import { Client, Bill, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { clientService, billService, deliveryService } from '@/lib/firebaseServices';
+import { SmartBillingService } from '@/services/smartBillingService';
+import { PDFInvoiceGenerator } from '@/lib/pdfGenerator';
 import BillForm from './BillForm';
 import BillPreview from './BillPreview';
 import toast from 'react-hot-toast';
@@ -73,46 +75,15 @@ export default function BillingManagement() {
     try {
       setLoading(true);
       
-      // Generate bills for all active clients for the selected month/year
-      const activeClients = clients.filter(c => c.isActive);
-      let generatedCount = 0;
+      // Use SmartBillingService to generate bills automatically
+      const smartBilling = new SmartBillingService();
+      const result = await smartBilling.generateMonthlyBills(selectedMonth, selectedYear);
       
-      for (const client of activeClients) {
-        // Check if bill already exists for this client and month
-        const existingBill = bills.find(b => 
-          b.clientId === client.id && 
-          b.month === selectedMonth && 
-          b.year === selectedYear
-        );
-        
-        if (!existingBill) {
-          // Get deliveries for the month to calculate actual quantities and amounts
-          const startDate = new Date(selectedYear, selectedMonth, 1);
-          const endDate = new Date(selectedYear, selectedMonth + 1, 0);
-          
-          // For now, estimate based on days in month (in real app, you'd get actual deliveries)
-          const daysInMonth = endDate.getDate();
-          const estimatedQuantity = daysInMonth * client.milkQuantity * 0.9; // 90% delivery rate estimate
-          const totalAmount = estimatedQuantity * client.rate;
-          
-          const billData = {
-            clientId: client.id,
-            month: selectedMonth,
-            year: selectedYear,
-            totalQuantity: estimatedQuantity,
-            totalAmount: totalAmount,
-            isPaid: false,
-            dueDate: new Date(selectedYear, selectedMonth + 1, 10), // 10th of next month
-            deliveries: [] // Would be populated from actual delivery records
-          };
-          
-          await billService.add(billData);
-          generatedCount++;
-        }
-      }
-      
-      if (generatedCount > 0) {
-        toast.success(`Generated ${generatedCount} bills successfully`);
+      if (result.generatedCount > 0) {
+        toast.success(`Generated ${result.generatedCount} bills automatically!`, {
+          icon: '🎯',
+          duration: 4000,
+        });
         await loadData(); // Reload to show new bills
       } else {
         toast('All bills for this month have already been generated', {
@@ -170,11 +141,23 @@ export default function BillingManagement() {
 
   const handleDownloadBill = async (bill: Bill) => {
     try {
-      // This would integrate with jsPDF or html2pdf.js
-      toast.success('Bill download will be implemented with PDF generation');
+      setLoading(true);
+      const client = clients.find(c => c.id === bill.clientId);
+      if (!client) {
+        toast.error('Client information not found');
+        return;
+      }
+      
+      await PDFInvoiceGenerator.downloadInvoice(bill, client);
+      toast.success('Invoice downloaded successfully!', {
+        icon: '📄',
+        duration: 3000,
+      });
     } catch (error) {
       toast.error('Failed to download bill');
       console.error('Error downloading bill:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -185,8 +168,21 @@ export default function BillingManagement() {
         year={selectedYear}
         clients={clients}
         onSave={async (billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>) => {
-          // Handle bill creation (add logic as needed)
-          setShowBillForm(false);
+          try {
+            setLoading(true);
+            const billId = await billService.add(billData);
+            toast.success('Bill created successfully!', {
+              icon: '📄',
+              duration: 3000,
+            });
+            await loadData(); // Reload to show new bill
+            setShowBillForm(false);
+          } catch (error) {
+            toast.error('Failed to create bill');
+            console.error('Error creating bill:', error);
+          } finally {
+            setLoading(false);
+          }
         }}
         onCancel={() => setShowBillForm(false)}
         loading={loading}
@@ -209,231 +205,278 @@ export default function BillingManagement() {
   }
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="min-h-screen bg-gradient-dairy p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">Billing & Payments</h2>
-            <p className="text-sm text-gray-500">
-              Manage monthly bills and track payments
+            <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+              Smart Billing & Payments
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Automated bill generation and payment tracking for {months[selectedMonth]} {selectedYear}
             </p>
           </div>
           <button
             onClick={() => setShowBillForm(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
+            className="bg-gradient-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
           >
             <Plus size={20} />
             <span>Create Bill</span>
           </button>
         </div>
-
-        {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Search clients..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-
-          <select
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {months.map((month, index) => (
-              <option key={month} value={index}>{month}</option>
-            ))}
-          </select>
-
-          <select
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            {years.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
-
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as 'all' | 'paid' | 'unpaid')}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Bills</option>
-            <option value="paid">Paid</option>
-            <option value="unpaid">Unpaid</option>
-          </select>
-        </div>
-
-        <button
-          onClick={handleGenerateBills}
-          disabled={loading}
-          className="w-full bg-green-600 text-white py-3 rounded-lg flex items-center justify-center space-x-2 hover:bg-green-700 transition-colors disabled:opacity-50"
-        >
-          <FileText size={20} />
-          <span>
-            {loading ? 'Generating...' : `Generate Bills for ${months[selectedMonth]} ${selectedYear}`}
-          </span>
-        </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <IndianRupee className="text-blue-600" size={20} />
+        {/* Smart Controls */}
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search clients..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              />
             </div>
-            <div>
-              <p className="text-sm font-medium text-blue-800">Total Revenue</p>
-              <p className="text-2xl font-bold text-blue-900">{formatCurrency(totalRevenue)}</p>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="text-green-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-green-800">Paid Amount</p>
-              <p className="text-2xl font-bold text-green-900">{formatCurrency(paidAmount)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <XCircle className="text-red-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-red-800">Pending Amount</p>
-              <p className="text-2xl font-bold text-red-900">{formatCurrency(unpaidAmount)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Bills List */}
-      <div className="space-y-3">
-        {filteredBills.length === 0 ? (
-          <div className="text-center py-8">
-            <FileText className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No bills found</h3>
-            <p className="text-gray-500 mb-4">
-              {searchTerm 
-                ? `No bills match your search for "${searchTerm}"`
-                : `No bills for ${months[selectedMonth]} ${selectedYear}`
-              }
-            </p>
-            <button
-              onClick={handleGenerateBills}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             >
-              Generate Bills
-            </button>
-          </div>
-        ) : (
-          filteredBills.map(bill => {
-            const client = clients.find(c => c.id === bill.clientId);
-            if (!client) return null;
+              {months.map((month, index) => (
+                <option key={month} value={index}>{month}</option>
+              ))}
+            </select>
 
-            return (
-              <div
-                key={bill.id}
-                className={`bg-white rounded-lg p-4 border shadow-sm ${
-                  bill.isPaid ? 'border-green-200 bg-green-50' : 'border-gray-200'
-                }`}
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+            >
+              {years.map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as 'all' | 'paid' | 'unpaid')}
+              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+            >
+              <option value="all">All Bills</option>
+              <option value="paid">Paid Bills</option>
+              <option value="unpaid">Unpaid Bills</option>
+            </select>
+          </div>
+
+          <button
+            onClick={handleGenerateBills}
+            disabled={loading}
+            className="w-full bg-gradient-secondary text-white py-3 sm:py-4 rounded-xl flex items-center justify-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
+          >
+            <Zap size={20} />
+            <span>
+              {loading ? 'Generating...' : `🚀 Auto-Generate Bills for ${months[selectedMonth]} ${selectedYear}`}
+            </span>
+          </button>
+        </div>
+
+      {/* Enhanced Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
+              <IndianRupee className="text-white" size={20} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-semibold text-blue-700 uppercase tracking-wide">Total Revenue</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-900 truncate">{formatCurrency(totalRevenue)}</p>
+              <p className="text-xs sm:text-sm text-blue-600 mt-1">This month's earnings</p>
+            </div>
+          </div>
+          <div className="mt-3 sm:mt-4 h-2 bg-blue-100 rounded-full overflow-hidden">
+            <div className="h-full w-3/4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg">
+              <CheckCircle className="text-white" size={20} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-semibold text-green-700 uppercase tracking-wide">Paid Amount</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-900 truncate">{formatCurrency(paidAmount)}</p>
+              <p className="text-xs sm:text-sm text-green-600 mt-1">Collected payments</p>
+            </div>
+          </div>
+          <div className="mt-3 sm:mt-4 h-2 bg-green-100 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full animate-pulse" style={{width: `${totalRevenue > 0 ? (paidAmount / totalRevenue) * 100 : 0}%`}}></div>
+          </div>
+        </div>
+
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            <div className="p-3 sm:p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg">
+              <AlertCircle className="text-white" size={20} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs sm:text-sm font-semibold text-red-700 uppercase tracking-wide">Pending Amount</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-900 truncate">{formatCurrency(unpaidAmount)}</p>
+              <p className="text-xs sm:text-sm text-red-600 mt-1">Outstanding payments</p>
+            </div>
+          </div>
+          <div className="mt-3 sm:mt-4 h-2 bg-red-100 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full animate-pulse" style={{width: `${totalRevenue > 0 ? (unpaidAmount / totalRevenue) * 100 : 0}%`}}></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Bills List */}
+      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-bold text-gray-900">Bills Overview</h3>
+          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+            {filteredBills.length} {filteredBills.length === 1 ? 'bill' : 'bills'}
+          </span>
+        </div>
+        
+        <div className="space-y-3 sm:space-y-4">
+          {filteredBills.length === 0 ? (
+            <div className="text-center py-8 sm:py-12">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <FileText className="text-gray-400" size={32} />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No bills found</h3>
+              <p className="text-gray-500 mb-6 max-w-md mx-auto">
+                {searchTerm 
+                  ? `No bills match your search for "${searchTerm}"`
+                  : `No bills generated for ${months[selectedMonth]} ${selectedYear} yet`
+                }
+              </p>
+              <button
+                onClick={handleGenerateBills}
+                disabled={loading}
+                className="bg-gradient-primary text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="font-semibold text-gray-900">{client.name}</h3>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          bill.isPaid
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {bill.isPaid ? 'Paid' : 'Unpaid'}
-                      </span>
-                      {bill.isPaid && bill.paidDate && (
-                        <span className="text-xs text-gray-500">
-                          Paid on {bill.paidDate.toLocaleDateString()}
+                <div className="flex items-center space-x-2">
+                  <Zap size={18} />
+                  <span>Generate Bills Automatically</span>
+                </div>
+              </button>
+            </div>
+          ) : (
+            filteredBills.map(bill => {
+              const client = clients.find(c => c.id === bill.clientId);
+              if (!client) return null;
+
+              return (
+                <div
+                  key={bill.id}
+                  className={`bg-gradient-to-r p-4 sm:p-6 rounded-2xl border shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
+                    bill.isPaid 
+                      ? 'from-green-50 to-emerald-50 border-green-200' 
+                      : 'from-red-50 to-orange-50 border-red-200'
+                  }`}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-3 sm:space-y-0">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <div className={`w-3 h-3 rounded-full ${bill.isPaid ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                        <h3 className="font-bold text-gray-900 text-lg truncate">{client.name}</h3>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            bill.isPaid
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {bill.isPaid ? '✓ PAID' : '⏰ UNPAID'}
                         </span>
+                        {bill.isPaid && bill.paidDate && (
+                          <span className="text-xs text-green-600 font-medium hidden sm:inline">
+                            Paid on {bill.paidDate.toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+                        <div className="bg-white/60 rounded-lg p-2">
+                          <span className="text-gray-600 block">Period</span>
+                          <p className="font-semibold text-gray-900">{months[bill.month]} {bill.year}</p>
+                        </div>
+                        <div className="bg-white/60 rounded-lg p-2">
+                          <span className="text-gray-600 block">Quantity</span>
+                          <p className="font-semibold text-blue-600">{bill.totalQuantity.toFixed(1)}L</p>
+                        </div>
+                        <div className="bg-white/60 rounded-lg p-2">
+                          <span className="text-gray-600 block">Amount</span>
+                          <p className="font-semibold text-green-600">{formatCurrency(bill.totalAmount)}</p>
+                        </div>
+                        <div className="bg-white/60 rounded-lg p-2">
+                          <span className="text-gray-600 block">Due Date</span>
+                          <p className={`font-semibold ${bill.isPaid ? 'text-gray-600' : 'text-orange-600'}`}>
+                            {bill.dueDate.toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+
+                      {bill.isPaid && bill.paidDate && (
+                        <div className="mt-3 sm:hidden">
+                          <span className="text-xs text-green-600 font-medium">
+                            Paid on {bill.paidDate.toLocaleDateString()}
+                          </span>
+                        </div>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <span className="text-gray-600">Period:</span>
-                        <p className="font-medium">{months[bill.month]} {bill.year}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Quantity:</span>
-                        <p className="font-medium">{bill.totalQuantity.toFixed(1)}L</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Amount:</span>
-                        <p className="font-medium">{formatCurrency(bill.totalAmount)}</p>
-                      </div>
-                      <div>
-                        <span className="text-gray-600">Due Date:</span>
-                        <p className="font-medium">{bill.dueDate.toLocaleDateString()}</p>
-                      </div>
+                    <div className="flex items-center justify-end space-x-2 sm:ml-6 flex-shrink-0">
+                      <button
+                        onClick={() => handleViewBill(bill)}
+                        className="p-2 sm:p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-colors"
+                        title="View Bill"
+                      >
+                        <Eye size={18} />
+                      </button>
+                      
+                      <button
+                        onClick={() => handleDownloadBill(bill)}
+                        disabled={loading}
+                        className="p-2 sm:p-3 text-green-600 hover:bg-green-100 rounded-xl transition-colors disabled:opacity-50"
+                        title="Download PDF"
+                      >
+                        <Download size={18} />
+                      </button>
+
+                      {bill.isPaid ? (
+                        <button
+                          onClick={() => handleMarkAsUnpaid(bill.id)}
+                          disabled={loading}
+                          className="p-2 sm:p-3 text-orange-600 hover:bg-orange-100 rounded-xl transition-colors disabled:opacity-50"
+                          title="Mark as Unpaid"
+                        >
+                          <XCircle size={18} />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleMarkAsPaid(bill.id)}
+                          disabled={loading}
+                          className="p-2 sm:p-3 text-green-600 hover:bg-green-100 rounded-xl transition-colors disabled:opacity-50"
+                          title="Mark as Paid"
+                        >
+                          <CheckCircle size={18} />
+                        </button>
+                      )}
                     </div>
                   </div>
-
-                  <div className="flex items-center space-x-2 ml-4">
-                    <button
-                      onClick={() => handleViewBill(bill)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                      title="View Bill"
-                    >
-                      <Eye size={18} />
-                    </button>
-                    
-                    <button
-                      onClick={() => handleDownloadBill(bill)}
-                      className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                      title="Download Bill"
-                    >
-                      <Download size={18} />
-                    </button>
-
-                    {bill.isPaid ? (
-                      <button
-                        onClick={() => handleMarkAsUnpaid(bill.id)}
-                        className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg"
-                        title="Mark as Unpaid"
-                      >
-                        <XCircle size={18} />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleMarkAsPaid(bill.id)}
-                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg"
-                        title="Mark as Paid"
-                      >
-                        <CheckCircle size={18} />
-                      </button>
-                    )}
-                  </div>
                 </div>
-              </div>
-            );
-          })
-        )}
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );

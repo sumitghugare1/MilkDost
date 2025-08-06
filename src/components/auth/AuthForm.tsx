@@ -111,20 +111,20 @@ export default function AuthForm({ onClose }: AuthFormProps) {
         <div className="absolute bottom-20 right-10 w-16 h-16 bg-yellow-400/10 rounded-full blur-xl"></div>
       </div>
 
-      <div className="flex items-center justify-center min-h-screen px-4 py-12 relative z-10">
-      <div className="max-w-md w-full space-y-8">
+      <div className="flex items-center justify-center min-h-screen px-3 sm:px-4 lg:px-6 py-6 sm:py-8 lg:py-12 relative z-10">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8">
         {/* Logo and Header */}
         <div className="text-center">
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4 sm:mb-6">
             <Logo size="lg" showText={false} />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
             DairyMate
           </h1>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">
             {isSignUp ? 'Join the Family' : 'Welcome Back'}
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600 text-sm sm:text-base lg:text-lg">
             {isSignUp 
               ? 'Start managing your dairy business today' 
               : 'Continue your dairy business journey'
@@ -133,19 +133,19 @@ export default function AuthForm({ onClose }: AuthFormProps) {
         </div>
 
         {/* Auth Form */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-8">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-6 sm:p-8">
+          <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
             {/* Sign Up Fields */}
             {isSignUp && (
               <>
                 {/* Full Name */}
                 <div>
-                  <label htmlFor="displayName" className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label htmlFor="displayName" className="block text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                     Full Name *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-blue-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                      <User className="h-4 w-4 sm:h-5 sm:w-5 text-blue-400" />
                     </div>
                     <input
                       id="displayName"
@@ -154,7 +154,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                       required
                       value={formData.displayName}
                       onChange={handleInputChange}
-                      className="block w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm"
+                      className="block w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -162,12 +162,12 @@ export default function AuthForm({ onClose }: AuthFormProps) {
 
                 {/* Business Name */}
                 <div>
-                  <label htmlFor="businessName" className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label htmlFor="businessName" className="block text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                     Business Name *
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Building className="h-5 w-5 text-green-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                      <Building className="h-4 w-4 sm:h-5 sm:w-5 text-green-400" />
                     </div>
                     <input
                       id="businessName"
@@ -176,7 +176,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                       required
                       value={formData.businessName}
                       onChange={handleInputChange}
-                      className="block w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm"
+                      className="block w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
                       placeholder="Enter your business name"
                     />
                   </div>
@@ -184,12 +184,12 @@ export default function AuthForm({ onClose }: AuthFormProps) {
 
                 {/* Phone Number */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-3">
+                  <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
                     Phone Number
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Phone className="h-5 w-5 text-purple-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-purple-400" />
                     </div>
                     <input
                       id="phone"
@@ -197,7 +197,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                       type="tel"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="block w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm"
+                      className="block w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 bg-white/50 backdrop-blur-sm text-sm sm:text-base"
                       placeholder="+91 98765 43210"
                     />
                   </div>

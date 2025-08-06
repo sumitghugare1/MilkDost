@@ -20,7 +20,7 @@ export default function Layout({ children, header, navigation }: LayoutProps) {
       )}
 
       {/* Main Content */}
-      <main className="pb-20"> {/* padding-bottom for mobile navigation */}
+      <main className="pb-20 sm:pb-24"> {/* Extra padding on larger screens for better spacing */}
         {children}
       </main>
 
@@ -35,6 +35,9 @@ export default function Layout({ children, header, navigation }: LayoutProps) {
           style: {
             background: '#363636',
             color: '#fff',
+            fontSize: '14px',
+            borderRadius: '12px',
+            padding: '12px 16px',
           },
         }}
       />

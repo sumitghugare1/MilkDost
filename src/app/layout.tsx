@@ -17,6 +17,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "DairyMate - Smart Milk Business Assistant",
   description: "Manage your milk delivery business with ease - track clients, deliveries, billing, and buffalo care",
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#3b82f6',
 };
 
 export default function RootLayout({
