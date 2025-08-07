@@ -288,7 +288,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-primary hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:-translate-y-1"
+              className="group relative w-full flex justify-center items-center py-4 px-6 border border-transparent text-lg font-semibold rounded-xl text-cream bg-dark hover:bg-dark/90 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sage disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:-translate-y-1"
             >
               {loading ? (
                 <div className="flex items-center">
@@ -321,7 +321,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="font-semibold text-blue-600 hover:text-blue-700 transition-colors duration-200 underline"
+                className="font-semibold text-dark hover:text-dark/80 transition-colors duration-200 underline"
               >
                 {isSignUp ? 'Sign in' : 'Sign up'}
               </button>
@@ -341,7 +341,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                 type="button"
                 onClick={handleDemoLogin}
                 disabled={loading}
-                className="w-full bg-gradient-secondary text-white py-3 px-6 rounded-xl font-semibold hover:shadow-lg focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transition-all duration-300 transform hover:-translate-y-0.5"
+                className="w-full bg-sage text-dark py-3 px-6 rounded-xl font-semibold hover:bg-sage/80 hover:shadow-lg focus:ring-2 focus:ring-sage focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-3 transition-all duration-300 transform hover:-translate-y-0.5"
               >
                 {loading ? (
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>

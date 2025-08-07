@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "setup-fonts": "powershell -ExecutionPolicy Bypass -File setup-fonts.ps1"
   },
   "dependencies": {
     "@firebase/auth": "^1.11.0",

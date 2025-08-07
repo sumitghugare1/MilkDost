@@ -1,24 +1,153 @@
 @import "tailwindcss";
 
+/* Rubik Font Face Declarations */
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rubik';
+  src: url('/fonts/Rubik/static/Rubik-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Alternative: Rubik Variable Font (more efficient) */
+@font-face {
+  font-family: 'RubikVariable';
+  src: url('/fonts/Rubik/Rubik-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'RubikVariable';
+  src: url('/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f3efe6;
+  --foreground: #2e2e2e;
   
-  /* DairyMate Theme Colors */
-  --primary: #3b82f6;
-  --primary-dark: #1d4ed8;
-  --secondary: #10b981;
-  --accent: #f59e0b;
-  --danger: #ef4444;
-  --warning: #f59e0b;
-  --success: #10b981;
+  /* Custom palette - only these 3 colors */
+  --primary: #2e2e2e;
+  --primary-dark: #252525;
+  --secondary: #b5cbb7;
+  --accent: #b5cbb7;
+  --sage: #b5cbb7;
+  --cream: #f3efe6;
+  --dark: #2e2e2e;
   
-  /* Dairy-specific colors */
-  --milk-white: #fefefe;
-  --cream: #fef7ed;
-  --dairy-blue: #3b82f6;
-  --fresh-green: #10b981;
-  --golden: #f59e0b;
+  /* Semantic colors mapped to our palette */
+  --success: #b5cbb7;
+  --warning: #b5cbb7;
+  --error: #2e2e2e;
+  --info: #b5cbb7;
 }
 
 /* Force light mode for better readability */
@@ -29,7 +158,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Archia', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color-scheme: light !important;
   line-height: 1.6;
 }
@@ -48,17 +177,17 @@ input[type="time"],
 input[type="url"],
 input[type="search"],
 .form-input {
-  color: #1f2937 !important;
-  background-color: #ffffff !important;
-  border: 1px solid #d1d5db !important;
-  -webkit-text-fill-color: #1f2937 !important;
+  color: #2e2e2e !important;
+  background-color: #f3efe6 !important;
+  border: 1px solid #b5cbb7 !important;
+  -webkit-text-fill-color: #2e2e2e !important;
   background-clip: text !important;
   -webkit-background-clip: text !important;
   opacity: 1 !important;
   transition: all 0.2s ease-in-out;
 }
 
-/* Focus states with DairyMate theme */
+/* Focus states with our custom palette */
 input:focus, 
 textarea:focus, 
 select:focus,
@@ -72,11 +201,11 @@ input[type="time"]:focus,
 input[type="url"]:focus,
 input[type="search"]:focus,
 .form-input:focus {
-  color: #1f2937 !important;
-  background-color: #ffffff !important;
-  border-color: var(--dairy-blue) !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-  -webkit-text-fill-color: #1f2937 !important;
+  color: #2e2e2e !important;
+  background-color: #f3efe6 !important;
+  border-color: #2e2e2e !important;
+  box-shadow: 0 0 0 3px rgba(181, 203, 183, 0.3) !important;
+  -webkit-text-fill-color: #2e2e2e !important;
   outline: none !important;
 }
 
@@ -84,7 +213,7 @@ input[type="search"]:focus,
 input::placeholder,
 textarea::placeholder,
 select::placeholder {
-  color: #9ca3af !important;
+  color: rgba(46, 46, 46, 0.6) !important;
   opacity: 1 !important;
 }
 
@@ -93,50 +222,153 @@ input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px white inset !important;
-  -webkit-text-fill-color: #1f2937 !important;
-  color: #1f2937 !important;
-  background-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 30px #f3efe6 inset !important;
+  -webkit-text-fill-color: #2e2e2e !important;
+  color: #2e2e2e !important;
+  background-color: #f3efe6 !important;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar using our palette */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f3efe6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #b5cbb7;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #2e2e2e;
 }
 
-/* Button hover effects */
+/* Button styles with our palette */
 .btn-primary {
-  background: linear-gradient(135deg, var(--dairy-blue) 0%, var(--primary-dark) 100%);
+  background: #2e2e2e;
+  color: #f3efe6;
   transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
+  background: #252525;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 4px 12px rgba(46, 46, 46, 0.4);
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--fresh-green) 0%, #059669 100%);
+  background: #b5cbb7;
+  color: #2e2e2e;
   transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
+  background: #a0b8a2;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+  box-shadow: 0 4px 12px rgba(181, 203, 183, 0.4);
+}
+
+/* Button classes using our custom palette */
+.btn {
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: #2e2e2e;
+  color: #f3efe6;
+  border-color: #2e2e2e;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #252525;
+  border-color: #252525;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(46, 46, 46, 0.4);
+}
+
+.btn-secondary {
+  background-color: #b5cbb7;
+  color: #2e2e2e;
+  border-color: #b5cbb7;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #a0b8a2;
+  border-color: #a0b8a2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(181, 203, 183, 0.4);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #2e2e2e;
+  border-color: #b5cbb7;
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: #b5cbb7;
+  color: #2e2e2e;
+  border-color: #b5cbb7;
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: #2e2e2e;
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background-color: rgba(181, 203, 183, 0.2);
+  color: #2e2e2e;
+}
+
+.btn-danger {
+  background-color: #2e2e2e;
+  color: #f3efe6;
+  border-color: #2e2e2e;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: #1a1a1a;
+  border-color: #1a1a1a;
+}
+
+/* Icon button styles */
+.btn-icon {
+  padding: 0.5rem;
+  width: auto;
+  height: auto;
+  min-width: 2.5rem;
+  min-height: 2.5rem;
+}
+
+/* Size variants */
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
 }
 
 /* Card hover effects */
@@ -146,28 +378,112 @@ input:-webkit-autofill:active {
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px rgba(46, 46, 46, 0.1);
+}
+
+/* Gradient backgrounds using our palette */
+.gradient-dairy,
+.bg-gradient-dairy {
+  background: linear-gradient(135deg, #f3efe6 0%, rgba(181, 203, 183, 0.1) 50%, #f3efe6 100%);
+}
+
+.gradient-primary,
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #2e2e2e 0%, #252525 100%);
+}
+
+.gradient-secondary,
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, #b5cbb7 0%, #a0b8a2 100%);
+}
+
+.gradient-accent,
+.bg-gradient-accent {
+  background: linear-gradient(135deg, #b5cbb7 0%, #a0b8a2 100%);
+}
+
+/* Ensure all text elements are readable */
+h1, h2, h3, h4, h5, h6, p, span, div, label, button {
+  color: inherit;
+}
+
+/* Button text visibility */
+button {
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+/* Text color overrides using our palette */
+.text-gray-900 { color: #2e2e2e !important; }
+.text-gray-800 { color: #2e2e2e !important; }
+.text-gray-700 { color: #2e2e2e !important; }
+.text-gray-600 { color: rgba(46, 46, 46, 0.8) !important; }
+.text-gray-500 { color: rgba(46, 46, 46, 0.6) !important; }
+
+/* Selection styling */
+::selection {
+  background-color: #b5cbb7;
+  color: #2e2e2e;
+}
+
+/* Loading animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Glass morphism effect using our palette */
+.glass {
+  background: rgba(243, 239, 230, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(181, 203, 183, 0.3);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
 /* Gradient backgrounds */
 .gradient-dairy,
 .bg-gradient-dairy {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdf4 100%);
+  background: linear-gradient(135deg, #f3efe6 0%, rgba(181, 203, 183, 0.1) 50%, #f3efe6 100%);
 }
 
 .gradient-primary,
 .bg-gradient-primary {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #2e2e2e 0%, #1a1a1a 100%);
 }
 
 .gradient-secondary,
 .bg-gradient-secondary {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #b5cbb7 0%, #9bb09e 100%);
 }
 
 .gradient-accent,
 .bg-gradient-accent {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #b5cbb7 0%, #9bb09e 100%);
 }
 
 /* Ensure all text elements are readable */
@@ -182,16 +498,16 @@ button {
 }
 
 /* Specific overrides for common UI patterns */
-.text-gray-900 { color: #111827 !important; }
-.text-gray-800 { color: #1f2937 !important; }
-.text-gray-700 { color: #374151 !important; }
-.text-gray-600 { color: #4b5563 !important; }
-.text-gray-500 { color: #6b7280 !important; }
+.text-gray-900 { color: #2e2e2e !important; }
+.text-gray-800 { color: #2e2e2e !important; }
+.text-gray-700 { color: #2e2e2e !important; }
+.text-gray-600 { color: #4a4a4a !important; }
+.text-gray-500 { color: #6a6a6a !important; }
 
 /* Selection styling */
 ::selection {
-  background-color: var(--dairy-blue);
-  color: #ffffff;
+  background-color: #b5cbb7;
+  color: #2e2e2e;
 }
 
 /* Loading animation */
@@ -216,9 +532,9 @@ button {
 
 /* Glass morphism effect */
 .glass {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(243, 239, 230, 0.25);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(181, 203, 183, 0.18);
 }
 
 /* Mobile optimizations */

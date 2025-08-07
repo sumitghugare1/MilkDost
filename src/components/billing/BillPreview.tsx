@@ -68,7 +68,7 @@ DairyMate Team`;
           <div className="flex items-center space-x-3">
             <button
               onClick={onClose}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+              className="p-2 text-dark/60 hover:bg-sage/20 rounded-xl transition-colors"
             >
               <ArrowLeft size={20} />
             </button>
@@ -86,7 +86,7 @@ DairyMate Team`;
             {client.email && (
               <button
                 onClick={handleSendEmail}
-                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-100 text-blue-700 rounded-xl hover:bg-blue-200 transition-colors"
+                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-sage/20 text-dark rounded-xl hover:bg-sage/30 transition-colors"
               >
                 <Mail size={16} />
                 <span className="hidden sm:inline">Email</span>
@@ -95,7 +95,7 @@ DairyMate Team`;
             
             <button
               onClick={handlePrint}
-              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors"
+              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-sage/20 text-dark rounded-xl hover:bg-sage/30 transition-colors"
             >
               <Printer size={16} />
               <span className="hidden sm:inline">Print</span>
@@ -104,7 +104,7 @@ DairyMate Team`;
             <button
               onClick={handleDownloadPDF}
               disabled={loading}
-              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-dark text-cream rounded-xl hover:bg-dark/90 transition-colors disabled:opacity-50"
             >
               <Download size={16} />
               <span className="hidden sm:inline">{loading ? 'Generating...' : 'Download PDF'}</span>

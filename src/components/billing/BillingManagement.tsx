@@ -219,7 +219,7 @@ export default function BillingManagement() {
           </div>
           <button
             onClick={() => setShowBillForm(true)}
-            className="bg-gradient-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+            className="bg-dark text-cream px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
           >
             <Plus size={20} />
             <span>Create Bill</span>
@@ -275,7 +275,7 @@ export default function BillingManagement() {
           <button
             onClick={handleGenerateBills}
             disabled={loading}
-            className="w-full bg-gradient-secondary text-white py-3 sm:py-4 rounded-xl flex items-center justify-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
+            className="w-full bg-sage text-dark py-3 sm:py-4 rounded-xl flex items-center justify-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
           >
             <Zap size={20} />
             <span>
@@ -288,24 +288,24 @@ export default function BillingManagement() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="p-3 sm:p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg">
-              <IndianRupee className="text-white" size={20} />
+            <div className="p-3 sm:p-4 bg-dark rounded-2xl shadow-lg">
+              <IndianRupee className="text-cream" size={20} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-blue-700 uppercase tracking-wide">Total Revenue</p>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-900 truncate">{formatCurrency(totalRevenue)}</p>
-              <p className="text-xs sm:text-sm text-blue-600 mt-1">This month's earnings</p>
+              <p className="text-xs sm:text-sm font-semibold text-dark uppercase tracking-wide">Total Revenue</p>
+              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-dark truncate">{formatCurrency(totalRevenue)}</p>
+              <p className="text-xs sm:text-sm text-dark/70 mt-1">This month's earnings</p>
             </div>
           </div>
-          <div className="mt-3 sm:mt-4 h-2 bg-blue-100 rounded-full overflow-hidden">
-            <div className="h-full w-3/4 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full animate-pulse"></div>
+          <div className="mt-3 sm:mt-4 h-2 bg-sage/20 rounded-full overflow-hidden">
+            <div className="h-full w-3/4 bg-dark rounded-full animate-pulse"></div>
           </div>
         </div>
 
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
           <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="p-3 sm:p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg">
-              <CheckCircle className="text-white" size={20} />
+            <div className="p-3 sm:p-4 bg-sage rounded-2xl shadow-lg">
+              <CheckCircle className="text-dark" size={20} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs sm:text-sm font-semibold text-green-700 uppercase tracking-wide">Paid Amount</p>

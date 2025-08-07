@@ -93,7 +93,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
           <div className="flex items-center space-x-3">
             <button
               onClick={onCancel}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-dark/60 hover:bg-sage/20 rounded-lg transition-colors"
             >
               <ArrowLeft size={20} />
             </button>
@@ -297,7 +297,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-2"
+              className="px-4 py-2 text-dark bg-sage/20 rounded-lg hover:bg-sage/30 transition-colors flex items-center space-x-2"
             >
               <X size={18} />
               <span>Cancel</span>
@@ -306,7 +306,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 bg-dark text-cream rounded-lg hover:bg-dark/90 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save size={18} />
               <span>{loading ? 'Saving...' : (client ? 'Update Client' : 'Add Client')}</span>

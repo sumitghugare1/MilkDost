@@ -141,7 +141,7 @@ export default function ClientManagement() {
           </div>
           <button
             onClick={handleAddClient}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
+            className="bg-dark text-cream px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-dark/90 transition-colors"
           >
             <Plus size={20} />
             <span>Add Client</span>
@@ -206,7 +206,7 @@ export default function ClientManagement() {
             {!searchTerm && (
               <button
                 onClick={handleAddClient}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-dark text-cream px-6 py-2 rounded-lg hover:bg-dark/90 transition-colors"
               >
                 Add First Client
               </button>
@@ -281,14 +281,14 @@ export default function ClientManagement() {
                   </button>
                   <button
                     onClick={() => handleEditClient(client)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    className="p-2 text-sage hover:bg-sage/20 rounded-lg"
                     title="Edit"
                   >
                     <Edit size={18} />
                   </button>
                   <button
                     onClick={() => handleDeleteClient(client.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    className="p-2 text-dark hover:bg-dark/10 rounded-lg"
                     title="Delete"
                   >
                     <Trash2 size={18} />

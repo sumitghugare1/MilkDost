@@ -31,7 +31,7 @@ export default function MobileTabNavigation({
   onTabChange 
 }: MobileTabNavigationProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 px-2 py-2 z-50 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 bg-custom-cream/95 backdrop-blur-lg border-t border-custom-sage px-2 py-2 z-50 shadow-lg">
       <div className="flex justify-around max-w-lg mx-auto">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -43,12 +43,12 @@ export default function MobileTabNavigation({
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center px-3 py-2 rounded-xl transition-all duration-200 transform min-w-0 flex-1 ${
                 isActive
-                  ? 'text-blue-600 bg-blue-50 scale-105 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                  ? 'text-white bg-dark scale-105 shadow-sm'
+                  : 'text-dark hover:text-dark hover:bg-sage/20'
               }`}
             >
               <div className={`p-1.5 rounded-lg transition-all duration-200 ${
-                isActive ? 'bg-blue-100' : ''
+                isActive ? 'bg-sage/20' : ''
               }`}>
                 <Icon size={20} />
               </div>

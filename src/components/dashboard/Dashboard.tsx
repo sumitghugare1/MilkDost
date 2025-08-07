@@ -63,18 +63,18 @@ function QuickAction({ title, description, icon: Icon, onClick, color }: QuickAc
   return (
     <button
       onClick={onClick}
-      className="bg-white/80 backdrop-blur-lg rounded-2xl p-4 sm:p-5 lg:p-6 shadow-xl border border-white/20 text-left hover:shadow-2xl transition-all duration-300 w-full transform hover:-translate-y-1 hover:scale-105"
+      className="bg-cream/80 backdrop-blur-lg rounded-2xl p-4 sm:p-5 lg:p-6 shadow-xl border border-sage/20 text-left hover:shadow-2xl transition-all duration-300 w-full transform hover:-translate-y-1 hover:scale-105"
     >
       <div className="flex items-center space-x-3 sm:space-x-4">
-        <div className={`p-2 sm:p-3 rounded-2xl ${color} shadow-lg flex-shrink-0`}>
-          <Icon size={20} className="sm:hidden text-white drop-shadow-sm" />
-          <Icon size={24} className="hidden sm:block text-white drop-shadow-sm" />
+        <div className="p-2 sm:p-3 rounded-2xl bg-dark shadow-lg flex-shrink-0">
+          <Icon size={20} className="sm:hidden text-cream drop-shadow-sm" />
+          <Icon size={24} className="hidden sm:block text-cream drop-shadow-sm" />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-gray-900 text-sm sm:text-base lg:text-lg truncate">{title}</h3>
-          <p className="text-xs sm:text-sm text-gray-600 font-medium mt-1 line-clamp-2">{description}</p>
+          <h3 className="font-bold text-dark text-sm sm:text-base lg:text-lg truncate">{title}</h3>
+          <p className="text-xs sm:text-sm text-dark/60 font-medium mt-1 line-clamp-2">{description}</p>
         </div>
-        <div className="text-gray-400 flex-shrink-0">
+        <div className="text-dark/40 flex-shrink-0">
           <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -204,23 +204,23 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       {overdueBillsCount > 0 && (
         <div 
           onClick={() => setShowOverdueBills(true)}
-          className="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-4 sm:p-6 text-white shadow-xl border border-red-300/20 cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
+          className="bg-dark rounded-2xl p-4 sm:p-6 text-cream shadow-xl border border-sage/20 cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="p-2 bg-white/20 rounded-xl">
-                <AlertTriangle className="text-white" size={24} />
+              <div className="p-2 bg-sage/20 rounded-xl">
+                <AlertTriangle className="text-cream" size={24} />
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-bold">
                   {overdueBillsCount} Overdue {overdueBillsCount === 1 ? 'Bill' : 'Bills'}
                 </h3>
-                <p className="text-white/90 text-sm">
+                <p className="text-cream/90 text-sm">
                   Click to view and send reminders
                 </p>
               </div>
             </div>
-            <div className="text-white/80">
+            <div className="text-cream/80">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -235,7 +235,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           title="Total Clients"
           value={stats?.totalClients || 0}
           icon={Users}
-          color="bg-gradient-primary"
+          color="bg-dark"
           subtitle="Active customers"
         />
         
@@ -243,7 +243,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           title="Today's Deliveries"
           value={`${stats?.completedDeliveries || 0}/${(stats?.completedDeliveries || 0) + (stats?.pendingDeliveries || 0)}`}
           icon={Truck}
-          color="bg-gradient-secondary"
+          color="bg-sage"
           subtitle={`${stats?.pendingDeliveries || 0} pending`}
         />
         
@@ -251,7 +251,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           title="Monthly Revenue"
           value={formatCurrency(stats?.monthlyRevenue || 0)}
           icon={IndianRupee}
-          color="bg-gradient-accent"
+          color="bg-dark"
           subtitle="This month's earnings"
         />
         
@@ -259,7 +259,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           title="Active Buffaloes"
           value={stats?.activeBuffaloes || 0}
           icon={Activity}
-          color="bg-green-500"
+          color="bg-sage"
           subtitle="Healthy & productive"
         />
       </div>
@@ -326,7 +326,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             description="Register a new milk delivery client"
             icon={Users}
             onClick={() => onNavigate('clients')}
-            color="bg-gradient-primary"
+            color=""
           />
           
           <QuickAction
@@ -334,7 +334,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             description="Mark today's deliveries as complete"
             icon={Truck}
             onClick={() => onNavigate('deliveries')}
-            color="bg-gradient-secondary"
+            color=""
           />
           
           <QuickAction
@@ -342,7 +342,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             description="Create monthly bills for clients"
             icon={FileText}
             onClick={() => onNavigate('billing')}
-            color="bg-gradient-accent"
+            color=""
           />
           
           <QuickAction
@@ -350,7 +350,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             description="Monitor buffalo health and feeding schedules"
             icon={Activity}
             onClick={() => onNavigate('buffalo')}
-            color="bg-green-500"
+            color=""
           />
         </div>
       </div>

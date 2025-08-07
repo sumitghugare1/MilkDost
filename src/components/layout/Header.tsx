@@ -31,39 +31,39 @@ export default function Header({
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-lg border-b border-gray-200 shadow-sm">
+    <div className="bg-custom-cream/90 backdrop-blur-lg border-b border-custom-sage shadow-sm">
       <div className="px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2 sm:space-x-3 flex-1 min-w-0">
             {onMenuClick && (
               <button
                 onClick={onMenuClick}
-                className="p-2 rounded-xl hover:bg-blue-50 transition-colors duration-200 flex-shrink-0"
+                className="p-2 rounded-xl hover:bg-custom-sage/20 transition-colors duration-200 flex-shrink-0"
               >
-                <Menu size={18} className="sm:hidden text-blue-600" />
-                <Menu size={20} className="hidden sm:block text-blue-600" />
+                <Menu size={18} className="sm:hidden text-custom-dark" />
+                <Menu size={20} className="hidden sm:block text-custom-dark" />
               </button>
             )}
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent truncate">{title}</h1>
+              <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-custom-dark to-custom-sage bg-clip-text text-transparent truncate">{title}</h1>
               {subtitle && (
-                <p className="text-xs sm:text-sm text-gray-600 font-medium truncate">{subtitle}</p>
+                <p className="text-xs sm:text-sm text-custom-dark/70 font-medium truncate">{subtitle}</p>
               )}
             </div>
           </div>
 
           <div className="flex items-center space-x-1 sm:space-x-2 lg:space-x-3 flex-shrink-0">
             {showSearch && (
-              <button className="p-2 rounded-xl hover:bg-blue-50 transition-colors duration-200">
-                <Search size={18} className="sm:hidden text-blue-600" />
-                <Search size={20} className="hidden sm:block text-blue-600" />
+              <button className="p-2 rounded-xl hover:bg-sage/20 transition-colors duration-200">
+                <Search size={18} className="sm:hidden text-dark" />
+                <Search size={20} className="hidden sm:block text-dark" />
               </button>
             )}
             
-            <button className="p-2 rounded-xl hover:bg-green-50 relative transition-colors duration-200">
-              <Bell size={18} className="sm:hidden text-green-600" />
-              <Bell size={20} className="hidden sm:block text-green-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            <button className="p-2 rounded-xl hover:bg-sage/20 relative transition-colors duration-200">
+              <Bell size={18} className="sm:hidden text-dark" />
+              <Bell size={20} className="hidden sm:block text-dark" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-dark rounded-full animate-pulse"></span>
             </button>
 
             {/* User Profile Menu */}

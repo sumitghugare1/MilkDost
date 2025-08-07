@@ -11,10 +11,10 @@ interface LayoutProps {
 
 export default function Layout({ children, header, navigation }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-custom-cream">
       {/* Header */}
       {header && (
-        <div className="sticky top-0 z-40 bg-white shadow-sm">
+        <div className="sticky top-0 z-40 bg-custom-cream shadow-sm">
           {header}
         </div>
       )}

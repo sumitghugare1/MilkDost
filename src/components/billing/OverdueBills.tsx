@@ -126,7 +126,7 @@ DairyMate Team`;
           {onClose && (
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl transition-colors"
+              className="px-4 py-2 text-dark/60 hover:bg-sage/20 rounded-xl transition-colors"
             >
               Close
             </button>
@@ -261,7 +261,7 @@ DairyMate Team`;
                     <div className="flex items-center space-x-2 sm:ml-6 flex-shrink-0">
                       <button
                         onClick={() => handleSendReminder(client, bill)}
-                        className="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm"
+                        className="flex items-center space-x-2 px-3 py-2 bg-sage text-dark rounded-xl hover:bg-sage/80 transition-colors text-sm"
                       >
                         <Bell size={16} />
                         <span className="hidden sm:inline">Send Reminder</span>
@@ -269,7 +269,7 @@ DairyMate Team`;
                       
                       <button
                         onClick={() => handleMarkAsPaid(bill.id)}
-                        className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm"
+                        className="flex items-center space-x-2 px-3 py-2 bg-dark text-cream rounded-xl hover:bg-dark/90 transition-colors text-sm"
                       >
                         <span>Mark Paid</span>
                       </button>

@@ -230,7 +230,7 @@ export default function BuffaloManagement() {
           </div>
           <button
             onClick={handleAddBuffaloClick}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
+            className="bg-dark text-cream px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-dark/90 transition-colors"
           >
             <Plus size={20} />
             <span>Add Buffalo</span>
@@ -251,7 +251,7 @@ export default function BuffaloManagement() {
           
           <button
             onClick={() => setShowFeedingTracker(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-green-700 transition-colors whitespace-nowrap"
+            className="bg-sage text-dark px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-sage/80 transition-colors whitespace-nowrap"
           >
             <Calendar size={20} />
             <span>Feeding Tracker</span>
