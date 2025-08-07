@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Clock, Crown, Shield, Sparkles, Star, Gem, Trophy, Rocket } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Crown, Shield, Sparkles, Star, Gem, Trophy, Rocket } from 'lucide-react';
 import { Buffalo, BuffaloFeeding } from '@/types';
 import { buffaloService, feedingService } from '@/lib/firebaseServices';
 import BuffaloForm from './BuffaloForm';
@@ -378,7 +378,7 @@ export default function BuffaloManagement() {
               <Calendar size={24} className="text-sage" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-dark">Today's Feeding Status</h3>
+              <h3 className="text-lg font-black text-dark">Today&apos;s Feeding Status</h3>
               <p className="text-sm text-dark/60 font-semibold">Track daily feeding progress</p>
             </div>
             <div className="ml-auto">

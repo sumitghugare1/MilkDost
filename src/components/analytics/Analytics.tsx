@@ -205,192 +205,272 @@ export default function Analytics() {
   };
 
   return (
-    <div className="p-4 space-y-6">
-      {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          <span className="ml-3 text-gray-600">Loading analytics...</span>
-        </div>
-      ) : (
-        <>
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Analytics & Reports</h2>
-            <p className="text-sm text-gray-500">
-              Business insights and performance metrics
-            </p>
+    <div className="min-h-screen bg-gradient-dairy">
+      <div className="max-w-5xl mx-auto p-4 space-y-6">
+        {loading ? (
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/30 text-center">
+            <div className="p-4 bg-[#2e2e2e]/10 rounded-2xl w-fit mx-auto mb-4">
+              <BarChart3 className="text-[#2e2e2e]/60 animate-pulse" size={48} />
+            </div>
+            <h3 className="text-lg font-black text-[#2e2e2e] mb-2">Loading Analytics...</h3>
+            <p className="text-[#2e2e2e]/60 font-medium">Gathering your business insights</p>
           </div>
-          
-          <select
-            value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="weekly">This Week</option>
-            <option value="monthly">This Month</option>
-            <option value="quarterly">This Quarter</option>
-            <option value="yearly">This Year</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Users className="text-blue-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-blue-800">Active Clients</p>
-              <p className="text-2xl font-bold text-blue-900">{activeClients}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <IndianRupee className="text-green-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-green-800">Avg. Revenue</p>
-              <p className="text-2xl font-bold text-green-900">{formatCurrency(avgMonthlyRevenue)}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Milk className="text-purple-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-purple-800">Milk Efficiency</p>
-              <p className="text-2xl font-bold text-purple-900">{efficiency.toFixed(1)}%</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <TrendingUp className="text-orange-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-orange-800">Growth Rate</p>
-              <p className="text-2xl font-bold text-orange-900">+12.5%</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Revenue Trend */}
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
-          <Line data={revenueChartData} options={chartOptions} />
-        </div>
-
-        {/* Milk Distribution */}
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Milk Distribution</h3>
-          <div className="h-64 flex items-center justify-center">
-            <Doughnut data={distributionChartData} options={pieOptions} />
-          </div>
-        </div>
-
-        {/* Daily Production */}
-        <div className="bg-white rounded-lg p-6 border border-gray-200 lg:col-span-2">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Milk Production</h3>
-          <Bar data={productionChartData} options={chartOptions} />
-        </div>
-      </div>
-
-      {/* Top Clients */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Top Clients by Revenue</h3>
-        <div className="space-y-3">
-          {topClients.map((client, index) => (
-            <div key={client.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-medium">
-                  {index + 1}
+        ) : (
+          <>
+            {/* Header Section */}
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
+                    <BarChart3 size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-[#2e2e2e]">Analytics & Reports</h2>
+                    <p className="text-sm text-[#2e2e2e]/60 font-medium">
+                      Business insights and performance metrics
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-medium text-gray-900">{client.name}</h4>
-                  <p className="text-sm text-gray-600">{client.milkQuantity}L daily @ {formatCurrency(client.rate)}/L</p>
+                
+                <select
+                  value={selectedPeriod}
+                  onChange={(e) => setSelectedPeriod(e.target.value)}
+                  className="px-4 py-3 bg-[#2e2e2e]/5 border border-[#2e2e2e]/20 rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300"
+                >
+                  <option value="weekly">This Week</option>
+                  <option value="monthly">This Month</option>
+                  <option value="quarterly">This Quarter</option>
+                  <option value="yearly">This Year</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Key Metrics */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                      <Users size={24} className="text-white" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Active Clients</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                      {activeClients}
+                    </p>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Currently active</p>
+                  </div>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="font-semibold text-gray-900">{formatCurrency(client.monthlyRevenue)}</p>
-                <p className="text-xs text-gray-500">per month</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Business Insights */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Insights</h3>
-          <div className="space-y-4">
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-              <div>
-                <p className="font-medium text-gray-900">Peak Production</p>
-                <p className="text-sm text-gray-600">Best production day: 92L (Jan 5th)</p>
+              <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                      <IndianRupee size={24} className="text-white" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Avg. Revenue</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                      {formatCurrency(avgMonthlyRevenue)}
+                    </p>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Per month</p>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-              <div>
-                <p className="font-medium text-gray-900">Growth Opportunity</p>
-                <p className="text-sm text-gray-600">Revenue increased 23% compared to last quarter</p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-              <div>
-                <p className="font-medium text-gray-900">Efficiency Alert</p>
-                <p className="text-sm text-gray-600">Minimize waste by improving storage (current: 2.1%)</p>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Total Clients</span>
-              <span className="font-semibold">{totalClients}</span>
+              <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                      <Milk size={24} className="text-white" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Milk Produced</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                      {totalMilkProduced.toFixed(1)}L
+                    </p>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Total production</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                      <TrendingUp size={24} className="text-white" />
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Efficiency</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                      {efficiency.toFixed(1)}%
+                    </p>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Milk sold ratio</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Daily Avg. Production</span>
-              <span className="font-semibold">{productions.length > 0 ? (totalMilkProduced / productions.length).toFixed(1) : '0.0'}L</span>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Revenue Trend */}
+              <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 rounded-xl">
+                    <TrendingUp size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-black text-[#2e2e2e]">Revenue Trend</h3>
+                </div>
+                <Line data={revenueChartData} options={chartOptions} />
+              </div>
+
+              {/* Milk Distribution */}
+              <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl">
+                    <Milk size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-black text-[#2e2e2e]">Milk Distribution</h3>
+                </div>
+                <div className="h-64 flex items-center justify-center">
+                  <Doughnut data={distributionChartData} options={pieOptions} />
+                </div>
+              </div>
+
+              {/* Daily Production */}
+              <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30 lg:col-span-2">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                    <BarChart3 size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-black text-[#2e2e2e]">Daily Milk Production</h3>
+                </div>
+                <Bar data={productionChartData} options={chartOptions} />
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Daily Avg. Sales</span>
-              <span className="font-semibold">{productions.length > 0 ? (totalMilkSold / productions.length).toFixed(1) : '0.0'}L</span>
+
+            {/* Top Clients */}
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
+                  <Users size={20} className="text-white" />
+                </div>
+                <h3 className="text-lg font-black text-[#2e2e2e]">Top Clients by Revenue</h3>
+              </div>
+              <div className="space-y-3">
+                {topClients.map((client, index) => (
+                  <div key={client.id} className="group flex items-center justify-between p-4 bg-[#2e2e2e]/5 rounded-xl hover:bg-[#2e2e2e]/10 transition-all duration-300">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 text-white rounded-xl flex items-center justify-center font-bold shadow-lg">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="font-black text-[#2e2e2e]">{client.name}</p>
+                        <p className="text-sm text-[#2e2e2e]/60 font-medium">{client.milkQuantity}L daily</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-black text-[#2e2e2e] text-lg">{formatCurrency(client.monthlyRevenue)}</p>
+                      <p className="text-xs text-[#2e2e2e]/60 font-medium">Monthly</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Best Client</span>
-              <span className="font-semibold">{topClients[0]?.name}</span>
+
+            {/* Business Insights */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl">
+                    <TrendingUp size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-black text-[#2e2e2e]">Business Insights</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl border border-emerald-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                      <span className="text-sm font-bold text-emerald-800">Revenue Growth</span>
+                    </div>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Your monthly revenue has increased by 12.5% compared to last month.</p>
+                  </div>
+                  
+                  <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl border border-blue-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-sm font-bold text-blue-800">Client Retention</span>
+                    </div>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">You have maintained {activeClients} active clients with excellent service quality.</p>
+                  </div>
+                  
+                  <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl border border-purple-200">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-sm font-bold text-purple-800">Production Efficiency</span>
+                    </div>
+                    <p className="text-xs text-[#2e2e2e]/60 font-medium">Your milk production efficiency is at {efficiency.toFixed(1)}%, showing optimal utilization.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className="p-2 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl">
+                    <Calendar size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-lg font-black text-[#2e2e2e]">Monthly Summary</h3>
+                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[#2e2e2e]/5 rounded-xl p-4">
+                      <div className="text-[#2e2e2e]/60 text-sm font-medium mb-1">Total Revenue</div>
+                      <div className="font-black text-xl text-[#2e2e2e]">{formatCurrency(totalRevenue)}</div>
+                    </div>
+                    <div className="bg-[#2e2e2e]/5 rounded-xl p-4">
+                      <div className="text-[#2e2e2e]/60 text-sm font-medium mb-1">Total Clients</div>
+                      <div className="font-black text-xl text-[#2e2e2e]">{totalClients}</div>
+                    </div>
+                    <div className="bg-[#2e2e2e]/5 rounded-xl p-4">
+                      <div className="text-[#2e2e2e]/60 text-sm font-medium mb-1">Milk Produced</div>
+                      <div className="font-black text-xl text-[#2e2e2e]">{totalMilkProduced.toFixed(1)}L</div>
+                    </div>
+                    <div className="bg-[#2e2e2e]/5 rounded-xl p-4">
+                      <div className="text-[#2e2e2e]/60 text-sm font-medium mb-1">Efficiency</div>
+                      <div className="font-black text-xl text-[#2e2e2e]">{efficiency.toFixed(1)}%</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Monthly Growth</span>
-              <span className="font-semibold text-green-600">+12.5%</span>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
-        </>
-      )}
     </div>
   );
 }

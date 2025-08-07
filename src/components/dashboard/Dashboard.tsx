@@ -15,6 +15,7 @@ import { formatCurrency } from '@/lib/utils';
 import toast from 'react-hot-toast';
 import Logo from '@/components/common/Logo';
 import OverdueBills from '@/components/billing/OverdueBills';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardStats {
   totalClients: number;
@@ -36,60 +37,31 @@ interface StatCardProps {
 
 function StatCard({ title, value, icon: Icon, color, subtitle }: StatCardProps) {
   return (
-    <div className="group relative bg-gradient-to-br from-white/95 to-white/80 backdrop-blur-2xl rounded-3xl p-6 shadow-2xl border border-white/40 hover:shadow-3xl transition-all duration-700 transform hover:-translate-y-3 hover:scale-105 overflow-hidden">
-      {/* Animated background patterns */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-sage/15 via-sage/5 to-transparent rounded-full -translate-y-20 translate-x-20 group-hover:scale-150 group-hover:rotate-45 transition-all duration-1000"></div>
-      <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-dark/10 via-dark/5 to-transparent rounded-full translate-y-16 -translate-x-16 group-hover:scale-125 group-hover:-rotate-45 transition-all duration-1000"></div>
+    <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+      {/* Background gradient effect */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       
-      {/* Floating particles effect */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute top-4 right-8 w-1 h-1 bg-sage rounded-full animate-ping delay-100"></div>
-        <div className="absolute top-8 right-12 w-1 h-1 bg-dark rounded-full animate-ping delay-300"></div>
-        <div className="absolute bottom-8 left-8 w-1 h-1 bg-sage rounded-full animate-ping delay-500"></div>
-      </div>
-      
-      <div className="relative flex items-center justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2 mb-3">
-            <p className="text-sm font-bold text-dark/70 uppercase tracking-wider">{title}</p>
-            <div className="p-1 rounded-full bg-gradient-to-r from-sage/20 to-dark/20 group-hover:scale-110 transition-transform duration-300">
-              <Sparkles size={12} className="text-sage animate-pulse" />
-            </div>
+      <div className="relative space-y-3">
+        {/* Icon and title row */}
+        <div className="flex items-center justify-between">
+          <div className="p-3 rounded-xl bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 shadow-lg transition-all duration-300 group-hover:scale-105">
+            <Icon size={24} className="text-white" />
           </div>
-          <p className="text-4xl font-black text-dark mb-3 bg-gradient-to-r from-dark via-dark/90 to-dark/80 bg-clip-text text-transparent leading-none">
+          <div className="text-right">
+            <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">{title}</p>
+          </div>
+        </div>
+        
+        {/* Value and subtitle */}
+        <div>
+          <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
             {value}
           </p>
           {subtitle && (
-            <div className="flex items-center space-x-2">
-              <div className="p-1 rounded-full bg-sage/20">
-                <TrendingUp size={12} className="text-sage" />
-              </div>
-              <p className="text-sm text-dark/70 font-semibold">{subtitle}</p>
-            </div>
+            <p className="text-xs text-[#2e2e2e]/60 font-medium">{subtitle}</p>
           )}
         </div>
-        
-        {/* Enhanced icon container */}
-        <div className={`relative p-4 rounded-2xl ${color} shadow-2xl flex-shrink-0 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500`}>
-          {/* Icon glow effect */}
-          <div className="absolute inset-0 bg-white/30 rounded-2xl blur-lg scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
-          <Icon size={32} className="relative text-white drop-shadow-2xl" />
-          
-          {/* Pulse rings */}
-          <div className="absolute inset-0 rounded-2xl border-2 border-white/30 scale-100 group-hover:scale-125 opacity-100 group-hover:opacity-0 transition-all duration-700"></div>
-          <div className="absolute inset-0 rounded-2xl border-2 border-white/20 scale-110 group-hover:scale-150 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-150"></div>
-        </div>
       </div>
-      
-      {/* Enhanced progress indicator */}
-      <div className="relative mt-6 h-2 bg-gradient-to-r from-sage/20 via-dark/15 to-sage/20 rounded-full overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-sage via-dark to-sage rounded-full transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 origin-left"></div>
-        <div className={`h-full bg-gradient-to-r from-sage to-dark rounded-full transition-all duration-1000 group-hover:shadow-lg`} style={{ width: '75%' }}></div>
-      </div>
-      
-      {/* Shine effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
     </div>
   );
 }
@@ -106,65 +78,21 @@ function QuickAction({ title, description, icon: Icon, onClick, color }: QuickAc
   return (
     <button
       onClick={onClick}
-      className="group relative bg-gradient-to-br from-cream/98 to-cream/90 backdrop-blur-2xl rounded-3xl p-8 shadow-2xl border border-sage/30 text-left hover:shadow-3xl transition-all duration-700 w-full transform hover:-translate-y-4 hover:scale-105 overflow-hidden"
+      className="group relative bg-white/80 backdrop-blur-lg rounded-xl p-4 shadow-lg border border-white/40 text-left hover:shadow-xl transition-all duration-300 w-full transform hover:-translate-y-0.5"
     >
-      {/* Dynamic background patterns */}
-      <div className="absolute inset-0 bg-gradient-to-r from-sage/3 via-transparent to-dark/3 opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-      <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-sage/10 via-sage/5 to-transparent rounded-full -translate-y-24 translate-x-24 group-hover:scale-125 group-hover:rotate-45 transition-all duration-1000"></div>
-      
-      {/* Floating elements */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
-        <div className="absolute top-6 right-8 w-2 h-2 bg-sage/60 rounded-full animate-bounce delay-100"></div>
-        <div className="absolute top-12 right-12 w-1 h-1 bg-dark/60 rounded-full animate-bounce delay-300"></div>
-        <div className="absolute bottom-8 left-6 w-1.5 h-1.5 bg-sage/40 rounded-full animate-bounce delay-500"></div>
-      </div>
-      
-      <div className="relative flex items-center space-x-6">
-        {/* Enhanced icon container */}
-        <div className="relative p-5 rounded-3xl bg-gradient-to-br from-dark via-dark/95 to-dark/85 shadow-2xl flex-shrink-0 group-hover:rotate-6 group-hover:scale-110 transition-all duration-500">
-          {/* Multi-layer glow effects */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-white/10 rounded-3xl blur-lg scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          <div className="absolute inset-0 bg-white/20 rounded-3xl blur-sm"></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-sage/20 to-dark/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          
-          <Icon size={28} className="relative text-cream drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" />
-          
-          {/* Orbit rings */}
-          <div className="absolute inset-0 rounded-3xl border-2 border-cream/20 scale-100 group-hover:scale-125 opacity-100 group-hover:opacity-0 transition-all duration-700"></div>
-          <div className="absolute inset-0 rounded-3xl border border-cream/10 scale-110 group-hover:scale-150 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100"></div>
-          
-          {/* Pulse effect */}
-          <div className="absolute inset-0 rounded-3xl bg-cream/10 animate-ping opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+      <div className="flex items-center space-x-3">
+        {/* Compact icon container */}
+        <div className="p-2 rounded-lg bg-gradient-to-br from-dark to-dark/80 shadow-md flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
+          <Icon size={18} className="text-cream" />
         </div>
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-3 mb-2">
-            <h3 className="font-black text-dark text-xl group-hover:text-dark/90 transition-colors duration-300">{title}</h3>
-            <div className="p-1.5 rounded-full bg-gradient-to-r from-sage/20 to-dark/20 opacity-0 group-hover:opacity-100 transition-all duration-500 transform scale-0 group-hover:scale-100">
-              <Star size={16} className="text-sage" />
-            </div>
-            <div className="p-1 rounded-full bg-sage/20 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 transform scale-0 group-hover:scale-100">
-              <Rocket size={12} className="text-dark" />
-            </div>
-          </div>
-          <p className="text-sm text-dark/70 font-medium line-clamp-2 group-hover:text-dark/80 transition-colors duration-300 leading-relaxed">{description}</p>
+          <h3 className="font-bold text-dark text-sm group-hover:text-dark/90 transition-colors duration-300 mb-0.5">{title}</h3>
+          <p className="text-xs text-dark/60 font-medium line-clamp-1 group-hover:text-dark/70 transition-colors duration-300">{description}</p>
         </div>
         
-        {/* Enhanced arrow with animation */}
-        <div className="text-dark/40 flex-shrink-0 group-hover:text-sage group-hover:translate-x-2 transition-all duration-500">
-          <div className="relative">
-            <ChevronRight className="w-7 h-7 transition-transform duration-300 group-hover:scale-110" />
-            <div className="absolute inset-0 bg-sage/20 rounded-full scale-0 group-hover:scale-150 transition-transform duration-500"></div>
-          </div>
-        </div>
+        <ChevronRight className="w-4 h-4 text-dark/40 group-hover:text-sage group-hover:translate-x-0.5 transition-all duration-300 flex-shrink-0" />
       </div>
-      
-      {/* Enhanced accent line with pulse */}
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sage via-dark to-sage transform scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
-      <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-white/50 to-transparent transform scale-x-0 group-hover:scale-x-100 transition-transform duration-1000 delay-200 origin-center"></div>
-      
-      {/* Shine sweep effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
     </button>
   );
 }
@@ -271,19 +199,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dairy p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6 lg:space-y-8">
-      {/* Welcome Header */}
-      <div className="flex items-center space-x-3 sm:space-x-4 mb-4 sm:mb-6 lg:mb-8">
-        <Logo size="md" showText={false} />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent leading-tight">
-            Welcome to DairyMate
-          </h1>
-          <p className="text-gray-600 font-medium text-sm sm:text-base lg:text-lg truncate">
-            Here&apos;s what&apos;s happening with your dairy business today
-          </p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gradient-dairy">
+      {/* Main Content with better spacing */}
+      <div className="max-w-5xl mx-auto p-4 space-y-6">
 
       {/* Overdue Bills Alert */}
       {overdueBillsCount > 0 && (
@@ -294,10 +212,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-sage/20 rounded-xl">
-                <AlertTriangle className="text-cream" size={24} />
+                <AlertTriangle className="text-cream" size={20} />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold">
+                <h3 className="text-base sm:text-lg font-bold">
                   {overdueBillsCount} Overdue {overdueBillsCount === 1 ? 'Bill' : 'Bills'}
                 </h3>
                 <p className="text-cream/90 text-sm">
@@ -305,190 +223,160 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 </p>
               </div>
             </div>
-            <div className="text-cream/80">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </div>
+            <ChevronRight className="text-cream/80 w-5 h-5" />
           </div>
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Clients"
-          value={stats?.totalClients || 0}
-          icon={Crown}
-          color="bg-gradient-to-br from-dark to-dark/80"
-          subtitle="Active customers"
-        />
-        
-        <StatCard
-          title="Today's Deliveries"
-          value={`${stats?.completedDeliveries || 0}/${(stats?.completedDeliveries || 0) + (stats?.pendingDeliveries || 0)}`}
-          icon={Rocket}
-          color="bg-gradient-to-br from-sage to-sage/80"
-          subtitle={`${stats?.pendingDeliveries || 0} pending`}
-        />
-        
-        <StatCard
-          title="Monthly Revenue"
-          value={formatCurrency(stats?.monthlyRevenue || 0)}
-          icon={Trophy}
-          color="bg-gradient-to-br from-dark to-dark/80"
-          subtitle="This month's earnings"
-        />
-        
-        <StatCard
-          title="Active Buffaloes"
-          value={stats?.activeBuffaloes || 0}
-          icon={Shield}
-          color="bg-gradient-to-br from-sage to-sage/80"
-          subtitle="Healthy & productive"
-        />
-      </div>
+        {/* Optimized Stats Grid - Better proportions */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <StatCard
+            title="Total Clients"
+            value={stats?.totalClients || 0}
+            icon={Users}
+            color=""
+            subtitle="Active customers"
+          />
+          
+          <StatCard
+            title="Today's Deliveries"
+            value={`${stats?.completedDeliveries || 0}/${(stats?.completedDeliveries || 0) + (stats?.pendingDeliveries || 0)}`}
+            icon={Truck}
+            color=""
+            subtitle={`${stats?.pendingDeliveries || 0} pending`}
+          />
+          
+          <StatCard
+            title="Monthly Revenue"
+            value={formatCurrency(stats?.monthlyRevenue || 0)}
+            icon={IndianRupee}
+            color=""
+            subtitle="This month's earnings"
+          />
+          
+          <StatCard
+            title="Active Buffaloes"
+            value={stats?.activeBuffaloes || 0}
+            icon={Heart}
+            color=""
+            subtitle="Healthy animals"
+          />
+        </div>
 
-      {/* Production Overview Card */}
-      <div className="bg-gradient-to-br from-white/98 to-white/90 backdrop-blur-2xl rounded-3xl p-8 shadow-2xl border border-white/40 hover:shadow-3xl transition-all duration-700 group">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <div className="relative p-4 bg-gradient-to-br from-dark via-dark/95 to-dark/85 rounded-3xl shadow-2xl group-hover:rotate-6 transition-transform duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/5 rounded-3xl"></div>
-              <PieChart size={28} className="text-cream drop-shadow-xl relative" />
-              <div className="absolute inset-0 rounded-3xl border border-cream/30 group-hover:scale-110 transition-transform duration-500"></div>
-            </div>
-            <div>
-              <h2 className="text-2xl font-black text-dark bg-gradient-to-r from-dark to-dark/80 bg-clip-text">Today's Production Overview</h2>
-              <p className="text-sm text-dark/60 font-medium">Real-time insights and analytics</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-3 text-sage">
-            <div className="p-2 bg-sage/20 rounded-xl">
-              <Gauge size={20} className="text-sage" />
-            </div>
-            <span className="font-black text-lg">+12% from yesterday</span>
-            <div className="w-2 h-2 bg-sage rounded-full animate-pulse"></div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div className="group/card bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-3xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-blue-200/50">
-            <div className="flex items-center space-x-4">
-              <div className="relative p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl group-hover/card:scale-110 group-hover/card:rotate-6 transition-transform duration-500">
-                <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
-                <Layers size={28} className="text-white relative" />
-                <div className="absolute inset-0 rounded-2xl border border-white/30 animate-pulse"></div>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-blue-700 mb-2 flex items-center space-x-2">
-                  <span>Milk Production</span>
-                  <Flame size={14} className="text-blue-600" />
-                </p>
-                <p className="text-3xl font-black text-blue-900 mb-1">{stats?.todayMilkProduction || 0}L</p>
-                <p className="text-xs text-blue-600 font-medium flex items-center space-x-1">
-                  <Globe size={12} />
-                  <span>Fresh milk collected</span>
-                </p>
-              </div>
-            </div>
-          </div>
+        {/* Two-column layout for better structure */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div className="group/card bg-gradient-to-br from-green-50 to-green-100/50 rounded-3xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-green-200/50">
-            <div className="flex items-center space-x-4">
-              <div className="relative p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl group-hover/card:scale-110 group-hover/card:rotate-6 transition-transform duration-500">
-                <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
-                <Medal size={28} className="text-white relative" />
-                <div className="absolute inset-0 rounded-2xl border border-white/30 animate-pulse"></div>
+          {/* Left Column - Production Overview */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Production Overview */}
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-dark to-dark/80 rounded-xl">
+                    <PieChart size={24} className="text-cream" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-dark">Today&apos;s Overview</h2>
+                    <p className="text-sm text-dark/60 font-medium">Real-time production insights</p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-1 text-sage">
+                  <TrendingUp size={16} />
+                  <span className="font-bold text-sm">+12%</span>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-green-700 mb-2 flex items-center space-x-2">
-                  <span>Delivered</span>
-                  <Rocket size={14} className="text-green-600" />
-                </p>
-                <p className="text-3xl font-black text-green-900 mb-1">{stats?.completedDeliveries || 0}</p>
-                <p className="text-xs text-green-600 font-medium flex items-center space-x-1">
-                  <CheckCircle size={12} />
-                  <span>Successful deliveries</span>
-                </p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 bg-blue-500 rounded-xl">
+                      <Milk size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-blue-700 mb-1">Milk Production</p>
+                      <p className="text-xl font-black text-blue-900">{stats?.todayMilkProduction || 0}L</p>
+                      <p className="text-xs text-blue-600 font-medium">Fresh collected</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 bg-green-500 rounded-xl">
+                      <CheckCircle size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-green-700 mb-1">Delivered</p>
+                      <p className="text-xl font-black text-green-900">{stats?.completedDeliveries || 0}</p>
+                      <p className="text-xs text-green-600 font-medium">Successful</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 bg-amber-500 rounded-xl">
+                      <Clock size={20} className="text-white" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-amber-700 mb-1">Pending</p>
+                      <p className="text-xl font-black text-amber-900">{formatCurrency(stats?.pendingPayments || 0)}</p>
+                      <p className="text-xs text-amber-600 font-medium">Collections</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          
-          <div className="group/card bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-3xl p-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-amber-200/50 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center space-x-4">
-              <div className="relative p-4 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl shadow-xl group-hover/card:scale-110 group-hover/card:rotate-6 transition-transform duration-500">
-                <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
-                <Hexagon size={28} className="text-white relative" />
-                <div className="absolute inset-0 rounded-2xl border border-white/30 animate-pulse"></div>
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold text-amber-700 mb-2 flex items-center space-x-2">
-                  <span>Pending Collections</span>
-                  <Eye size={14} className="text-amber-600" />
-                </p>
-                <p className="text-3xl font-black text-amber-900 mb-1">{formatCurrency(stats?.pendingPayments || 0)}</p>
-                <p className="text-xs text-amber-600 font-medium flex items-center space-x-1">
-                  <Clock size={12} />
-                  <span>Outstanding payments</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Quick Actions */}
-      <div>
-        <div className="flex items-center space-x-4 mb-8">
-          <div className="relative p-3 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-2xl shadow-2xl">
-            <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
-            <Bolt size={28} className="text-white relative" />
-            <div className="absolute inset-0 rounded-2xl border border-white/30 animate-pulse"></div>
+          {/* Right Column - Quick Actions */}
+          <div className="space-y-4">
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-sage to-sage/80 rounded-xl">
+                  <Zap size={20} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-dark">Quick Actions</h2>
+                  <p className="text-xs text-dark/60 font-medium">Essential features</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <QuickAction
+                  title="Add Client"
+                  description="Register new customer with delivery preferences"
+                  icon={Users}
+                  onClick={() => onNavigate('clients')}
+                  color=""
+                />
+                
+                <QuickAction
+                  title="Track Deliveries"
+                  description="Mark deliveries and manage routes"
+                  icon={Truck}
+                  onClick={() => onNavigate('deliveries')}
+                  color=""
+                />
+                
+                <QuickAction
+                  title="Generate Bills"
+                  description="Create monthly bills with automated calculations"
+                  icon={FileText}
+                  onClick={() => onNavigate('billing')}
+                  color=""
+                />
+                
+                <QuickAction
+                  title="Buffalo Care"
+                  description="Monitor health and feeding schedules"
+                  icon={Heart}
+                  onClick={() => onNavigate('buffalo')}
+                  color=""
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex-1">
-            <h2 className="text-2xl font-black text-dark bg-gradient-to-r from-dark to-dark/80 bg-clip-text">Quick Actions</h2>
-            <p className="text-sm text-dark/60 font-medium">Fast access to essential features</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-sage rounded-full animate-ping"></div>
-            <div className="w-2 h-2 bg-dark rounded-full animate-ping delay-75"></div>
-            <div className="w-2 h-2 bg-sage rounded-full animate-ping delay-150"></div>
-          </div>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <QuickAction
-            title="Add New Client"
-            description="Register a new milk delivery customer with delivery preferences and payment settings"
-            icon={Crown}
-            onClick={() => onNavigate('clients')}
-            color=""
-          />
-          
-          <QuickAction
-            title="Track Deliveries"
-            description="Mark today's deliveries as complete and manage delivery routes efficiently"
-            icon={Rocket}
-            onClick={() => onNavigate('deliveries')}
-            color=""
-          />
-          
-          <QuickAction
-            title="Generate Bills"
-            description="Create and send monthly bills with automated calculations and payment tracking"
-            icon={Trophy}
-            onClick={() => onNavigate('billing')}
-            color=""
-          />
-          
-          <QuickAction
-            title="Buffalo Care"
-            description="Monitor buffalo health, feeding schedules, and veterinary appointments"
-            icon={Shield}
-            onClick={() => onNavigate('buffalo')}
-            color=""
-          />
         </div>
       </div>
 

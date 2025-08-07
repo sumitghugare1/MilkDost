@@ -103,238 +103,297 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
   ];
 
   return (
-    <div className="p-4">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={onCancel}
-              className="p-2 text-dark/60 hover:bg-sage/20 rounded-lg transition-colors"
-            >
-              <ArrowLeft size={20} />
-            </button>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {buffalo ? 'Edit Buffalo' : 'Add New Buffalo'}
-              </h2>
-              <p className="text-sm text-gray-500">
-                {buffalo ? 'Update buffalo information' : 'Add a new buffalo to your herd'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Buffalo Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.name ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter buffalo name"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Age (Years) *
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  max="25"
-                  value={formData.age}
-                  onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 1)}
-                  className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                    errors.age ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                  placeholder="5"
-                />
-                {errors.age && (
-                  <p className="mt-1 text-sm text-red-600">{errors.age}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Breed
-                </label>
-                <select
-                  value={formData.breed}
-                  onChange={(e) => handleInputChange('breed', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Select breed...</option>
-                  {commonBreeds.map(breed => (
-                    <option key={breed} value={breed}>{breed}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Health Status *
-                </label>
-                <select
-                  value={formData.healthStatus}
-                  onChange={(e) => handleInputChange('healthStatus', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  {healthStatusOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
-
-          {/* Health Records */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Health Records</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Last Vet Visit
-                </label>
-                <input
-                  type="date"
-                  value={formData.lastVetVisit}
-                  onChange={(e) => handleInputChange('lastVetVisit', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Next Vet Visit
-                </label>
-                <input
-                  type="date"
-                  value={formData.nextVetVisit}
-                  onChange={(e) => handleInputChange('nextVetVisit', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Feeding Schedule */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Feeding Schedule</h3>
-            
-            <div className="space-y-3">
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="morning-feeding"
-                  checked={formData.feedingSchedule.morning}
-                  onChange={(e) => handleFeedingScheduleChange('morning', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="morning-feeding" className="text-sm font-medium text-gray-700">
-                  Morning Feeding
-                </label>
-              </div>
-
-              <div className="flex items-center space-x-3">
-                <input
-                  type="checkbox"
-                  id="evening-feeding"
-                  checked={formData.feedingSchedule.evening}
-                  onChange={(e) => handleFeedingScheduleChange('evening', e.target.checked)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                />
-                <label htmlFor="evening-feeding" className="text-sm font-medium text-gray-700">
-                  Evening Feeding
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Photo */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Photo (Optional)</h3>
-            
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20">
+          {/* Header */}
+          <div className="px-8 py-6 border-b border-gray-200/50">
             <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                {formData.photo ? (
-                  <img
-                    src={formData.photo}
-                    alt="Buffalo"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <Camera className="text-gray-400" size={24} />
-                )}
+              <button
+                onClick={onCancel}
+                className="p-3 text-dark/60 hover:bg-sage/20 rounded-xl transition-all duration-200 
+                           hover:scale-105 transform shadow-lg hover:shadow-xl"
+              >
+                <ArrowLeft size={24} />
+              </button>
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
+                  <Camera className="text-white" size={28} />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                    {buffalo ? 'Edit Buffalo' : 'Add New Buffalo'}
+                  </h2>
+                  <p className="text-gray-600 mt-1">
+                    {buffalo ? 'Update buffalo information' : 'Add a new buffalo to your herd'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="p-8 space-y-8">
+            {/* Basic Information */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
+                  <Save className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Basic Information
+                </h3>
               </div>
               
-              <div className="flex-1">
-                <input
-                  type="url"
-                  value={formData.photo}
-                  onChange={(e) => handleInputChange('photo', e.target.value)}
-                  placeholder="Enter photo URL or upload later"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  You can paste an image URL here
-                </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Buffalo Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 
+                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 ${
+                      errors.name ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="Enter buffalo name"
+                  />
+                  {errors.name && (
+                    <p className="mt-2 text-sm text-red-600">{errors.name}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Age (Years) *
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="25"
+                    value={formData.age}
+                    onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 1)}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 
+                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 ${
+                      errors.age ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="5"
+                  />
+                  {errors.age && (
+                    <p className="mt-2 text-sm text-red-600">{errors.age}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Breed
+                  </label>
+                  <select
+                    value={formData.breed}
+                    onChange={(e) => handleInputChange('breed', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  >
+                    <option value="">Select breed...</option>
+                    {commonBreeds.map(breed => (
+                      <option key={breed} value={breed}>{breed}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Health Status *
+                  </label>
+                  <select
+                    value={formData.healthStatus}
+                    onChange={(e) => handleInputChange('healthStatus', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  >
+                    {healthStatusOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Notes */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Additional Notes</h3>
-            
-            <textarea
-              value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
-              placeholder="Add any additional notes about this buffalo..."
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+            {/* Health Records */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-red-500 to-pink-600 rounded-lg">
+                  <Save className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Health Records
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Last Vet Visit
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.lastVetVisit}
+                    onChange={(e) => handleInputChange('lastVetVisit', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  />
+                </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-dark bg-sage/20 rounded-lg hover:bg-sage/30 transition-colors flex items-center space-x-2"
-            >
-              <X size={18} />
-              <span>Cancel</span>
-            </button>
-            
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 bg-dark text-cream rounded-lg hover:bg-dark/90 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save size={18} />
-              <span>{loading ? 'Saving...' : (buffalo ? 'Update Buffalo' : 'Add Buffalo')}</span>
-            </button>
-          </div>
-        </form>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Next Vet Visit
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.nextVetVisit}
+                    onChange={(e) => handleInputChange('nextVetVisit', e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Feeding Schedule */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
+                  <Save className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Feeding Schedule
+                </h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-gradient-to-br from-green-50 to-green-100/50 rounded-2xl border border-green-200/50">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="morning-feeding"
+                      checked={formData.feedingSchedule.morning}
+                      onChange={(e) => handleFeedingScheduleChange('morning', e.target.checked)}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="morning-feeding" className="text-sm font-medium text-gray-700">
+                      Morning Feeding
+                    </label>
+                  </div>
+                </div>
+
+                <div className="p-6 bg-gradient-to-br from-orange-50 to-orange-100/50 rounded-2xl border border-orange-200/50">
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="evening-feeding"
+                      checked={formData.feedingSchedule.evening}
+                      onChange={(e) => handleFeedingScheduleChange('evening', e.target.checked)}
+                      className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="evening-feeding" className="text-sm font-medium text-gray-700">
+                      Evening Feeding
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Photo */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg">
+                  <Camera className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Photo (Optional)
+                </h3>
+              </div>
+              
+              <div className="flex items-center space-x-6">
+                <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl 
+                                flex items-center justify-center overflow-hidden border border-gray-200/50 shadow-lg">
+                  {formData.photo ? (
+                    <img
+                      src={formData.photo}
+                      alt="Buffalo"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="text-gray-400" size={32} />
+                  )}
+                </div>
+                
+                <div className="flex-1">
+                  <input
+                    type="url"
+                    value={formData.photo}
+                    onChange={(e) => handleInputChange('photo', e.target.value)}
+                    placeholder="Enter photo URL or upload later"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-2">
+                    You can paste an image URL here
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-gray-500 to-gray-600 rounded-lg">
+                  <Save className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Additional Notes
+                </h3>
+              </div>
+              
+              <textarea
+                value={formData.notes}
+                onChange={(e) => handleInputChange('notes', e.target.value)}
+                placeholder="Add any additional notes about this buffalo..."
+                rows={4}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                           focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end space-x-4 pt-8 border-t border-gray-200/50">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="px-6 py-3 text-dark bg-sage/20 rounded-xl hover:bg-sage/30 transition-all 
+                           duration-200 flex items-center space-x-2 hover:scale-105 transform shadow-lg hover:shadow-xl"
+              >
+                <X size={20} />
+                <span>Cancel</span>
+              </button>
+              
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 py-4 bg-gradient-to-r from-dark to-dark/90 text-cream rounded-xl 
+                           hover:scale-105 transform transition-all duration-200 shadow-lg hover:shadow-xl 
+                           flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Save size={20} />
+                <span>{loading ? 'Saving...' : (buffalo ? 'Update Buffalo' : 'Add Buffalo')}</span>
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

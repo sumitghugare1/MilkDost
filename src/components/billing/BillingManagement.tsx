@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, TrendingUp, AlertCircle, Crown, Shield, Sparkles, Star, Gem, Trophy, Rocket } from 'lucide-react';
+import { Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, AlertCircle, Crown, Sparkles, Star } from 'lucide-react';
 import { Client, Bill, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
-import { clientService, billService, deliveryService } from '@/lib/firebaseServices';
+import { clientService, billService } from '@/lib/firebaseServices';
 import { SmartBillingService } from '@/services/smartBillingService';
 import { PDFInvoiceGenerator } from '@/lib/pdfGenerator';
 import BillForm from './BillForm';
@@ -205,10 +205,10 @@ export default function BillingManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dairy p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6 space-y-8">
       {/* Enhanced Header */}
-      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
+      <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-6 sm:space-y-0">
           <div className="flex items-center space-x-4">
             <div className="relative p-3 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-2xl shadow-2xl">
               <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
@@ -219,19 +219,21 @@ export default function BillingManagement() {
             </div>
             <div>
               <div className="flex items-center space-x-2 mb-1">
-                <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
                   Smart Billing & Payments
                 </h2>
-                <Sparkles size={18} className="text-sage animate-pulse" />
+                <Sparkles size={20} className="text-sage animate-pulse" />
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-gray-600 mt-1">
                 Automated bill generation and payment tracking for {months[selectedMonth]} {selectedYear}
               </p>
             </div>
           </div>
           <button
             onClick={() => setShowBillForm(true)}
-            className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-4 sm:px-6 py-2 sm:py-3 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 overflow-hidden"
+            className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-6 py-4 
+                       rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 
+                       transform hover:-translate-y-2 hover:scale-105 overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
@@ -244,23 +246,26 @@ export default function BillingManagement() {
       </div>
 
         {/* Smart Controls */}
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sage" size={18} />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-sage" size={20} />
               <input
                 type="text"
                 placeholder="Search clients..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80 placeholder-dark/50"
+                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                           focus:ring-blue-500 focus:border-transparent transition-all duration-200 
+                           bg-white/80 backdrop-blur-sm placeholder-gray-500"
               />
             </div>
 
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
             >
               {months.map((month, index) => (
                 <option key={month} value={index}>{month}</option>
@@ -270,7 +275,8 @@ export default function BillingManagement() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
             >
               {years.map(year => (
                 <option key={year} value={year}>{year}</option>
@@ -280,7 +286,8 @@ export default function BillingManagement() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as 'all' | 'paid' | 'unpaid')}
-              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
+              className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 
+                         focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
             >
               <option value="all">All Bills</option>
               <option value="paid">Paid Bills</option>
@@ -291,13 +298,16 @@ export default function BillingManagement() {
           <button
             onClick={handleGenerateBills}
             disabled={loading}
-            className="group relative w-full bg-gradient-to-br from-sage via-sage/95 to-sage/85 text-dark py-3 sm:py-4 rounded-2xl flex items-center justify-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 font-bold overflow-hidden"
+            className="group relative w-full bg-gradient-to-br from-sage via-sage/95 to-sage/85 text-dark 
+                       py-4 rounded-2xl flex items-center justify-center space-x-3 hover:shadow-2xl 
+                       transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 
+                       disabled:opacity-50 font-bold overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-dark/10 via-transparent to-sage/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
               <Zap size={20} className="relative" />
             </div>
-            <span className="relative">
+            <span className="relative text-lg">
               {loading ? 'Generating...' : `🚀 Auto-Generate Bills for ${months[selectedMonth]} ${selectedYear}`}
             </span>
             <Star size={16} className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -305,61 +315,78 @@ export default function BillingManagement() {
         </div>
 
       {/* Enhanced Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="p-3 sm:p-4 bg-dark rounded-2xl shadow-lg">
-              <IndianRupee className="text-cream" size={20} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                        hover:scale-105 transform transition-all duration-300 group">
+          <div className="flex items-center space-x-4">
+            <div className="p-4 bg-gradient-to-br from-dark to-dark/90 rounded-2xl shadow-lg 
+                            group-hover:shadow-xl transition-all duration-300">
+              <IndianRupee className="text-cream" size={24} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-dark uppercase tracking-wide">Total Revenue</p>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-dark truncate">{formatCurrency(totalRevenue)}</p>
-              <p className="text-xs sm:text-sm text-dark/70 mt-1">This month's earnings</p>
+              <p className="text-sm font-medium text-gray-600 mb-1">Total Revenue</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                {formatCurrency(totalRevenue)}
+              </p>
+              <p className="text-sm text-gray-500 mt-1">This month&apos;s earnings</p>
             </div>
           </div>
-          <div className="mt-3 sm:mt-4 h-2 bg-sage/20 rounded-full overflow-hidden">
-            <div className="h-full w-3/4 bg-dark rounded-full animate-pulse"></div>
+          <div className="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-full w-3/4 bg-gradient-to-r from-dark to-sage-600 rounded-full animate-pulse"></div>
           </div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="p-3 sm:p-4 bg-sage rounded-2xl shadow-lg">
-              <CheckCircle className="text-dark" size={20} />
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                        hover:scale-105 transform transition-all duration-300 group">
+          <div className="flex items-center space-x-4">
+            <div className="p-4 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg 
+                            group-hover:shadow-xl transition-all duration-300">
+              <CheckCircle className="text-white" size={24} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-green-700 uppercase tracking-wide">Paid Amount</p>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-900 truncate">{formatCurrency(paidAmount)}</p>
-              <p className="text-xs sm:text-sm text-green-600 mt-1">Collected payments</p>
+              <p className="text-sm font-medium text-green-600 mb-1">Paid Amount</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+                {formatCurrency(paidAmount)}
+              </p>
+              <p className="text-sm text-green-500 mt-1">Collected payments</p>
             </div>
           </div>
-          <div className="mt-3 sm:mt-4 h-2 bg-green-100 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full animate-pulse" style={{width: `${totalRevenue > 0 ? (paidAmount / totalRevenue) * 100 : 0}%`}}></div>
+          <div className="mt-4 h-2 bg-green-100 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full animate-pulse" 
+                 style={{width: `${totalRevenue > 0 ? (paidAmount / totalRevenue) * 100 : 0}%`}}></div>
           </div>
         </div>
 
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="p-3 sm:p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg">
-              <AlertCircle className="text-white" size={20} />
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                        hover:scale-105 transform transition-all duration-300 group">
+          <div className="flex items-center space-x-4">
+            <div className="p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl shadow-lg 
+                            group-hover:shadow-xl transition-all duration-300">
+              <AlertCircle className="text-white" size={24} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs sm:text-sm font-semibold text-red-700 uppercase tracking-wide">Pending Amount</p>
-              <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-900 truncate">{formatCurrency(unpaidAmount)}</p>
-              <p className="text-xs sm:text-sm text-red-600 mt-1">Outstanding payments</p>
+              <p className="text-sm font-medium text-red-600 mb-1">Pending Amount</p>
+              <p className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                {formatCurrency(unpaidAmount)}
+              </p>
+              <p className="text-sm text-red-500 mt-1">Outstanding payments</p>
             </div>
           </div>
-          <div className="mt-3 sm:mt-4 h-2 bg-red-100 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full animate-pulse" style={{width: `${totalRevenue > 0 ? (unpaidAmount / totalRevenue) * 100 : 0}%`}}></div>
+          <div className="mt-4 h-2 bg-red-100 rounded-full overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-red-400 to-red-600 rounded-full animate-pulse" 
+                 style={{width: `${totalRevenue > 0 ? (unpaidAmount / totalRevenue) * 100 : 0}%`}}></div>
           </div>
         </div>
       </div>
 
       {/* Enhanced Bills List */}
-      <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
-        <div className="flex items-center justify-between mb-4 sm:mb-6">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900">Bills Overview</h3>
-          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
+      <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+        <div className="flex items-center justify-between mb-8">
+          <h3 className="text-2xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+            Bills Overview
+          </h3>
+          <span className="px-4 py-2 bg-gradient-to-br from-sage-50 to-cream-50 text-dark rounded-xl 
+                           font-medium border border-sage-200/50">
             {filteredBills.length} {filteredBills.length === 1 ? 'bill' : 'bills'}
           </span>
         </div>

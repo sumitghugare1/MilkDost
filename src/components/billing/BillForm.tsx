@@ -56,26 +56,29 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dairy p-4">
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
       <div className="max-w-4xl mx-auto">
-        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
         {/* Enhanced Header */}
-        <div className="px-6 py-4 border-b border-sage/20 bg-gradient-to-r from-sage/5 to-sage/10">
-          <div className="flex items-center space-x-3">
+        <div className="px-8 py-6 border-b border-gray-200/50 bg-gradient-to-r from-sage/5 to-sage/10">
+          <div className="flex items-center space-x-4">
             <button
               onClick={onCancel}
-              className="group relative p-2 text-dark/60 hover:bg-sage/20 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5"
+              className="group relative p-3 text-dark/60 hover:bg-sage/20 rounded-xl transition-all duration-200 
+                         transform hover:-translate-y-0.5 hover:scale-105 shadow-lg hover:shadow-xl"
             >
-              <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform duration-300" />
+              <ArrowLeft size={24} className="group-hover:-translate-x-0.5 transition-transform duration-300" />
             </button>
-            <div className="flex items-center space-x-3">
-              <div className="relative p-2 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-xl shadow-lg">
+            <div className="flex items-center space-x-4">
+              <div className="relative p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
                 <div className="absolute inset-0 bg-white/20 rounded-xl"></div>
-                <FileText size={20} className="text-white relative" />
+                <FileText size={28} className="text-white relative" />
               </div>
               <div>
-                <h2 className="text-xl font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">Create Bill</h2>
-                <p className="text-sm text-gray-500">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Create Bill
+                </h2>
+                <p className="text-gray-600 mt-1">
                   Generate bill for {months[month]} {year}
                 </p>
               </div>
@@ -84,19 +87,27 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-8 space-y-8">
           {/* Client Selection */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Bill Details</h3>
+          <div className="space-y-6">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg">
+                <FileText className="text-white" size={20} />
+              </div>
+              <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                Bill Details
+              </h3>
+            </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
                 Select Client *
               </label>
               <select
                 value={selectedClientId}
                 onChange={(e) => setSelectedClientId(e.target.value)}
-                className="w-full px-3 py-2 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 transition-all duration-300 bg-white/80"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 
+                           focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200"
                 required
               >
                 <option value="">Choose a client...</option>
@@ -108,28 +119,28 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Period
                 </label>
                 <input
                   type="text"
                   value={`${months[month]} ${year}`}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50/80 backdrop-blur-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Days in Month
                 </label>
                 <input
                   type="text"
                   value={daysInMonth}
                   readOnly
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl bg-gray-50/80 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -137,33 +148,40 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
 
           {/* Quantity and Rate */}
           {selectedClient && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">Calculation</h3>
+            <div className="space-y-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                  <FileText className="text-white" size={20} />
+                </div>
+                <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Calculation
+                </h3>
+              </div>
               
-              <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-gray-600">Default Daily Quantity:</span>
-                    <span className="font-medium ml-2">{selectedClient.milkQuantity}L</span>
+              <div className="bg-gradient-to-br from-sage-50 to-cream-50 rounded-2xl p-6 border border-sage-200/50">
+                <div className="grid grid-cols-2 gap-6 text-sm">
+                  <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                    <span className="text-gray-600 block mb-1">Default Daily Quantity:</span>
+                    <span className="font-bold text-dark text-lg">{selectedClient.milkQuantity}L</span>
                   </div>
-                  <div>
-                    <span className="text-gray-600">Default Rate:</span>
-                    <span className="font-medium ml-2">{formatCurrency(selectedClient.rate)}/L</span>
+                  <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                    <span className="text-gray-600 block mb-1">Default Rate:</span>
+                    <span className="font-bold text-dark text-lg">{formatCurrency(selectedClient.rate)}/L</span>
                   </div>
-                  <div>
-                    <span className="text-gray-600">Expected Total Quantity:</span>
-                    <span className="font-medium ml-2">{defaultQuantity.toFixed(1)}L</span>
+                  <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                    <span className="text-gray-600 block mb-1">Expected Total Quantity:</span>
+                    <span className="font-bold text-blue-600 text-lg">{defaultQuantity.toFixed(1)}L</span>
                   </div>
-                  <div>
-                    <span className="text-gray-600">Expected Amount:</span>
-                    <span className="font-medium ml-2">{formatCurrency(defaultQuantity * selectedClient.rate)}</span>
+                  <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                    <span className="text-gray-600 block mb-1">Expected Amount:</span>
+                    <span className="font-bold text-green-600 text-lg">{formatCurrency(defaultQuantity * selectedClient.rate)}</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Custom Total Quantity (Optional)
                   </label>
                   <input
@@ -173,15 +191,16 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
                     value={customQuantity || ''}
                     onChange={(e) => setCustomQuantity(e.target.value ? parseFloat(e.target.value) : null)}
                     placeholder={defaultQuantity.toFixed(1)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-gray-500 mt-2">
                     Leave empty to use default calculation
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Custom Rate (Optional)
                   </label>
                   <input
@@ -191,24 +210,26 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
                     value={customRate || ''}
                     onChange={(e) => setCustomRate(e.target.value ? parseFloat(e.target.value) : null)}
                     placeholder={selectedClient.rate.toString()}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                   />
-                  <p className="text-xs text-gray-500 mt-1">
-                    Leave empty to use client's default rate
+                  <p className="text-xs text-gray-500 mt-2">
+                    Leave empty to use client&apos;s default rate
                   </p>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">
                   Notes (Optional)
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Add any notes or adjustments..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={4}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                             focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
                 />
               </div>
             </div>
@@ -216,51 +237,65 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
 
           {/* Bill Summary */}
           {selectedClient && (
-            <div className="bg-blue-50 rounded-lg p-4 space-y-3 border border-blue-200">
-              <h4 className="font-medium text-blue-900">Bill Summary</h4>
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-blue-700">Client:</span>
-                  <p className="font-medium text-blue-900">{selectedClient.name}</p>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200/50">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg">
+                  <FileText className="text-white" size={20} />
                 </div>
-                <div>
-                  <span className="text-blue-700">Period:</span>
-                  <p className="font-medium text-blue-900">{months[month]} {year}</p>
+                <h4 className="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  Bill Summary
+                </h4>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                  <span className="text-blue-700 text-sm font-medium block mb-1">Client:</span>
+                  <p className="font-bold text-blue-900 text-lg">{selectedClient.name}</p>
                 </div>
-                <div>
-                  <span className="text-blue-700">Total Quantity:</span>
-                  <p className="font-medium text-blue-900">{quantity.toFixed(1)}L</p>
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                  <span className="text-blue-700 text-sm font-medium block mb-1">Period:</span>
+                  <p className="font-bold text-blue-900 text-lg">{months[month]} {year}</p>
                 </div>
-                <div>
-                  <span className="text-blue-700">Rate:</span>
-                  <p className="font-medium text-blue-900">{formatCurrency(rate)}/L</p>
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                  <span className="text-blue-700 text-sm font-medium block mb-1">Total Quantity:</span>
+                  <p className="font-bold text-blue-900 text-lg">{quantity.toFixed(1)}L</p>
                 </div>
-                <div className="col-span-2 pt-2 border-t border-blue-200">
-                  <span className="text-blue-700">Total Amount:</span>
-                  <p className="text-xl font-bold text-blue-900">{formatCurrency(totalAmount)}</p>
+                <div className="p-4 bg-white/80 backdrop-blur-sm rounded-xl border border-white/20">
+                  <span className="text-blue-700 text-sm font-medium block mb-1">Rate:</span>
+                  <p className="font-bold text-blue-900 text-lg">{formatCurrency(rate)}/L</p>
+                </div>
+                <div className="col-span-2 p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border border-green-200/50">
+                  <span className="text-green-700 text-sm font-medium block mb-2">Total Amount:</span>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                    {formatCurrency(totalAmount)}
+                  </p>
                 </div>
               </div>
             </div>
           )}
 
           {/* Enhanced Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-sage/20">
+          <div className="flex items-center justify-end space-x-4 pt-8 border-t border-gray-200/50">
             <button
               type="button"
               onClick={onCancel}
-              className="group relative px-6 py-3 text-dark bg-sage/20 rounded-xl hover:bg-sage/30 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center space-x-2"
+              className="group relative px-6 py-3 text-dark bg-sage/20 rounded-xl hover:bg-sage/30 
+                         transition-all duration-200 transform hover:-translate-y-0.5 hover:scale-105 
+                         flex items-center space-x-2 shadow-lg hover:shadow-xl"
             >
-              <X size={18} className="group-hover:rotate-90 transition-transform duration-300" />
-              <span className="font-semibold">Cancel</span>
+              <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+              <span className="font-medium">Cancel</span>
             </button>
             
             <button
               type="submit"
               disabled={loading || !selectedClient}
-              className="group relative px-6 py-3 bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+              className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white 
+                         rounded-xl hover:scale-105 transform transition-all duration-200 shadow-lg hover:shadow-xl 
+                         flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              <Save size={18} className="relative group-hover:rotate-12 transition-transform duration-300" />
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Save size={20} className="relative group-hover:rotate-12 transition-transform duration-300" />
               <span className="relative font-bold">{loading ? 'Creating...' : 'Create Bill'}</span>
             </button>
           </div>

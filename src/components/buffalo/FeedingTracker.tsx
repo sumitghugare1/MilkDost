@@ -24,7 +24,6 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
   });
 
   const today = new Date();
-  const dateString = selectedDate.toDateString();
   const isToday = selectedDate.toDateString() === today.toDateString();
 
   // Get feedings for selected date
@@ -151,178 +150,211 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
   ];
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={onBack}
-            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Feeding Tracker</h2>
-            <p className="text-sm text-gray-500">
-              Track daily feeding schedule for all buffaloes
-            </p>
-          </div>
-        </div>
-
-        {/* Date Selector and Add Button */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <Calendar className="text-gray-500" size={20} />
-              <input
-                type="date"
-                value={formatDateForInput(selectedDate)}
-                onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            {isToday && (
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                Today
-              </span>
-            )}
-          </div>
-
-          <button
-            onClick={() => setShowAddFeeding(true)}
-            className="bg-dark text-cream px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-dark/90 transition-colors"
-          >
-            <Plus size={18} />
-            <span>Add Feeding</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Progress Summary */}
-      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-medium text-gray-900">Feeding Progress</h3>
-          <span className="text-sm font-medium text-gray-600">
-            {completedFeedings}/{totalFeedings} completed
-          </span>
-        </div>
-        
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="h-2 bg-sage rounded-full transition-all duration-300"
-            style={{ width: `${totalFeedings > 0 ? (completedFeedings / totalFeedings) * 100 : 0}%` }}
-          ></div>
-        </div>
-        
-        <div className="mt-2 text-sm text-gray-600">
-          {totalFeedings > 0 ? Math.round((completedFeedings / totalFeedings) * 100) : 0}% of scheduled feedings completed
-        </div>
-      </div>
-
-      {/* Feeding Schedule */}
-      <div className="space-y-3">
-        {feedingSchedule.length === 0 ? (
-          <div className="text-center py-8">
-            <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No feeding schedule</h3>
-            <p className="text-gray-500">No buffaloes have feeding scheduled for this day</p>
-          </div>
-        ) : (
-          feedingSchedule.map(({ buffalo, time, feeding }) => (
-            <div
-              key={`${buffalo.id}-${time}`}
-              className={`bg-white rounded-lg p-4 border shadow-sm transition-all ${
-                feeding?.isCompleted 
-                  ? 'border-green-200 bg-green-50' 
-                  : 'border-gray-200 hover:shadow-md'
-              }`}
+            <button
+              onClick={onBack}
+              className="p-3 text-gray-600 hover:bg-gray-100 rounded-xl transition-all duration-200 
+                         hover:scale-105 transform shadow-lg hover:shadow-xl"
             >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => handleToggleFeeding(buffalo, time)}
-                    className={`p-2 rounded-lg transition-colors ${
-                      feeding?.isCompleted
-                        ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                        : 'bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-600'
-                    }`}
-                  >
-                    {feeding?.isCompleted ? <CheckCircle size={20} /> : <XCircle size={20} />}
-                  </button>
-                  
-                  <div className="flex-1">
-                    <h3 className={`font-semibold ${feeding?.isCompleted ? 'text-green-900' : 'text-gray-900'}`}>
-                      {buffalo.name}
-                    </h3>
-                    <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span className="capitalize">{time} Feeding</span>
-                      {buffalo.breed && <span>• {buffalo.breed}</span>}
-                      <span className={`px-2 py-1 rounded-full text-xs ${
-                        buffalo.healthStatus === 'healthy' ? 'bg-green-100 text-green-800' :
-                        buffalo.healthStatus === 'sick' ? 'bg-red-100 text-red-800' :
-                        buffalo.healthStatus === 'pregnant' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {buffalo.healthStatus}
-                      </span>
-                    </div>
-                    
-                    {feeding && (
-                      <div className="mt-2 text-sm">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-gray-600">Feed: {feeding.feedType}</span>
-                          <span className="text-gray-600">Quantity: {feeding.quantity}kg</span>
-                        </div>
-                        {feeding.notes && (
-                          <p className="text-gray-600 mt-1">Notes: {feeding.notes}</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {feeding?.isCompleted && (
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                    Completed
-                  </span>
-                )}
+              <ArrowLeft size={24} />
+            </button>
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg">
+                <Calendar className="text-white" size={28} />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Feeding Tracker
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  Track daily feeding schedule for all buffaloes
+                </p>
               </div>
             </div>
-          ))
-        )}
-      </div>
+          </div>
 
-      {/* Custom Feedings */}
-      {dateFeedings.filter(f => !feedingSchedule.some(s => s.feeding?.id === f.id)).length > 0 && (
-        <div className="space-y-3">
-          <h3 className="font-medium text-gray-900">Additional Feedings</h3>
-          {dateFeedings
-            .filter(f => !feedingSchedule.some(s => s.feeding?.id === f.id))
-            .map(feeding => {
-              const buffalo = buffaloes.find(b => b.id === feeding.buffaloId);
-              if (!buffalo) return null;
+          {/* Date Selector and Add Button */}
+          <div className="flex items-center justify-between mt-6">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200/50">
+                <Calendar className="text-sage-600" size={20} />
+                <input
+                  type="date"
+                  value={formatDateForInput(selectedDate)}
+                  onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                  className="bg-transparent border-none outline-none text-dark font-medium"
+                />
+              </div>
+              {isToday && (
+                <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-xl shadow-lg">
+                  Today
+                </span>
+              )}
+            </div>
 
-              return (
-                <div key={feeding.id} className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium text-blue-900">{buffalo.name}</h4>
-                      <div className="text-sm text-blue-700">
-                        <span className="capitalize">{feeding.time}</span> • {feeding.feedType} • {feeding.quantity}kg
+            <button
+              onClick={() => setShowAddFeeding(true)}
+              className="bg-gradient-to-r from-dark to-dark/90 text-cream px-6 py-3 rounded-xl 
+                         flex items-center space-x-2 hover:scale-105 transform transition-all duration-200 
+                         shadow-lg hover:shadow-xl"
+            >
+              <Plus size={20} />
+              <span>Add Feeding</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Progress Summary */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
+                <CheckCircle className="text-white" size={20} />
+              </div>
+              <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                Feeding Progress
+              </h3>
+            </div>
+            <span className="text-lg font-medium text-gray-600">
+              {completedFeedings}/{totalFeedings} completed
+            </span>
+          </div>
+          
+          <div className="w-full bg-gray-200 rounded-full h-3 mb-4">
+            <div 
+              className="h-3 bg-gradient-to-r from-sage-500 to-sage-600 rounded-full transition-all duration-300 shadow-lg"
+              style={{ width: `${totalFeedings > 0 ? (completedFeedings / totalFeedings) * 100 : 0}%` }}
+            ></div>
+          </div>
+          
+          <div className="text-lg text-gray-600 font-medium">
+            {totalFeedings > 0 ? Math.round((completedFeedings / totalFeedings) * 100) : 0}% of scheduled feedings completed
+          </div>
+        </div>
+
+        {/* Feeding Schedule */}
+        <div className="space-y-4">
+          {feedingSchedule.length === 0 ? (
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-12 text-center">
+              <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl inline-block mb-6">
+                <Calendar className="text-gray-400" size={64} />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-3">No feeding schedule</h3>
+              <p className="text-gray-500 text-lg">No buffaloes have feeding scheduled for this day</p>
+            </div>
+          ) : (
+            feedingSchedule.map(({ buffalo, time, feeding }) => (
+              <div
+                key={`${buffalo.id}-${time}`}
+                className={`bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                           transition-all duration-300 hover:scale-[1.02] transform ${
+                  feeding?.isCompleted 
+                    ? 'border-green-200/50 bg-gradient-to-br from-green-50/50 to-green-100/30' 
+                    : 'hover:shadow-2xl'
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => handleToggleFeeding(buffalo, time)}
+                      className={`p-3 rounded-xl transition-all duration-200 hover:scale-105 transform shadow-lg ${
+                        feeding?.isCompleted
+                          ? 'bg-gradient-to-br from-green-500 to-green-600 text-white hover:shadow-green-200'
+                          : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-400 hover:bg-gradient-to-br hover:from-green-100 hover:to-green-200 hover:text-green-600'
+                      }`}
+                    >
+                      {feeding?.isCompleted ? <CheckCircle size={24} /> : <XCircle size={24} />}
+                    </button>
+                    
+                    <div className="flex-1">
+                      <h3 className={`text-xl font-bold ${feeding?.isCompleted ? 'text-green-900' : 'text-gray-900'}`}>
+                        {buffalo.name}
+                      </h3>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600 mt-1">
+                        <span className="capitalize font-medium">{time} Feeding</span>
+                        {buffalo.breed && <span>• {buffalo.breed}</span>}
+                        <span className={`px-3 py-1 rounded-xl text-xs font-medium shadow-sm ${
+                          buffalo.healthStatus === 'healthy' ? 'bg-green-100 text-green-800' :
+                          buffalo.healthStatus === 'sick' ? 'bg-red-100 text-red-800' :
+                          buffalo.healthStatus === 'pregnant' ? 'bg-blue-100 text-blue-800' :
+                          'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {buffalo.healthStatus}
+                        </span>
                       </div>
-                      {feeding.notes && (
-                        <p className="text-sm text-blue-600 mt-1">{feeding.notes}</p>
+                      
+                      {feeding && (
+                        <div className="mt-3 text-sm">
+                          <div className="flex items-center space-x-4">
+                            <span className="text-gray-600 font-medium">Feed: {feeding.feedType}</span>
+                            <span className="text-gray-600 font-medium">Quantity: {feeding.quantity}kg</span>
+                          </div>
+                          {feeding.notes && (
+                            <p className="text-gray-600 mt-2 p-3 bg-gray-50 rounded-xl">
+                              Notes: {feeding.notes}
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                      Custom
-                    </span>
                   </div>
+
+                  {feeding?.isCompleted && (
+                    <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-xl shadow-lg">
+                      Completed
+                    </span>
+                  )}
                 </div>
-              );
-            })}
+              </div>
+            ))
+          )}
         </div>
-      )}
+
+        {/* Custom Feedings */}
+        {dateFeedings.filter(f => !feedingSchedule.some(s => s.feeding?.id === f.id)).length > 0 && (
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                <Plus className="text-white" size={20} />
+              </div>
+              <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                Additional Feedings
+              </h3>
+            </div>
+            {dateFeedings
+              .filter(f => !feedingSchedule.some(s => s.feeding?.id === f.id))
+              .map(feeding => {
+                const buffalo = buffaloes.find(b => b.id === feeding.buffaloId);
+                if (!buffalo) return null;
+
+                return (
+                  <div key={feeding.id} className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-xl font-bold text-blue-900">{buffalo.name}</h4>
+                        <div className="text-sm text-blue-700 mt-1">
+                          <span className="capitalize font-medium">{feeding.time}</span> • {feeding.feedType} • {feeding.quantity}kg
+                        </div>
+                        {feeding.notes && (
+                          <p className="text-sm text-blue-600 mt-2 p-3 bg-blue-50 rounded-xl">
+                            Notes: {feeding.notes}
+                          </p>
+                        )}
+                      </div>
+                      <span className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-xl shadow-lg">
+                        Custom
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        )}
 
       {/* Add Custom Feeding Modal */}
       {showAddFeeding && (
@@ -426,6 +458,7 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

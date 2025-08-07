@@ -141,215 +141,275 @@ export default function DeliveryTracking() {
   }
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Daily Deliveries</h2>
-            <p className="text-sm text-gray-500">
-              Track and manage daily milk deliveries
-            </p>
+    <div className="min-h-screen bg-gradient-dairy">
+      <div className="max-w-5xl mx-auto p-4 space-y-6">
+        {/* Header Section */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
+                <Calendar size={24} className="text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black text-[#2e2e2e]">Daily Deliveries</h2>
+                <p className="text-sm text-[#2e2e2e]/60 font-medium">
+                  Track and manage daily milk deliveries
+                </p>
+              </div>
+            </div>
+            
+            <input
+              type="date"
+              value={selectedDate.toISOString().split('T')[0]}
+              onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              className="px-4 py-3 bg-[#2e2e2e]/5 border border-[#2e2e2e]/20 rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300"
+            />
           </div>
-          
-          <input
-            type="date"
-            value={selectedDate.toISOString().split('T')[0]}
-            onChange={(e) => setSelectedDate(new Date(e.target.value))}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <CheckCircle className="text-blue-600" size={20} />
+          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                  <CheckCircle size={24} className="text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Completed</p>
+                </div>
               </div>
-              <div>
-                <p className="text-sm font-medium text-blue-800">Completed</p>
-                <p className="text-2xl font-bold text-blue-900">{completedDeliveries}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-orange-50 rounded-lg p-4 border border-orange-200">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <Clock className="text-orange-600" size={20} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-orange-800">Pending</p>
-                <p className="text-2xl font-bold text-orange-900">{pendingDeliveries}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Milk className="text-green-600" size={20} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-green-800">Total Milk</p>
-                <p className="text-2xl font-bold text-green-900">{totalQuantity.toFixed(1)}L</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <User className="text-purple-600" size={20} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-purple-800">Total Clients</p>
-                <p className="text-2xl font-bold text-purple-900">{clients.length}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Delivery List */}
-      <div className="bg-white rounded-lg border border-gray-200">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">
-              Deliveries for {selectedDate.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-              })}
-            </h3>
-            {isToday && (
-              <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                Today
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="divide-y divide-gray-200">
-          {clients.length === 0 ? (
-            <div className="p-8 text-center">
-              <User className="mx-auto text-gray-400 mb-4" size={48} />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No active clients</h3>
-              <p className="text-gray-500">Add some clients to start tracking deliveries</p>
-            </div>
-          ) : (
-            clients.map(client => {
-              const isDelivered = getDeliveryStatus(client.id);
-              const quantity = getDeliveryQuantity(client.id);
               
-              return (
-                <div
-                  key={client.id}
-                  className={`p-6 hover:bg-gray-50 transition-colors ${
-                    isDelivered ? 'bg-green-50' : ''
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={() => handleToggleDelivery(client.id, isDelivered)}
-                        className={`p-2 rounded-lg transition-colors ${
-                          isDelivered
-                            ? 'bg-green-100 text-green-600 hover:bg-green-200'
-                            : 'bg-gray-100 text-gray-400 hover:bg-green-100 hover:text-green-600'
-                        }`}
-                      >
-                        {isDelivered ? <CheckCircle size={20} /> : <XCircle size={20} />}
-                      </button>
-                      
-                      <div className="flex-1">
-                        <h3 className={`font-semibold ${isDelivered ? 'text-green-900' : 'text-gray-900'}`}>
-                          {client.name}
-                        </h3>
-                        <div className="flex items-center space-x-4 text-sm text-gray-600">
-                          <div className="flex items-center space-x-1">
-                            <MapPin size={14} />
-                            <span>{client.address}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Phone size={14} />
-                            <span>{client.phone}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <Clock size={14} />
-                            <span>{client.deliveryTime}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+              <div>
+                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                  {completedDeliveries}
+                </p>
+                <p className="text-xs text-[#2e2e2e]/60 font-medium">Delivered today</p>
+              </div>
+            </div>
+          </div>
 
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
-                        <div className="flex items-center space-x-2">
-                          <input
-                            type="number"
-                            step="0.1"
-                            min="0"
-                            value={quantity}
-                            onChange={(e) => handleQuantityChange(client.id, parseFloat(e.target.value) || 0)}
-                            className="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            disabled={loading}
-                          />
-                          <span className="text-sm text-gray-500">L</span>
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1">
-                          @ {formatCurrency(client.rate)}/L
+          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                  <Clock size={24} className="text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Pending</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                  {pendingDeliveries}
+                </p>
+                <p className="text-xs text-[#2e2e2e]/60 font-medium">Awaiting delivery</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                  <Milk size={24} className="text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Total Milk</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                  {totalQuantity.toFixed(1)}L
+                </p>
+                <p className="text-xs text-[#2e2e2e]/60 font-medium">Distributed today</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-all duration-300 group-hover:scale-105">
+                  <User size={24} className="text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Total Clients</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                  {clients.length}
+                </p>
+                <p className="text-xs text-[#2e2e2e]/60 font-medium">Active clients</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Delivery List */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
+          <div className="px-6 py-4 border-b border-[#2e2e2e]/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="p-2 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 rounded-xl">
+                  <User size={20} className="text-white" />
+                </div>
+                <h3 className="text-lg font-black text-[#2e2e2e]">
+                  Deliveries for {selectedDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </h3>
+              </div>
+              {isToday && (
+                <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-bold rounded-full">
+                  Today
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="divide-y divide-[#2e2e2e]/10">
+            {clients.length === 0 ? (
+              <div className="p-8 text-center">
+                <div className="p-4 bg-[#2e2e2e]/10 rounded-2xl w-fit mx-auto mb-4">
+                  <User className="text-[#2e2e2e]/60" size={48} />
+                </div>
+                <h3 className="text-lg font-black text-[#2e2e2e] mb-2">No active clients</h3>
+                <p className="text-[#2e2e2e]/60 font-medium">Add some clients to start tracking deliveries</p>
+              </div>
+            ) : (
+              clients.map(client => {
+                const isDelivered = getDeliveryStatus(client.id);
+                const quantity = getDeliveryQuantity(client.id);
+                
+                return (
+                  <div
+                    key={client.id}
+                    className={`group p-6 hover:bg-[#2e2e2e]/5 transition-all duration-300 ${
+                      isDelivered ? 'bg-emerald-50/50' : ''
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <button
+                          onClick={() => handleToggleDelivery(client.id, isDelivered)}
+                          className={`p-3 rounded-xl transition-all duration-300 transform hover:scale-110 ${
+                            isDelivered
+                              ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200 shadow-lg'
+                              : 'bg-[#2e2e2e]/10 text-[#2e2e2e]/40 hover:bg-emerald-100 hover:text-emerald-600'
+                          }`}
+                        >
+                          {isDelivered ? <CheckCircle size={24} /> : <XCircle size={24} />}
+                        </button>
+                        
+                        <div className="flex-1">
+                          <h3 className={`font-black text-lg ${isDelivered ? 'text-emerald-900' : 'text-[#2e2e2e]'}`}>
+                            {client.name}
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
+                              <MapPin size={14} />
+                              <span className="font-medium">{client.address}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
+                              <Phone size={14} />
+                              <span className="font-medium">{client.phone}</span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
+                              <Clock size={14} />
+                              <span className="font-medium">{client.deliveryTime}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      
-                      <div className="text-right">
-                        <div className="font-medium">
-                          {formatCurrency(quantity * client.rate)}
+
+                      <div className="flex items-center space-x-6">
+                        <div className="text-right">
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="number"
+                              step="0.1"
+                              min="0"
+                              value={quantity}
+                              onChange={(e) => handleQuantityChange(client.id, parseFloat(e.target.value) || 0)}
+                              className="w-20 px-3 py-2 text-sm border border-[#2e2e2e]/20 rounded-lg focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300"
+                              disabled={loading}
+                            />
+                            <span className="text-sm text-[#2e2e2e]/60 font-bold">L</span>
+                          </div>
+                          <div className="text-xs text-[#2e2e2e]/60 mt-1 font-medium">
+                            @ {formatCurrency(client.rate)}/L
+                          </div>
                         </div>
-                        <div className={`text-xs px-2 py-1 rounded-full ${
-                          isDelivered 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-orange-100 text-orange-800'
-                        }`}>
-                          {isDelivered ? 'Delivered' : 'Pending'}
+                        
+                        <div className="text-right">
+                          <div className="font-black text-lg text-[#2e2e2e]">
+                            {formatCurrency(quantity * client.rate)}
+                          </div>
+                          <div className={`text-xs px-3 py-1 rounded-full font-bold ${
+                            isDelivered 
+                              ? 'bg-emerald-100 text-emerald-800' 
+                              : 'bg-amber-100 text-amber-800'
+                          }`}>
+                            {isDelivered ? 'Delivered' : 'Pending'}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
         </div>
-      </div>
 
-      {/* Summary */}
-      {clients.length > 0 && (
-        <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-            <div>
-              <div className="text-gray-500">Total Quantity</div>
-              <div className="font-medium">{totalQuantity.toFixed(1)}L</div>
+        {/* Summary */}
+        {clients.length > 0 && (
+          <div className="bg-gradient-to-br from-[#b5cbb7]/10 to-[#2e2e2e]/5 rounded-2xl p-6 border border-white/30">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl">
+                <Calendar size={20} className="text-white" />
+              </div>
+              <h4 className="font-black text-[#2e2e2e]">Daily Summary</h4>
             </div>
-            <div>
-              <div className="text-gray-500">Completed</div>
-              <div className="font-medium">{completedDeliveries}/{clients.length}</div>
-            </div>
-            <div>
-              <div className="text-gray-500">Daily Revenue</div>
-              <div className="font-medium text-green-600">{formatCurrency(totalRevenue)}</div>
-            </div>
-            <div>
-              <div className="text-gray-500">Completion Rate</div>
-              <div className="font-medium">
-                {clients.length > 0 ? Math.round((completedDeliveries / clients.length) * 100) : 0}%
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white/80 rounded-xl p-4">
+                <div className="text-[#2e2e2e]/60 text-sm font-medium">Total Quantity</div>
+                <div className="font-black text-xl text-[#2e2e2e]">{totalQuantity.toFixed(1)}L</div>
+              </div>
+              <div className="bg-white/80 rounded-xl p-4">
+                <div className="text-[#2e2e2e]/60 text-sm font-medium">Completed</div>
+                <div className="font-black text-xl text-[#2e2e2e]">{completedDeliveries}/{clients.length}</div>
+              </div>
+              <div className="bg-white/80 rounded-xl p-4">
+                <div className="text-[#2e2e2e]/60 text-sm font-medium">Daily Revenue</div>
+                <div className="font-black text-xl text-emerald-600">{formatCurrency(totalRevenue)}</div>
+              </div>
+              <div className="bg-white/80 rounded-xl p-4">
+                <div className="text-[#2e2e2e]/60 text-sm font-medium">Completion Rate</div>
+                <div className="font-black text-xl text-[#2e2e2e]">
+                  {clients.length > 0 ? Math.round((completedDeliveries / clients.length) * 100) : 0}%
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

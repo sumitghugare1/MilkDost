@@ -61,53 +61,65 @@ DairyMate Team`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
       {/* Header Actions */}
-      <div className="bg-white rounded-2xl shadow-xl border border-white/20 mb-4 sm:mb-6 print:hidden">
-        <div className="p-4 sm:p-6 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 mb-8 print:hidden">
+        <div className="p-8 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
             <button
               onClick={onClose}
-              className="p-2 text-dark/60 hover:bg-sage/20 rounded-xl transition-colors"
+              className="p-3 text-dark/60 hover:bg-sage/20 rounded-xl transition-all duration-200 
+                         hover:scale-105 transform shadow-lg hover:shadow-xl"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={24} />
             </button>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-                Invoice Preview
-              </h1>
-              <p className="text-sm text-gray-600">
-                {client.name} - {months[bill.month]} {bill.year}
-              </p>
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                <FileText className="text-white" size={28} />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
+                  Invoice Preview
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  {client.name} - {months[bill.month]} {bill.year}
+                </p>
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="flex items-center space-x-3">
             {client.email && (
               <button
                 onClick={handleSendEmail}
-                className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-sage/20 text-dark rounded-xl hover:bg-sage/30 transition-colors"
+                className="flex items-center space-x-2 px-4 py-3 bg-sage/20 text-dark rounded-xl 
+                           hover:bg-sage/30 transition-all duration-200 hover:scale-105 transform 
+                           shadow-lg hover:shadow-xl"
               >
-                <Mail size={16} />
-                <span className="hidden sm:inline">Email</span>
+                <Mail size={18} />
+                <span>Email</span>
               </button>
             )}
             
             <button
               onClick={handlePrint}
-              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-sage/20 text-dark rounded-xl hover:bg-sage/30 transition-colors"
+              className="flex items-center space-x-2 px-4 py-3 bg-sage/20 text-dark rounded-xl 
+                         hover:bg-sage/30 transition-all duration-200 hover:scale-105 transform 
+                         shadow-lg hover:shadow-xl"
             >
-              <Printer size={16} />
-              <span className="hidden sm:inline">Print</span>
+              <Printer size={18} />
+              <span>Print</span>
             </button>
             
             <button
               onClick={handleDownloadPDF}
               disabled={loading}
-              className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-dark text-cream rounded-xl hover:bg-dark/90 transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 
+                         text-white rounded-xl hover:scale-105 transform transition-all duration-200 
+                         shadow-lg hover:shadow-xl disabled:opacity-50"
             >
-              <Download size={16} />
-              <span className="hidden sm:inline">{loading ? 'Generating...' : 'Download PDF'}</span>
+              <Download size={18} />
+              <span>{loading ? 'Downloading...' : 'Download PDF'}</span>
             </button>
           </div>
         </div>

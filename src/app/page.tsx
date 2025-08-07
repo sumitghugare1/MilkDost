@@ -126,7 +126,6 @@ export default function Home() {
         <Header
           title={getPageTitle()}
           subtitle={getPageSubtitle()}
-          showSearch={activeTab !== 'dashboard'}
         />
       }
       navigation={

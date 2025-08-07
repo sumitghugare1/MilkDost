@@ -233,315 +233,386 @@ export default function InventoryManagement() {
   }, [selectedDate, selectedDateRecord]);
 
   return (
-    <div className="p-4 space-y-6">
-      {/* Header */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Milk Inventory</h2>
-            <p className="text-sm text-gray-500">
-              Track daily milk production, sales, and usage
-            </p>
-          </div>
-          <button
-            onClick={() => setShowAddRecord(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
-          >
-            <Plus size={20} />
-            <span>Add Record</span>
-          </button>
-        </div>
-
-        {/* Date Selector */}
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <Calendar className="text-gray-500" size={20} />
-            <input
-              type="date"
-              value={formatDateForInput(selectedDate)}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          {isToday && (
-            <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-              Today
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Weekly Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Milk className="text-blue-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-blue-800">Avg. Production</p>
-              <p className="text-2xl font-bold text-blue-900">{avgDailyProduction.toFixed(1)}L</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <TrendingUp className="text-green-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-green-800">Avg. Sold</p>
-              <p className="text-2xl font-bold text-green-900">{avgDailySold.toFixed(1)}L</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <TrendingDown className="text-red-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-red-800">Weekly Waste</p>
-              <p className="text-2xl font-bold text-red-900">{weeklyStats.wasted.toFixed(1)}L</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Home className="text-purple-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-purple-800">Home Use</p>
-              <p className="text-2xl font-bold text-purple-900">{weeklyStats.homeCons.toFixed(1)}L</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart */}
-      {weeklyRecords.length > 0 && (
-        <div className="bg-white rounded-lg p-6 border border-gray-200">
-          <Line data={chartData} options={chartOptions} />
-        </div>
-      )}
-
-      {/* Selected Date Record */}
-      <div className="bg-white rounded-lg p-6 border border-gray-200">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-gray-900">
-            {selectedDate.toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </h3>
-          {selectedDateRecord && (
-            <button
-              onClick={() => handleDeleteRecord(selectedDateRecord.id)}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
-              title="Delete Record"
-            >
-              <Trash2 size={18} />
-            </button>
-          )}
-        </div>
-
-        {selectedDateRecord ? (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-blue-600 font-medium">Produced</p>
-                <p className="text-2xl font-bold text-blue-900">{selectedDateRecord.totalProduced}L</p>
+    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        
+        {/* Header Section */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+                <BarChart3 className="text-white" size={28} />
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <p className="text-sm text-green-600 font-medium">Sold</p>
-                <p className="text-2xl font-bold text-green-900">{selectedDateRecord.totalSold}L</p>
-              </div>
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <p className="text-sm text-red-600 font-medium">Wasted</p>
-                <p className="text-2xl font-bold text-red-900">{selectedDateRecord.totalWasted}L</p>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <p className="text-sm text-purple-600 font-medium">Home Use</p>
-                <p className="text-2xl font-bold text-purple-900">{selectedDateRecord.totalHomeCons}L</p>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                  Milk Inventory
+                </h1>
+                <p className="text-gray-600 mt-1">
+                  Track daily milk production, sales, and usage
+                </p>
               </div>
             </div>
-
-            {selectedDateRecord.notes && (
-              <div className="p-4 bg-gray-50 rounded-lg">
-                <p className="text-sm font-medium text-gray-700 mb-1">Notes:</p>
-                <p className="text-gray-600">{selectedDateRecord.notes}</p>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between text-sm text-gray-600">
-              <span>
-                Efficiency: {((selectedDateRecord.totalSold / selectedDateRecord.totalProduced) * 100).toFixed(1)}%
-              </span>
-              <span>
-                Waste Rate: {((selectedDateRecord.totalWasted / selectedDateRecord.totalProduced) * 100).toFixed(1)}%
-              </span>
-            </div>
-
             <button
               onClick={() => setShowAddRecord(true)}
-              className="w-full py-2 text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+              className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl 
+                         flex items-center space-x-2 hover:scale-105 transform transition-all duration-200 
+                         shadow-lg hover:shadow-xl"
             >
-              Edit Record
+              <Plus size={20} />
+              <span>Add Record</span>
             </button>
           </div>
-        ) : (
-          <div className="text-center py-8">
-            <Milk className="mx-auto text-gray-400 mb-4" size={48} />
-            <h4 className="text-lg font-medium text-gray-900 mb-2">No record for this date</h4>
-            <p className="text-gray-500 mb-4">Add a milk production record for this day</p>
-            <button
-              onClick={() => setShowAddRecord(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Add Record
-            </button>
+
+          {/* Date Selector */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-gray-200/50">
+                <Calendar className="text-sage-600" size={20} />
+                <input
+                  type="date"
+                  value={formatDateForInput(selectedDate)}
+                  onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                  className="bg-transparent border-none outline-none text-dark font-medium"
+                />
+              </div>
+              {isToday && (
+                <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-sm font-medium rounded-xl shadow-lg">
+                  Today
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Weekly Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                          hover:scale-105 transform transition-all duration-300 group">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg 
+                              group-hover:shadow-xl transition-all duration-300">
+                <Milk className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 mb-1">Avg. Production</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                  {avgDailyProduction.toFixed(1)}L
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                          hover:scale-105 transform transition-all duration-300 group">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg 
+                              group-hover:shadow-xl transition-all duration-300">
+                <TrendingUp className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 mb-1">Avg. Sold</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+                  {avgDailySold.toFixed(1)}L
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                          hover:scale-105 transform transition-all duration-300 group">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg 
+                              group-hover:shadow-xl transition-all duration-300">
+                <TrendingDown className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 mb-1">Weekly Waste</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                  {weeklyStats.wasted.toFixed(1)}L
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-6 
+                          hover:scale-105 transform transition-all duration-300 group">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg 
+                              group-hover:shadow-xl transition-all duration-300">
+                <Home className="text-white" size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 mb-1">Home Use</p>
+                <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
+                  {weeklyStats.homeCons.toFixed(1)}L
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chart */}
+        {weeklyRecords.length > 0 && (
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg">
+                <BarChart3 className="text-white" size={20} />
+              </div>
+              <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+                Weekly Production Overview
+              </h3>
+            </div>
+            <Line data={chartData} options={chartOptions} />
           </div>
         )}
-      </div>
 
-      {/* Add/Edit Record Modal */}
-      {showAddRecord && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              {selectedDateRecord ? 'Edit' : 'Add'} Milk Record
+        {/* Selected Date Record */}
+        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-semibold bg-gradient-to-r from-dark to-sage-600 bg-clip-text text-transparent">
+              {selectedDate.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
             </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Total Produced (Liters) *
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={newRecord.totalProduced}
-                  onChange={(e) => setNewRecord(prev => ({ ...prev, totalProduced: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="85.0"
-                />
+            {selectedDateRecord && (
+              <button
+                onClick={() => handleDeleteRecord(selectedDateRecord.id)}
+                className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition-all duration-200 
+                           hover:scale-105 transform shadow-lg hover:shadow-xl"
+                title="Delete Record"
+              >
+                <Trash2 size={20} />
+              </button>
+            )}
+          </div>
+
+          {selectedDateRecord ? (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl border border-blue-200/50">
+                  <p className="text-sm text-blue-600 font-medium mb-2">Produced</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
+                    {selectedDateRecord.totalProduced}L
+                  </p>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl border border-green-200/50">
+                  <p className="text-sm text-green-600 font-medium mb-2">Sold</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+                    {selectedDateRecord.totalSold}L
+                  </p>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-red-50 to-red-100 rounded-2xl border border-red-200/50">
+                  <p className="text-sm text-red-600 font-medium mb-2">Wasted</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
+                    {selectedDateRecord.totalWasted}L
+                  </p>
+                </div>
+                <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl border border-purple-200/50">
+                  <p className="text-sm text-purple-600 font-medium mb-2">Home Use</p>
+                  <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
+                    {selectedDateRecord.totalHomeCons}L
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Total Sold (Liters)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={newRecord.totalSold}
-                  onChange={(e) => setNewRecord(prev => ({ ...prev, totalSold: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="75.0"
-                />
+              {selectedDateRecord.notes && (
+                <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border border-gray-200/50">
+                  <p className="text-sm font-medium text-gray-700 mb-2">Notes:</p>
+                  <p className="text-gray-600">{selectedDateRecord.notes}</p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between p-6 bg-gradient-to-br from-sage-50 to-cream-50 
+                              rounded-2xl border border-sage-200/50">
+                <div className="text-center">
+                  <p className="text-sm text-sage-600 font-medium mb-1">Efficiency</p>
+                  <p className="text-2xl font-bold bg-gradient-to-r from-sage-600 to-sage-700 bg-clip-text text-transparent">
+                    {((selectedDateRecord.totalSold / selectedDateRecord.totalProduced) * 100).toFixed(1)}%
+                  </p>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm text-sage-600 font-medium mb-1">Waste Rate</p>
+                  <p className="text-2xl font-bold bg-gradient-to-r from-sage-600 to-sage-700 bg-clip-text text-transparent">
+                    {((selectedDateRecord.totalWasted / selectedDateRecord.totalProduced) * 100).toFixed(1)}%
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Total Wasted (Liters)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={newRecord.totalWasted}
-                  onChange={(e) => setNewRecord(prev => ({ ...prev, totalWasted: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="2.0"
-                />
+              <button
+                onClick={() => setShowAddRecord(true)}
+                className="w-full py-4 text-blue-600 bg-white/80 backdrop-blur-sm border-2 border-blue-300 
+                           rounded-2xl hover:bg-blue-50 transition-all duration-200 hover:scale-[1.02] 
+                           transform shadow-lg hover:shadow-xl font-medium"
+              >
+                Edit Record
+              </button>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl inline-block mb-6">
+                <Milk className="text-gray-400" size={64} />
               </div>
+              <h4 className="text-2xl font-bold text-gray-900 mb-3">No record for this date</h4>
+              <p className="text-gray-500 mb-6 text-lg">Add a milk production record for this day</p>
+              <button
+                onClick={() => setShowAddRecord(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-2xl 
+                           hover:scale-105 transform transition-all duration-200 shadow-lg hover:shadow-xl font-medium text-lg"
+              >
+                Add Record
+              </button>
+            </div>
+          )}
+        </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Home Consumption (Liters)
-                </label>
-                <input
-                  type="number"
-                  step="0.1"
-                  min="0"
-                  value={newRecord.totalHomeCons}
-                  onChange={(e) => setNewRecord(prev => ({ ...prev, totalHomeCons: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="8.0"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Notes (Optional)
-                </label>
-                <textarea
-                  value={newRecord.notes}
-                  onChange={(e) => setNewRecord(prev => ({ ...prev, notes: e.target.value }))}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Any additional notes..."
-                />
-              </div>
-
-              {/* Summary */}
-              <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                <h4 className="font-medium text-gray-900">Summary</h4>
-                <div className="text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Total Distribution:</span>
-                    <span className="font-medium">
-                      {(newRecord.totalSold + newRecord.totalWasted + newRecord.totalHomeCons).toFixed(1)}L
-                    </span>
+        {/* Add/Edit Record Modal */}
+        {showAddRecord && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 
+                            w-full max-w-md max-h-[90vh] overflow-y-auto">
+              <div className="p-8">
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-dark to-sage-600 bg-clip-text 
+                               text-transparent mb-6">
+                  {selectedDateRecord ? 'Edit' : 'Add'} Milk Record
+                </h3>
+                
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Total Produced (Liters) *
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={newRecord.totalProduced}
+                      onChange={(e) => setNewRecord(prev => ({ ...prev, totalProduced: parseFloat(e.target.value) || 0 }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                                 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                      placeholder="85.0"
+                    />
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Remaining:</span>
-                    <span className="font-medium">
-                      {Math.max(0, newRecord.totalProduced - newRecord.totalSold - newRecord.totalWasted - newRecord.totalHomeCons).toFixed(1)}L
-                    </span>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Total Sold (Liters)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={newRecord.totalSold}
+                      onChange={(e) => setNewRecord(prev => ({ ...prev, totalSold: parseFloat(e.target.value) || 0 }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                                 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                      placeholder="75.0"
+                    />
                   </div>
-                  {newRecord.totalProduced > 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Efficiency:</span>
-                      <span className="font-medium">
-                        {((newRecord.totalSold / newRecord.totalProduced) * 100).toFixed(1)}%
-                      </span>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Total Wasted (Liters)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={newRecord.totalWasted}
+                      onChange={(e) => setNewRecord(prev => ({ ...prev, totalWasted: parseFloat(e.target.value) || 0 }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                                 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                      placeholder="2.0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Home Consumption (Liters)
+                    </label>
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      value={newRecord.totalHomeCons}
+                      onChange={(e) => setNewRecord(prev => ({ ...prev, totalHomeCons: parseFloat(e.target.value) || 0 }))}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                                 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                      placeholder="8.0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Notes (Optional)
+                    </label>
+                    <textarea
+                      value={newRecord.notes}
+                      onChange={(e) => setNewRecord(prev => ({ ...prev, notes: e.target.value }))}
+                      rows={3}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
+                                 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                      placeholder="Any additional notes..."
+                    />
+                  </div>
+
+                  {/* Summary */}
+                  <div className="bg-gradient-to-br from-sage-50 to-cream-50 rounded-2xl p-6 border border-sage-200/50">
+                    <h4 className="font-medium text-gray-900 mb-4">Summary</h4>
+                    <div className="text-sm space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total Distribution:</span>
+                        <span className="font-medium">
+                          {(newRecord.totalSold + newRecord.totalWasted + newRecord.totalHomeCons).toFixed(1)}L
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Remaining:</span>
+                        <span className="font-medium">
+                          {Math.max(0, newRecord.totalProduced - newRecord.totalSold - newRecord.totalWasted - newRecord.totalHomeCons).toFixed(1)}L
+                        </span>
+                      </div>
+                      {newRecord.totalProduced > 0 && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">Efficiency:</span>
+                          <span className="font-medium">
+                            {((newRecord.totalSold / newRecord.totalProduced) * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end space-x-4 mt-8">
+                  <button
+                    onClick={() => {
+                      setShowAddRecord(false);
+                      resetForm();
+                    }}
+                    className="px-6 py-3 text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 
+                               transition-all duration-200 hover:scale-105 transform font-medium"
+                  >
+                    Cancel
+                  </button>
+                  
+                  <button
+                    onClick={handleAddRecord}
+                    disabled={loading}
+                    className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl 
+                               hover:scale-105 transform transition-all duration-200 shadow-lg hover:shadow-xl 
+                               disabled:opacity-50 font-medium"
+                  >
+                    {loading ? 'Saving...' : (selectedDateRecord ? 'Update' : 'Add')} Record
+                  </button>
                 </div>
               </div>
             </div>
-
-            <div className="flex items-center justify-end space-x-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowAddRecord(false);
-                  resetForm();
-                }}
-                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-              >
-                Cancel
-              </button>
-              
-              <button
-                onClick={handleAddRecord}
-                disabled={loading}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-              >
-                {loading ? 'Saving...' : (selectedDateRecord ? 'Update' : 'Add')} Record
-              </button>
-            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
