@@ -190,7 +190,7 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
 
           <button
             onClick={() => setShowAddFeeding(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-blue-700 transition-colors"
+            className="bg-dark text-cream px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-dark/90 transition-colors"
           >
             <Plus size={18} />
             <span>Add Feeding</span>
@@ -209,7 +209,7 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
         
         <div className="w-full bg-gray-200 rounded-full h-2">
           <div 
-            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+            className="h-2 bg-sage rounded-full transition-all duration-300"
             style={{ width: `${totalFeedings > 0 ? (completedFeedings / totalFeedings) * 100 : 0}%` }}
           ></div>
         </div>
@@ -418,7 +418,7 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
               
               <button
                 onClick={handleAddCustomFeeding}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 bg-sage text-dark rounded-lg hover:bg-sage/80 transition-colors"
               >
                 Add Feeding
               </button>

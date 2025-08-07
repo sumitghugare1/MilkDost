@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Eye, EyeOff, LogIn, UserPlus, User, Building, Phone, MapPin, Mail, Lock, ArrowRight, FileText, Milk } from 'lucide-react';
+import { Eye, EyeOff, LogIn, UserPlus, User, Building, Phone, MapPin, Mail, Lock, ArrowRight, FileText, Milk, Shield, Sparkles, Crown, Star } from 'lucide-react';
 import Logo from '@/components/common/Logo';
 
 interface AuthFormProps {

@@ -8,7 +8,9 @@ import {
   Heart, 
   BarChart3, 
   Truck,
-  Milk
+  Milk,
+  Sparkles,
+  Zap
 } from 'lucide-react';
 import type { TabItem } from '@/types';
 
@@ -31,8 +33,25 @@ export default function MobileTabNavigation({
   onTabChange 
 }: MobileTabNavigationProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-custom-cream/95 backdrop-blur-lg border-t border-custom-sage px-2 py-2 z-50 shadow-lg">
-      <div className="flex justify-around max-w-lg mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-sage/30 px-3 py-3 z-50 shadow-2xl">
+      <div className="flex justify-around max-w-lg mx-auto relative">
+        {/* Active tab indicator background */}
+        <div className="absolute inset-0 flex justify-around items-center pointer-events-none">
+          {tabs.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <div
+                key={`bg-${tab.id}`}
+                className={`w-16 h-16 rounded-2xl transition-all duration-500 ${
+                  isActive 
+                    ? 'bg-gradient-to-br from-dark to-dark/80 shadow-xl scale-110' 
+                    : 'scale-0'
+                }`}
+              />
+            );
+          })}
+        </div>
+        
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -41,24 +60,52 @@ export default function MobileTabNavigation({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center px-3 py-2 rounded-xl transition-all duration-200 transform min-w-0 flex-1 ${
+              className={`relative flex flex-col items-center px-3 py-3 rounded-2xl transition-all duration-300 transform min-w-0 flex-1 group ${
                 isActive
-                  ? 'text-white bg-dark scale-105 shadow-sm'
-                  : 'text-dark hover:text-dark hover:bg-sage/20'
+                  ? 'text-cream scale-110 -translate-y-1'
+                  : 'text-dark/70 hover:text-dark hover:scale-105 hover:-translate-y-0.5'
               }`}
             >
-              <div className={`p-1.5 rounded-lg transition-all duration-200 ${
-                isActive ? 'bg-sage/20' : ''
+              <div className={`relative p-2 rounded-xl transition-all duration-300 ${
+                isActive 
+                  ? 'bg-white/20 shadow-lg' 
+                  : 'group-hover:bg-sage/20'
               }`}>
-                <Icon size={20} />
+                <Icon 
+                  size={22} 
+                  className={`transition-all duration-300 ${
+                    isActive ? 'drop-shadow-lg' : 'group-hover:scale-110'
+                  }`} 
+                />
+                
+                {/* Active state sparkle effect */}
+                {isActive && (
+                  <Sparkles 
+                    size={12} 
+                    className="absolute -top-1 -right-1 text-cream animate-pulse" 
+                  />
+                )}
               </div>
-              <span className="text-xs mt-1 font-medium truncate w-full text-center leading-tight">
+              
+              <span className={`text-xs mt-1.5 font-bold truncate w-full text-center leading-tight transition-all duration-300 ${
+                isActive ? 'text-cream drop-shadow-sm' : 'text-dark/70'
+              }`}>
                 {tab.label}
               </span>
+              
+              {/* Ripple effect on tap */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                <div className={`absolute inset-0 bg-white/30 rounded-2xl transform scale-0 group-active:scale-100 transition-transform duration-150 ${
+                  isActive ? 'opacity-30' : 'opacity-20'
+                }`} />
+              </div>
             </button>
           );
         })}
       </div>
+      
+      {/* Bottom accent line */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-sage via-dark to-sage"></div>
     </div>
   );
 }

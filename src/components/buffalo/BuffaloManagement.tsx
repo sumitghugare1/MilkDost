@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Clock } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Clock, Crown, Shield, Sparkles, Star, Gem, Trophy, Rocket } from 'lucide-react';
 import { Buffalo, BuffaloFeeding } from '@/types';
 import { buffaloService, feedingService } from '@/lib/firebaseServices';
 import BuffaloForm from './BuffaloForm';
@@ -222,110 +222,196 @@ export default function BuffaloManagement() {
       {/* Header */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">Buffalo Care</h2>
-            <p className="text-sm text-gray-500">
-              Manage buffalo health, feeding, and care schedules
-            </p>
+          <div className="flex items-center space-x-4">
+            <div className="relative p-3 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-2xl shadow-2xl">
+              <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
+              <Shield size={28} className="text-white relative" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-dark to-dark/80 rounded-full flex items-center justify-center">
+                <Crown size={10} className="text-cream" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center space-x-2 mb-1">
+                <h2 className="text-2xl font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">Buffalo Care</h2>
+                <Sparkles size={18} className="text-sage animate-pulse" />
+              </div>
+              <p className="text-sm text-dark/60 font-semibold">
+                Manage buffalo health, feeding, and care schedules
+              </p>
+            </div>
           </div>
           <button
             onClick={handleAddBuffaloClick}
-            className="bg-dark text-cream px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-dark/90 transition-colors"
+            className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-6 py-3 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 overflow-hidden"
           >
-            <Plus size={20} />
-            <span>Add Buffalo</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+              <Plus size={20} className="relative" />
+            </div>
+            <span className="relative font-bold">Add Buffalo</span>
+            <Star size={16} className="relative text-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
 
         <div className="flex space-x-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-sage" size={20} />
             <input
               type="text"
               placeholder="Search buffaloes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-12 pr-4 py-3 border border-sage/20 rounded-2xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 transition-all duration-300 bg-white/80 placeholder-dark/50"
             />
           </div>
           
           <button
             onClick={() => setShowFeedingTracker(true)}
-            className="bg-sage text-dark px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-sage/80 transition-colors whitespace-nowrap"
+            className="group relative bg-gradient-to-br from-sage via-sage/95 to-sage/85 text-dark px-6 py-3 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
           >
-            <Calendar size={20} />
-            <span>Feeding Tracker</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-dark/10 via-transparent to-sage/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+              <Calendar size={20} className="relative" />
+            </div>
+            <span className="relative font-bold whitespace-nowrap">Feeding Tracker</span>
+            <Star size={16} className="relative text-dark opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <Heart className="text-blue-600" size={20} />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        {/* Total Buffalo */}
+        <div className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-sage/10">
+          <div className="absolute inset-0 bg-gradient-to-br from-sage/5 via-transparent to-dark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-sage/10 to-dark/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+          <div className="absolute top-2 right-2 w-2 h-2 bg-sage rounded-full animate-pulse"></div>
+          
+          <div className="relative">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-3 bg-gradient-to-br from-sage/20 to-sage/10 rounded-2xl">
+                <Crown size={20} className="text-sage" />
+              </div>
+              <div className="w-1 h-6 bg-gradient-to-b from-sage to-dark rounded-full"></div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-blue-800">Total Buffalo</p>
-              <p className="text-2xl font-bold text-blue-900">{buffaloes.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <CheckCircle className="text-green-600" size={20} />
-            </div>
-            <div>
-              <p className="text-sm font-medium text-green-800">Healthy</p>
-              <p className="text-2xl font-bold text-green-900">{healthyBuffaloes}</p>
+            <p className="text-sm font-semibold text-dark/60 mb-1">Total Buffalo</p>
+            <div className="flex items-center space-x-2">
+              <p className="text-2xl font-black text-dark">{buffaloes.length}</p>
+              <Gem size={14} className="text-sage animate-pulse" />
             </div>
           </div>
         </div>
 
-        <div className="bg-red-50 rounded-lg p-4 border border-red-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <AlertCircle className="text-red-600" size={20} />
+        {/* Healthy Buffalo */}
+        <div className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-sage/10">
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+          <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+          
+          <div className="relative">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-3 bg-gradient-to-br from-emerald-500/20 to-emerald-500/10 rounded-2xl">
+                <Trophy size={20} className="text-emerald-600" />
+              </div>
+              <div className="w-1 h-6 bg-gradient-to-b from-emerald-500 to-emerald-600 rounded-full"></div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-red-800">Need Care</p>
-              <p className="text-2xl font-bold text-red-900">{sickBuffaloes}</p>
+            <p className="text-sm font-semibold text-dark/60 mb-1">Healthy</p>
+            <div className="flex items-center space-x-2">
+              <p className="text-2xl font-black text-dark">{healthyBuffaloes}</p>
+              <Star size={14} className="text-emerald-500 animate-pulse" />
             </div>
           </div>
         </div>
 
-        <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Heart className="text-purple-600" size={20} />
+        {/* Need Care */}
+        <div className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-sage/10">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-red-500/10 to-red-600/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+          <div className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+          
+          <div className="relative">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-3 bg-gradient-to-br from-red-500/20 to-red-500/10 rounded-2xl">
+                <Rocket size={20} className="text-red-600" />
+              </div>
+              <div className="w-1 h-6 bg-gradient-to-b from-red-500 to-red-600 rounded-full"></div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-purple-800">Pregnant</p>
-              <p className="text-2xl font-bold text-purple-900">{pregnantBuffaloes}</p>
+            <p className="text-sm font-semibold text-dark/60 mb-1">Need Care</p>
+            <div className="flex items-center space-x-2">
+              <p className="text-2xl font-black text-dark">{sickBuffaloes}</p>
+              <Sparkles size={14} className="text-red-500 animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* Pregnant */}
+        <div className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-sage/10">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-500/10 to-purple-600/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+          <div className="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+          
+          <div className="relative">
+            <div className="flex items-center space-x-3 mb-3">
+              <div className="p-3 bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-2xl">
+                <Shield size={20} className="text-purple-600" />
+              </div>
+              <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-purple-600 rounded-full"></div>
+            </div>
+            <p className="text-sm font-semibold text-dark/60 mb-1">Pregnant</p>
+            <div className="flex items-center space-x-2">
+              <p className="text-2xl font-black text-dark">{pregnantBuffaloes}</p>
+              <Gem size={14} className="text-purple-500 animate-pulse" />
             </div>
           </div>
         </div>
       </div>
 
       {/* Today's Feeding Status */}
-      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-        <h3 className="font-medium text-gray-900 mb-3">Today's Feeding Status</h3>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">Completed: {completedFeedings}</span>
+      <div className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-sage/10 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-sage/5 via-transparent to-dark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-sage/10 to-dark/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+        <div className="absolute top-2 right-2 w-2 h-2 bg-sage rounded-full animate-pulse"></div>
+        
+        <div className="relative">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="p-3 bg-gradient-to-br from-sage/20 to-sage/10 rounded-2xl">
+              <Calendar size={24} className="text-sage" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-dark">Today's Feeding Status</h3>
+              <p className="text-sm text-dark/60 font-semibold">Track daily feeding progress</p>
+            </div>
+            <div className="ml-auto">
+              <Sparkles size={20} className="text-sage animate-pulse" />
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-gray-400 rounded-full"></div>
-            <span className="text-sm text-gray-600">Total Expected: {totalExpectedFeedings}</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm font-medium text-gray-900">
-              Progress: {totalExpectedFeedings > 0 ? Math.round((completedFeedings / totalExpectedFeedings) * 100) : 0}%
-            </span>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center space-x-3 p-4 bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-200/50">
+              <div className="w-4 h-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full shadow-lg"></div>
+              <div>
+                <span className="text-sm font-semibold text-emerald-800">Completed</span>
+                <p className="text-xl font-black text-emerald-900">{completedFeedings}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-4 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl border border-amber-200/50">
+              <div className="w-4 h-4 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full shadow-lg"></div>
+              <div>
+                <span className="text-sm font-semibold text-amber-800">Expected</span>
+                <p className="text-xl font-black text-amber-900">{totalExpectedFeedings}</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-4 bg-gradient-to-br from-sage/10 to-sage/20 rounded-2xl border border-sage/30">
+              <div className="w-4 h-4 bg-gradient-to-br from-sage to-dark rounded-full shadow-lg"></div>
+              <div>
+                <span className="text-sm font-semibold text-dark/80">Progress</span>
+                <p className="text-xl font-black text-dark">
+                  {totalExpectedFeedings > 0 ? Math.round((completedFeedings / totalExpectedFeedings) * 100) : 0}%
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -333,12 +419,19 @@ export default function BuffaloManagement() {
       {/* Buffalo List */}
       <div className="space-y-3">
         {filteredBuffaloes.length === 0 ? (
-          <div className="text-center py-8">
-            <Heart className="mx-auto text-gray-400 mb-4" size={48} />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="text-center py-12">
+            <div className="relative mb-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-sage/20 to-sage/10 rounded-3xl mx-auto flex items-center justify-center">
+                <Shield size={40} className="text-sage" />
+              </div>
+              <div className="absolute -top-2 -right-8 w-6 h-6 bg-gradient-to-br from-dark to-dark/80 rounded-full flex items-center justify-center">
+                <Crown size={12} className="text-cream" />
+              </div>
+            </div>
+            <h3 className="text-xl font-black text-dark mb-2">
               {searchTerm ? 'No buffaloes found' : 'No buffaloes yet'}
             </h3>
-            <p className="text-gray-500 mb-4">
+            <p className="text-dark/60 font-semibold mb-6">
               {searchTerm 
                 ? `No buffaloes match "${searchTerm}"`
                 : 'Add your first buffalo to start tracking care'
@@ -347,9 +440,14 @@ export default function BuffaloManagement() {
             {!searchTerm && (
               <button
                 onClick={handleAddBuffaloClick}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-8 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden mx-auto"
               >
-                Add First Buffalo
+                <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+                  <Plus size={20} className="relative" />
+                </div>
+                <span className="relative font-bold">Add First Buffalo</span>
+                <Star size={16} className="relative text-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </button>
             )}
           </div>
@@ -357,89 +455,118 @@ export default function BuffaloManagement() {
           filteredBuffaloes.map(buffalo => (
             <div
               key={buffalo.id}
-              className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm"
+              className="group relative bg-gradient-to-br from-white via-cream/50 to-white p-6 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-1 border border-sage/10 overflow-hidden"
             >
-              <div className="flex items-start justify-between">
+              <div className="absolute inset-0 bg-gradient-to-br from-sage/5 via-transparent to-dark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-sage/10 to-dark/10 rounded-full opacity-20 group-hover:animate-pulse"></div>
+              <div className="absolute top-2 right-2 w-2 h-2 bg-sage rounded-full animate-pulse"></div>
+
+              <div className="relative flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                      {buffalo.photo ? (
-                        <img
-                          src={buffalo.photo}
-                          alt={buffalo.name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <Heart className="text-white" size={24} />
-                      )}
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="relative">
+                      <div className="w-16 h-16 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-2xl flex items-center justify-center shadow-xl">
+                        {buffalo.photo ? (
+                          <img
+                            src={buffalo.photo}
+                            alt={buffalo.name}
+                            className="w-16 h-16 rounded-2xl object-cover"
+                          />
+                        ) : (
+                          <Shield className="text-white" size={28} />
+                        )}
+                      </div>
+                      <div className="absolute -top-1 -right-1 w-6 h-6 bg-gradient-to-br from-dark to-dark/80 rounded-full flex items-center justify-center">
+                        <Crown size={12} className="text-cream" />
+                      </div>
                     </div>
                     
-                    <div>
-                      <h3 className="font-semibold text-gray-900">{buffalo.name}</h3>
-                      <div className="flex items-center space-x-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getHealthStatusColor(buffalo.healthStatus)}`}>
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <h3 className="text-xl font-black text-dark">{buffalo.name}</h3>
+                        <Gem size={16} className="text-sage animate-pulse" />
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getHealthStatusColor(buffalo.healthStatus)}`}>
                           <div className="flex items-center space-x-1">
                             {getHealthStatusIcon(buffalo.healthStatus)}
                             <span className="capitalize">{buffalo.healthStatus}</span>
                           </div>
                         </span>
                         {buffalo.breed && (
-                          <span className="text-xs text-gray-500">{buffalo.breed}</span>
+                          <span className="text-sm text-dark/60 font-semibold bg-dark/5 px-2 py-1 rounded-lg">{buffalo.breed}</span>
                         )}
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span className="text-gray-600">Age:</span>
-                      <p className="font-medium">{buffalo.age} years</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                    <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-sage/10 to-sage/5 rounded-2xl border border-sage/20">
+                      <Trophy size={16} className="text-sage" />
+                      <div>
+                        <span className="text-dark/60 font-semibold">Age</span>
+                        <p className="font-black text-dark">{buffalo.age} years</p>
+                      </div>
                     </div>
-                    <div>
-                      <span className="text-gray-600">Feeding Schedule:</span>
-                      <p className="font-medium">
-                        {[
-                          buffalo.feedingSchedule.morning && 'Morning',
-                          buffalo.feedingSchedule.evening && 'Evening'
-                        ].filter(Boolean).join(', ') || 'None'}
-                      </p>
+                    <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-2xl border border-amber-200/50">
+                      <Calendar size={16} className="text-amber-600" />
+                      <div>
+                        <span className="text-dark/60 font-semibold">Feeding</span>
+                        <p className="font-black text-dark">
+                          {[
+                            buffalo.feedingSchedule.morning && 'Morning',
+                            buffalo.feedingSchedule.evening && 'Evening'
+                          ].filter(Boolean).join(', ') || 'None'}
+                        </p>
+                      </div>
                     </div>
                     {buffalo.lastVetVisit && (
-                      <div>
-                        <span className="text-gray-600">Last Vet Visit:</span>
-                        <p className="font-medium">{buffalo.lastVetVisit.toLocaleDateString()}</p>
+                      <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-2xl border border-emerald-200/50">
+                        <Star size={16} className="text-emerald-600" />
+                        <div>
+                          <span className="text-dark/60 font-semibold">Last Visit</span>
+                          <p className="font-black text-dark">{buffalo.lastVetVisit.toLocaleDateString()}</p>
+                        </div>
                       </div>
                     )}
                     {buffalo.nextVetVisit && (
-                      <div>
-                        <span className="text-gray-600">Next Vet Visit:</span>
-                        <p className="font-medium">{buffalo.nextVetVisit.toLocaleDateString()}</p>
+                      <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-2xl border border-blue-200/50">
+                        <Rocket size={16} className="text-blue-600" />
+                        <div>
+                          <span className="text-dark/60 font-semibold">Next Visit</span>
+                          <p className="font-black text-dark">{buffalo.nextVetVisit.toLocaleDateString()}</p>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   {buffalo.notes && (
-                    <div className="mt-3">
-                      <span className="text-gray-600 text-sm">Notes:</span>
-                      <p className="text-sm text-gray-700">{buffalo.notes}</p>
+                    <div className="p-4 bg-gradient-to-br from-dark/5 to-dark/10 rounded-2xl border border-dark/10">
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Sparkles size={14} className="text-dark/60" />
+                        <span className="text-dark/60 text-sm font-semibold">Notes</span>
+                      </div>
+                      <p className="text-sm text-dark font-medium">{buffalo.notes}</p>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center space-x-2 ml-4">
+                <div className="relative flex flex-col space-y-2 ml-6">
                   <button
-                    onClick={() => handleEditBuffalo(buffalo)}
-                    className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    onClick={() => handleEditBuffaloClick(buffalo)}
+                    className="group/btn relative p-3 bg-gradient-to-br from-sage via-sage/95 to-sage/85 text-dark rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
                     title="Edit"
                   >
-                    <Edit size={18} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-dark/10 via-transparent to-sage/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                    <Edit size={18} className="relative group-hover/btn:rotate-12 transition-transform duration-300" />
                   </button>
                   <button
                     onClick={() => handleDeleteBuffalo(buffalo.id)}
-                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    className="group/btn relative p-3 bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
                     title="Delete"
                   >
-                    <Trash2 size={18} />
+                    <div className="absolute inset-0 bg-gradient-to-r from-dark/20 via-transparent to-dark/10 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></div>
+                    <Trash2 size={18} className="relative group-hover/btn:rotate-12 transition-transform duration-300" />
                   </button>
                 </div>
               </div>

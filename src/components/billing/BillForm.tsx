@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ArrowLeft, Save, X } from 'lucide-react';
+import { ArrowLeft, Save, X, FileText } from 'lucide-react';
 import { Client, Bill } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 
@@ -56,22 +56,29 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
   };
 
   return (
-    <div className="p-4">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200">
+    <div className="min-h-screen bg-gradient-dairy p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+        {/* Enhanced Header */}
+        <div className="px-6 py-4 border-b border-sage/20 bg-gradient-to-r from-sage/5 to-sage/10">
           <div className="flex items-center space-x-3">
             <button
               onClick={onCancel}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+              className="group relative p-2 text-dark/60 hover:bg-sage/20 rounded-xl transition-all duration-300 transform hover:-translate-y-0.5"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform duration-300" />
             </button>
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">Create Bill</h2>
-              <p className="text-sm text-gray-500">
-                Generate bill for {months[month]} {year}
-              </p>
+            <div className="flex items-center space-x-3">
+              <div className="relative p-2 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-xl shadow-lg">
+                <div className="absolute inset-0 bg-white/20 rounded-xl"></div>
+                <FileText size={20} className="text-white relative" />
+              </div>
+              <div>
+                <h2 className="text-xl font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">Create Bill</h2>
+                <p className="text-sm text-gray-500">
+                  Generate bill for {months[month]} {year}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -89,7 +96,7 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
               <select
                 value={selectedClientId}
                 onChange={(e) => setSelectedClientId(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 transition-all duration-300 bg-white/80"
                 required
               >
                 <option value="">Choose a client...</option>
@@ -236,27 +243,29 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
             </div>
           )}
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
+          {/* Enhanced Action Buttons */}
+          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-sage/20">
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-2"
+              className="group relative px-6 py-3 text-dark bg-sage/20 rounded-xl hover:bg-sage/30 transition-all duration-300 transform hover:-translate-y-0.5 flex items-center space-x-2"
             >
-              <X size={18} />
-              <span>Cancel</span>
+              <X size={18} className="group-hover:rotate-90 transition-transform duration-300" />
+              <span className="font-semibold">Cancel</span>
             </button>
             
             <button
               type="submit"
               disabled={loading || !selectedClient}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative px-6 py-3 bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
             >
-              <Save size={18} />
-              <span>{loading ? 'Creating...' : 'Create Bill'}</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <Save size={18} className="relative group-hover:rotate-12 transition-transform duration-300" />
+              <span className="relative font-bold">{loading ? 'Creating...' : 'Create Bill'}</span>
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, TrendingUp, AlertCircle } from 'lucide-react';
+import { Calendar, Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, TrendingUp, AlertCircle, Crown, Shield, Sparkles, Star, Gem, Trophy, Rocket } from 'lucide-react';
 import { Client, Bill, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { clientService, billService, deliveryService } from '@/lib/firebaseServices';
@@ -206,23 +206,39 @@ export default function BillingManagement() {
 
   return (
     <div className="min-h-screen bg-gradient-dairy p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-6">
-      {/* Header */}
+      {/* Enhanced Header */}
       <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-4 sm:space-y-0">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent">
-              Smart Billing & Payments
-            </h2>
-            <p className="text-sm text-gray-600 mt-1">
-              Automated bill generation and payment tracking for {months[selectedMonth]} {selectedYear}
-            </p>
+          <div className="flex items-center space-x-4">
+            <div className="relative p-3 bg-gradient-to-br from-sage via-sage/90 to-sage/80 rounded-2xl shadow-2xl">
+              <div className="absolute inset-0 bg-white/20 rounded-2xl"></div>
+              <IndianRupee size={28} className="text-white relative" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-dark to-dark/80 rounded-full flex items-center justify-center">
+                <Crown size={10} className="text-cream" />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center space-x-2 mb-1">
+                <h2 className="text-xl sm:text-2xl font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">
+                  Smart Billing & Payments
+                </h2>
+                <Sparkles size={18} className="text-sage animate-pulse" />
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                Automated bill generation and payment tracking for {months[selectedMonth]} {selectedYear}
+              </p>
+            </div>
           </div>
           <button
             onClick={() => setShowBillForm(true)}
-            className="bg-dark text-cream px-4 sm:px-6 py-2 sm:py-3 rounded-xl flex items-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5"
+            className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-4 sm:px-6 py-2 sm:py-3 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 overflow-hidden"
           >
-            <Plus size={20} />
-            <span>Create Bill</span>
+            <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+              <Plus size={20} className="relative" />
+            </div>
+            <span className="relative font-bold">Create Bill</span>
+            <Star size={16} className="relative text-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
       </div>
@@ -231,20 +247,20 @@ export default function BillingManagement() {
         <div className="bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 p-4 sm:p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sage" size={18} />
               <input
                 type="text"
                 placeholder="Search clients..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                className="w-full pl-10 pr-4 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80 placeholder-dark/50"
               />
             </div>
 
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
             >
               {months.map((month, index) => (
                 <option key={month} value={index}>{month}</option>
@@ -254,7 +270,7 @@ export default function BillingManagement() {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
             >
               {years.map(year => (
                 <option key={year} value={year}>{year}</option>
@@ -264,7 +280,7 @@ export default function BillingManagement() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as 'all' | 'paid' | 'unpaid')}
-              className="px-3 py-2 sm:py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+              className="px-3 py-2 sm:py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage/50 focus:border-sage/30 text-sm sm:text-base transition-all duration-300 bg-white/80"
             >
               <option value="all">All Bills</option>
               <option value="paid">Paid Bills</option>
@@ -275,12 +291,16 @@ export default function BillingManagement() {
           <button
             onClick={handleGenerateBills}
             disabled={loading}
-            className="w-full bg-sage text-dark py-3 sm:py-4 rounded-xl flex items-center justify-center space-x-2 hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
+            className="group relative w-full bg-gradient-to-br from-sage via-sage/95 to-sage/85 text-dark py-3 sm:py-4 rounded-2xl flex items-center justify-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 font-bold overflow-hidden"
           >
-            <Zap size={20} />
-            <span>
+            <div className="absolute inset-0 bg-gradient-to-r from-dark/10 via-transparent to-sage/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+              <Zap size={20} className="relative" />
+            </div>
+            <span className="relative">
               {loading ? 'Generating...' : `🚀 Auto-Generate Bills for ${months[selectedMonth]} ${selectedYear}`}
             </span>
+            <Star size={16} className="relative opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           </button>
         </div>
 
@@ -347,10 +367,15 @@ export default function BillingManagement() {
         <div className="space-y-3 sm:space-y-4">
           {filteredBills.length === 0 ? (
             <div className="text-center py-8 sm:py-12">
-              <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FileText className="text-gray-400" size={32} />
+              <div className="relative mb-6">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-sage/20 to-sage/10 rounded-3xl flex items-center justify-center mx-auto">
+                  <FileText className="text-sage" size={32} />
+                </div>
+                <div className="absolute -top-2 -right-8 w-6 h-6 bg-gradient-to-br from-dark to-dark/80 rounded-full flex items-center justify-center">
+                  <Crown size={12} className="text-cream" />
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">No bills found</h3>
+              <h3 className="text-lg font-black text-gray-900 mb-2">No bills found</h3>
               <p className="text-gray-500 mb-6 max-w-md mx-auto">
                 {searchTerm 
                   ? `No bills match your search for "${searchTerm}"`
@@ -360,11 +385,15 @@ export default function BillingManagement() {
               <button
                 onClick={handleGenerateBills}
                 disabled={loading}
-                className="bg-gradient-primary text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all transform hover:-translate-y-0.5 disabled:opacity-50 font-semibold"
+                className="group relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream px-6 py-3 rounded-2xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 disabled:opacity-50 font-bold overflow-hidden"
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-sage/10 via-transparent to-dark/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="flex items-center space-x-2">
-                  <Zap size={18} />
-                  <span>Generate Bills Automatically</span>
+                  <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+                    <Zap size={18} className="relative" />
+                  </div>
+                  <span className="relative">Generate Bills Automatically</span>
+                  <Star size={16} className="relative text-sage opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </button>
             </div>
@@ -436,7 +465,7 @@ export default function BillingManagement() {
                     <div className="flex items-center justify-end space-x-2 sm:ml-6 flex-shrink-0">
                       <button
                         onClick={() => handleViewBill(bill)}
-                        className="p-2 sm:p-3 text-blue-600 hover:bg-blue-100 rounded-xl transition-colors"
+                        className="p-2 sm:p-3 text-dark hover:bg-sage/20 rounded-xl transition-colors"
                         title="View Bill"
                       >
                         <Eye size={18} />
@@ -445,7 +474,7 @@ export default function BillingManagement() {
                       <button
                         onClick={() => handleDownloadBill(bill)}
                         disabled={loading}
-                        className="p-2 sm:p-3 text-green-600 hover:bg-green-100 rounded-xl transition-colors disabled:opacity-50"
+                        className="p-2 sm:p-3 text-sage hover:bg-sage/20 rounded-xl transition-colors disabled:opacity-50"
                         title="Download PDF"
                       >
                         <Download size={18} />
@@ -455,7 +484,7 @@ export default function BillingManagement() {
                         <button
                           onClick={() => handleMarkAsUnpaid(bill.id)}
                           disabled={loading}
-                          className="p-2 sm:p-3 text-orange-600 hover:bg-orange-100 rounded-xl transition-colors disabled:opacity-50"
+                          className="p-2 sm:p-3 text-dark hover:bg-dark/10 rounded-xl transition-colors disabled:opacity-50"
                           title="Mark as Unpaid"
                         >
                           <XCircle size={18} />
@@ -464,7 +493,7 @@ export default function BillingManagement() {
                         <button
                           onClick={() => handleMarkAsPaid(bill.id)}
                           disabled={loading}
-                          className="p-2 sm:p-3 text-green-600 hover:bg-green-100 rounded-xl transition-colors disabled:opacity-50"
+                          className="p-2 sm:p-3 text-sage hover:bg-sage/20 rounded-xl transition-colors disabled:opacity-50"
                           title="Mark as Paid"
                         >
                           <CheckCircle size={18} />
