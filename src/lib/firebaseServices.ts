@@ -271,13 +271,35 @@ export const buffaloService = {
   async add(buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
       const now = new Date();
-      const docRef = await addDoc(collection(db, COLLECTIONS.BUFFALOES), {
-        ...buffaloData,
-        lastVetVisit: buffaloData.lastVetVisit ? convertToTimestamp(buffaloData.lastVetVisit) : null,
-        nextVetVisit: buffaloData.nextVetVisit ? convertToTimestamp(buffaloData.nextVetVisit) : null,
+      
+      // Create document data without undefined values
+      const docData: any = {
+        name: buffaloData.name,
+        age: buffaloData.age,
+        healthStatus: buffaloData.healthStatus,
+        feedingSchedule: buffaloData.feedingSchedule,
         createdAt: convertToTimestamp(now),
         updatedAt: convertToTimestamp(now)
-      });
+      };
+      
+      // Only add optional fields if they have values
+      if (buffaloData.breed) {
+        docData.breed = buffaloData.breed;
+      }
+      if (buffaloData.photo) {
+        docData.photo = buffaloData.photo;
+      }
+      if (buffaloData.notes) {
+        docData.notes = buffaloData.notes;
+      }
+      if (buffaloData.lastVetVisit) {
+        docData.lastVetVisit = convertToTimestamp(buffaloData.lastVetVisit);
+      }
+      if (buffaloData.nextVetVisit) {
+        docData.nextVetVisit = convertToTimestamp(buffaloData.nextVetVisit);
+      }
+      
+      const docRef = await addDoc(collection(db, COLLECTIONS.BUFFALOES), docData);
       return docRef.id;
     } catch (error) {
       console.error('Error adding buffalo:', error);
@@ -408,16 +430,16 @@ export const billService = {
   // Get bills by month and year
   async getByMonth(month: number, year: number): Promise<Bill[]> {
     try {
+      // Use simpler query to avoid index requirement
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.BILLS),
           where('month', '==', month),
-          where('year', '==', year),
-          orderBy('createdAt', 'desc')
+          where('year', '==', year)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const bills = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         paidDate: doc.data().paidDate ? convertTimestamp(doc.data().paidDate) : undefined,
@@ -425,6 +447,9 @@ export const billService = {
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Bill[];
+
+      // Sort by createdAt in JavaScript instead of Firestore
+      return bills.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching bills:', error);
       throw error;
@@ -435,13 +460,27 @@ export const billService = {
   async add(billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
       const now = new Date();
-      const docRef = await addDoc(collection(db, COLLECTIONS.BILLS), {
-        ...billData,
+      
+      // Create document data without undefined values
+      const docData: any = {
+        clientId: billData.clientId,
+        month: billData.month,
+        year: billData.year,
+        totalQuantity: billData.totalQuantity,
+        totalAmount: billData.totalAmount,
+        isPaid: billData.isPaid,
         dueDate: convertToTimestamp(billData.dueDate),
-        paidDate: billData.paidDate ? convertToTimestamp(billData.paidDate) : null,
+        deliveries: billData.deliveries,
         createdAt: convertToTimestamp(now),
         updatedAt: convertToTimestamp(now)
-      });
+      };
+      
+      // Only add paidDate if it has a value
+      if (billData.paidDate) {
+        docData.paidDate = convertToTimestamp(billData.paidDate);
+      }
+      
+      const docRef = await addDoc(collection(db, COLLECTIONS.BILLS), docData);
       return docRef.id;
     } catch (error) {
       console.error('Error adding bill:', error);
@@ -484,7 +523,7 @@ export const productionService = {
           collection(db, COLLECTIONS.PRODUCTIONS),
           where('date', '>=', convertToTimestamp(startDate)),
           where('date', '<=', convertToTimestamp(endDate)),
-          orderBy('date', 'desc')
+          orderBy('date', 'asc')
         )
       );
 

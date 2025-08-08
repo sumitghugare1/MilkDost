@@ -42,39 +42,6 @@ export default function BuffaloManagement() {
     }
   };
 
-  const handleAddBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      setLoading(true);
-      await buffaloService.add(buffaloData);
-      await loadData();
-      setShowBuffaloForm(false);
-      toast.success('Buffalo added successfully');
-    } catch (error) {
-      console.error('Error adding buffalo:', error);
-      toast.error('Failed to add buffalo');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleEditBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      if (!editingBuffalo) return;
-      
-      setLoading(true);
-      await buffaloService.update(editingBuffalo.id, buffaloData);
-      await loadData();
-      setShowBuffaloForm(false);
-      setEditingBuffalo(null);
-      toast.success('Buffalo updated successfully');
-    } catch (error) {
-      console.error('Error updating buffalo:', error);
-      toast.error('Failed to update buffalo');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDeleteBuffalo = async (id: string) => {
     if (!confirm('Are you sure you want to delete this buffalo?')) return;
     
@@ -134,23 +101,14 @@ export default function BuffaloManagement() {
       setLoading(true);
       
       if (editingBuffalo) {
-        const updatedBuffalo: Buffalo = {
-          ...editingBuffalo,
-          ...buffaloData,
-          updatedAt: new Date()
-        };
-        setBuffaloes(prev => prev.map(buffalo => 
-          buffalo.id === editingBuffalo.id ? updatedBuffalo : buffalo
-        ));
+        // Update existing buffalo in Firebase
+        await buffaloService.update(editingBuffalo.id, buffaloData);
+        await loadData(); // Reload data from Firebase
         toast.success('Buffalo record updated successfully');
       } else {
-        const newBuffalo: Buffalo = {
-          id: Date.now().toString(),
-          ...buffaloData,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        setBuffaloes(prev => [...prev, newBuffalo]);
+        // Add new buffalo to Firebase
+        await buffaloService.add(buffaloData);
+        await loadData(); // Reload data from Firebase
         toast.success('Buffalo record added successfully');
       }
       

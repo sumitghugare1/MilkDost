@@ -127,7 +127,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
       ] = await Promise.all([
         clientService.getAll(),
         deliveryService.getByDate(today),
-        billService.getByMonth(today.getMonth() + 1, today.getFullYear()),
+        billService.getByMonth(today.getMonth(), today.getFullYear()),
         buffaloService.getAll(),
         productionService.getByDateRange(today, today)
       ]);

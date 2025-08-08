@@ -51,17 +51,29 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
       return;
     }
 
-    const buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'> = {
+    const buffaloData: any = {
       name: formData.name,
       age: formData.age,
-      breed: formData.breed || undefined,
       healthStatus: formData.healthStatus,
-      lastVetVisit: formData.lastVetVisit ? new Date(formData.lastVetVisit) : undefined,
-      nextVetVisit: formData.nextVetVisit ? new Date(formData.nextVetVisit) : undefined,
-      feedingSchedule: formData.feedingSchedule,
-      notes: formData.notes || undefined,
-      photo: formData.photo || undefined
+      feedingSchedule: formData.feedingSchedule
     };
+
+    // Only add optional fields if they have values
+    if (formData.breed?.trim()) {
+      buffaloData.breed = formData.breed.trim();
+    }
+    if (formData.lastVetVisit) {
+      buffaloData.lastVetVisit = new Date(formData.lastVetVisit);
+    }
+    if (formData.nextVetVisit) {
+      buffaloData.nextVetVisit = new Date(formData.nextVetVisit);
+    }
+    if (formData.notes?.trim()) {
+      buffaloData.notes = formData.notes.trim();
+    }
+    if (formData.photo?.trim()) {
+      buffaloData.photo = formData.photo.trim();
+    }
 
     await onSave(buffaloData);
   };

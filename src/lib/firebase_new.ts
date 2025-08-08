@@ -1,4 +1,3 @@
-
 // Firebase configuration and utilities
 
 import { initializeApp } from 'firebase/app';
