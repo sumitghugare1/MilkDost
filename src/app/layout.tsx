@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { primaryFont } from "@/lib/fonts";
+// import { primaryFont } from "@/lib/fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${primaryFont.variable} font-sans antialiased`}
+        className="font-rubik font-sans antialiased"
       >
         <AuthProvider>
           {children}
