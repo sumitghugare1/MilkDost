@@ -15,6 +15,7 @@ import {
   Legend,
 } from 'chart.js';
 import { clientService, billService, productionService, deliveryService } from '@/lib/firebaseServices';
+import { Client, Bill, MilkProduction, Delivery } from '@/types';
 
 // Register Chart.js components
 ChartJS.register(
@@ -30,10 +31,10 @@ ChartJS.register(
 );
 
 const Analytics = () => {
-  const [bills, setBills] = useState<any[]>([]);
-  const [clients, setClients] = useState<any[]>([]);
-  const [productions, setProductions] = useState<any[]>([]);
-  const [deliveries, setDeliveries] = useState<any[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [productions, setProductions] = useState<MilkProduction[]>([]);
+  const [, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -110,9 +111,9 @@ const Analytics = () => {
 
   // Production data - IMPROVED with fallback
   const recentProductions = productions.length > 0 ? productions.slice(-12) : [];
-  const fallbackProductions = Array.from({ length: 12 }, (_, i) => ({
-    morningYield: Math.floor(Math.random() * 10) + 15,
-    eveningYield: Math.floor(Math.random() * 8) + 12,
+  const fallbackProductions = Array.from({ length: 12 }, () => ({
+    totalProduced: Math.floor(Math.random() * 15) + 20,
+    date: new Date(),
   }));
   
   const productionDataSource = recentProductions.length > 0 ? recentProductions : fallbackProductions;
@@ -121,26 +122,18 @@ const Analytics = () => {
     labels: productionDataSource.map((_, index) => `Day ${index + 1}`),
     datasets: [
       {
-        label: 'Morning (L)',
-        data: productionDataSource.map(item => item.morningYield || 0),
+        label: 'Total Production (L)',
+        data: productionDataSource.map(item => item.totalProduced || 0),
         backgroundColor: 'rgba(59, 130, 246, 0.8)',
         borderColor: 'rgba(59, 130, 246, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Evening (L)',
-        data: productionDataSource.map(item => item.eveningYield || 0),
-        backgroundColor: 'rgba(168, 85, 247, 0.8)',
-        borderColor: 'rgba(168, 85, 247, 1)',
         borderWidth: 1,
       },
     ],
   };
 
   // Calculate production totals and averages
-  const totalMorning = productions.reduce((sum, item) => sum + (item.morningYield || 0), 0);
-  const totalEvening = productions.reduce((sum, item) => sum + (item.eveningYield || 0), 0);
-  const avgDaily = productions.length > 0 ? (totalMorning + totalEvening) / productions.length : 18.5;
+  const totalProduced = productions.reduce((sum, item) => sum + (item.totalProduced || 0), 0);
+  const avgDaily = productions.length > 0 ? totalProduced / productions.length : 18.5;
 
   // Client distribution data
   const activeClients = clients.filter(client => client.isActive !== false).length;
@@ -367,7 +360,7 @@ const Analytics = () => {
                   Peak Production Day
                 </span>
                 <span className="text-green-800 font-bold">
-                  {Math.max(...productionDataSource.map(p => (p.morningYield || 0) + (p.eveningYield || 0))).toFixed(1)}L
+                  {Math.max(...productionDataSource.map(p => p.totalProduced || 0)).toFixed(1)}L
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
