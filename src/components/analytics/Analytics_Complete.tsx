@@ -14,7 +14,10 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { clientService, billService, productionService, deliveryService } from '@/lib/firebaseServices';
+import { getAllBills } from '@/lib/firebase/bills';
+import { getAllClients } from '@/lib/firebase/clients';
+import { getAllProductions } from '@/lib/firebase/productions';
+import { getAllDeliveries } from '@/lib/firebase/deliveries';
 
 // Register Chart.js components
 ChartJS.register(
@@ -39,15 +42,11 @@ const Analytics = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const endDate = new Date();
-        const startDate = new Date();
-        startDate.setMonth(startDate.getMonth() - 12); // Get last 12 months of data
-        
         const [billsData, clientsData, productionsData, deliveriesData] = await Promise.all([
-          billService.getAll(),
-          clientService.getAll(),
-          productionService.getByDateRange(startDate, endDate),
-          deliveryService.getAll(),
+          getAllBills(),
+          getAllClients(),
+          getAllProductions(),
+          getAllDeliveries(),
         ]);
         setBills(billsData || []);
         setClients(clientsData || []);
