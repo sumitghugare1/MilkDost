@@ -905,3 +905,124 @@ button {
     color: black !important;
   }
 }
+
+/* Enhanced Billing UI Animations */
+@keyframes floating-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes stats-counter {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bill-card-entrance {
+  0% {
+    transform: translateY(20px) scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes revenue-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(181, 203, 183, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(181, 203, 183, 0);
+  }
+}
+
+@keyframes success-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Billing specific utility classes */
+.billing-card {
+  animation: bill-card-entrance 0.6s ease-out forwards;
+}
+
+.billing-card:nth-child(1) { animation-delay: 0.1s; }
+.billing-card:nth-child(2) { animation-delay: 0.2s; }
+.billing-card:nth-child(3) { animation-delay: 0.3s; }
+.billing-card:nth-child(4) { animation-delay: 0.4s; }
+
+.stats-card {
+  animation: stats-counter 0.8s ease-out forwards;
+}
+
+.floating-element {
+  animation: floating-glow 3s ease-in-out infinite;
+}
+
+.revenue-indicator {
+  animation: revenue-pulse 2s infinite;
+}
+
+.success-indicator {
+  animation: success-bounce 1s ease-in-out;
+}
+
+/* Enhanced glassmorphism for billing */
+.billing-glass {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+/* Improved button animations */
+.billing-button {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.billing-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.billing-button:hover::before {
+  left: 100%;
+}
+
+.billing-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
