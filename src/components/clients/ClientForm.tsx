@@ -86,11 +86,13 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-dairy">
-      <div className="max-w-4xl mx-auto p-4">
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-[#2e2e2e]/10">
+    <div className="fixed inset-0 bg-gradient-dairy overflow-hidden">
+      <div className="h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 scrollbar-thin scrollbar-thumb-sage-300 scrollbar-track-transparent">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 mb-6">
+              {/* Header */}
+              <div className="px-6 py-4 border-b border-[#2e2e2e]/10 sticky top-0 bg-white/95 backdrop-blur-lg rounded-t-2xl z-10">
             <div className="flex items-center space-x-4">
               <button
                 onClick={onCancel}
@@ -341,6 +343,8 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

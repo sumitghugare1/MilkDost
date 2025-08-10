@@ -12,7 +12,7 @@ import DeliveryTracking from '@/components/deliveries/DeliveryTracking';
 import BillingManagement from '@/components/billing/BillingManagement';
 import BuffaloManagement from '@/components/buffalo/BuffaloManagement';
 import InventoryManagement from '@/components/inventory/InventoryManagement';
-import Analytics from '@/components/analytics/Analytics';
+import AnalyticsHub from '@/components/analytics/AnalyticsHub';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -114,7 +114,7 @@ export default function Home() {
       case 'inventory':
         return <InventoryManagement />;
       case 'analytics':
-        return <Analytics />;
+        return <AnalyticsHub />;
       default:
         return <Dashboard onNavigate={setActiveTab} />;
     }

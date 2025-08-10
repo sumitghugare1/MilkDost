@@ -14,8 +14,8 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { clientService, billService, productionService, deliveryService } from '@/lib/firebaseServices';
-import { Client, Bill, MilkProduction, Delivery } from '@/types';
+import { clientService, billService, productionService, deliveryService, buffaloService } from '@/lib/firebaseServices';
+import { Client, Bill, MilkProduction, Delivery, Buffalo } from '@/types';
 
 // Register Chart.js components
 ChartJS.register(
@@ -34,6 +34,7 @@ const Analytics = () => {
   const [bills, setBills] = useState<Bill[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [productions, setProductions] = useState<MilkProduction[]>([]);
+  const [buffaloes, setBuffaloes] = useState<Buffalo[]>([]);
   const [, setDeliveries] = useState<Delivery[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,16 +45,18 @@ const Analytics = () => {
         const startDate = new Date();
         startDate.setMonth(startDate.getMonth() - 12); // Get last 12 months of data
         
-        const [billsData, clientsData, productionsData, deliveriesData] = await Promise.all([
+        const [billsData, clientsData, productionsData, deliveriesData, buffaloesData] = await Promise.all([
           billService.getAll(),
           clientService.getAll(),
           productionService.getByDateRange(startDate, endDate),
           deliveryService.getAll(),
+          buffaloService.getAll(),
         ]);
         setBills(billsData || []);
         setClients(clientsData || []);
         setProductions(productionsData || []);
         setDeliveries(deliveriesData || []);
+        setBuffaloes(buffaloesData || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -72,7 +75,7 @@ const Analytics = () => {
     );
   }
 
-  // Process revenue data by month - CORRECTED
+  // Process revenue data by month - DATABASE ONLY
   const monthlyRevenue: { [key: string]: number } = {};
   bills.forEach(bill => {
     if (bill.month && bill.totalAmount) {
@@ -84,18 +87,14 @@ const Analytics = () => {
     }
   });
 
-  // Fallback data if no revenue data exists
-  const fallbackMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-  const fallbackRevenue = [15000, 18000, 16500, 20000, 22000, 19000];
-  
   const hasRevenueData = Object.keys(monthlyRevenue).length > 0;
   
   const revenueData = {
-    labels: hasRevenueData ? Object.keys(monthlyRevenue) : fallbackMonths,
+    labels: hasRevenueData ? Object.keys(monthlyRevenue) : ['No Data'],
     datasets: [
       {
         label: 'Revenue (₹)',
-        data: hasRevenueData ? Object.values(monthlyRevenue) : fallbackRevenue,
+        data: hasRevenueData ? Object.values(monthlyRevenue) : [0],
         borderColor: 'rgba(34, 197, 94, 1)',
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
         borderWidth: 2,
@@ -109,21 +108,19 @@ const Analytics = () => {
     ],
   };
 
-  // Production data - IMPROVED with fallback
-  const recentProductions = productions.length > 0 ? productions.slice(-12) : [];
-  const fallbackProductions = Array.from({ length: 12 }, () => ({
-    totalProduced: Math.floor(Math.random() * 15) + 20,
-    date: new Date(),
-  }));
-  
-  const productionDataSource = recentProductions.length > 0 ? recentProductions : fallbackProductions;
+  // Production data - DATABASE ONLY
+  const recentProductions = productions.slice(-12); // Last 12 records
   
   const productionData = {
-    labels: productionDataSource.map((_, index) => `Day ${index + 1}`),
+    labels: recentProductions.length > 0 
+      ? recentProductions.map((_, index) => `Day ${index + 1}`)
+      : ['No Data'],
     datasets: [
       {
         label: 'Total Production (L)',
-        data: productionDataSource.map(item => item.totalProduced || 0),
+        data: recentProductions.length > 0 
+          ? recentProductions.map(item => item.totalProduced || 0)
+          : [0],
         backgroundColor: 'rgba(59, 130, 246, 0.8)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 1,
@@ -131,18 +128,23 @@ const Analytics = () => {
     ],
   };
 
-  // Calculate production totals and averages
+  // Calculate production totals and averages - DATABASE ONLY
   const totalProduced = productions.reduce((sum, item) => sum + (item.totalProduced || 0), 0);
-  const avgDaily = productions.length > 0 ? totalProduced / productions.length : 18.5;
+  const avgDaily = productions.length > 0 ? totalProduced / productions.length : 0;
 
   // Client distribution data
   const activeClients = clients.filter(client => client.isActive !== false).length;
   const totalClients = clients.length;
+  
+  // Buffalo and milk capacity analytics
+  const totalMilkCapacity = buffaloes.reduce((sum, buffalo) => sum + (buffalo.milkCapacity || 0), 0);
+  const healthyBuffaloes = buffaloes.filter(b => b.healthStatus === 'healthy').length;
+  const capacityUtilization = totalMilkCapacity > 0 ? ((avgDaily / totalMilkCapacity) * 100) : 0;
 
-  // Stats cards data
+  // Stats cards data - DATABASE ONLY
   const totalRevenueValue = hasRevenueData 
     ? Object.values(monthlyRevenue).reduce((sum: number, val: number) => sum + val, 0)
-    : fallbackRevenue.reduce((sum, val) => sum + val, 0);
+    : 0;
 
   const stats = [
     {
@@ -152,22 +154,34 @@ const Analytics = () => {
       color: 'bg-green-500',
     },
     {
-      title: 'Active Clients',
-      value: `${activeClients}/${totalClients || 'N/A'}`,
-      icon: '👥',
+      title: 'Daily Capacity',
+      value: `${totalMilkCapacity.toFixed(1)}L`,
+      icon: '🥛',
       color: 'bg-blue-500',
+    },
+    {
+      title: 'Capacity Usage',
+      value: `${capacityUtilization.toFixed(1)}%`,
+      icon: '📊',
+      color: 'bg-purple-500',
+    },
+    {
+      title: 'Healthy Buffalo',
+      value: `${healthyBuffaloes}/${buffaloes.length}`,
+      icon: '🐄',
+      color: 'bg-orange-500',
+    },
+    {
+      title: 'Active Clients',
+      value: `${activeClients}`,
+      icon: '👥',
+      color: 'bg-indigo-500',
     },
     {
       title: 'Avg Daily Production',
       value: `${avgDaily.toFixed(1)}L`,
-      icon: '🥛',
-      color: 'bg-purple-500',
-    },
-    {
-      title: 'Total Productions',
-      value: productions.length.toString(),
-      icon: '📊',
-      color: 'bg-orange-500',
+      icon: '🧪',
+      color: 'bg-emerald-500',
     },
   ];
 
@@ -225,7 +239,7 @@ const Analytics = () => {
     },
   };
 
-  // Milk distribution data - ENHANCED with fallback
+  // Milk distribution data - DATABASE ONLY
   const totalSold = productions.reduce((sum, item) => sum + (item.totalSold || 0), 0);
   const totalHomeCons = productions.reduce((sum, item) => sum + (item.totalHomeCons || 0), 0);
   const totalWasted = productions.reduce((sum, item) => sum + (item.totalWasted || 0), 0);
@@ -238,7 +252,7 @@ const Analytics = () => {
       {
         data: hasDistributionData 
           ? [totalSold, totalHomeCons, totalWasted]
-          : [320, 45, 15], // Fallback data
+          : [0, 0, 0], // Show zeros if no data
         backgroundColor: [
           'rgba(34, 197, 94, 0.8)',
           'rgba(168, 85, 247, 0.8)',
@@ -294,24 +308,22 @@ const Analytics = () => {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow"
+              className="bg-white rounded-xl p-4 shadow-lg hover:shadow-xl transition-shadow"
             >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    {stat.title}
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900">
-                    {stat.value}
-                  </p>
-                </div>
-                <div className={`p-3 rounded-lg ${stat.color} text-white text-xl`}>
+              <div className="text-center">
+                <div className={`p-3 rounded-lg ${stat.color} text-white text-2xl mb-3 mx-auto w-fit`}>
                   {stat.icon}
                 </div>
+                <p className="text-xs font-medium text-gray-600 mb-1">
+                  {stat.title}
+                </p>
+                <p className="text-lg font-bold text-gray-900">
+                  {stat.value}
+                </p>
               </div>
             </div>
           ))}
@@ -325,7 +337,16 @@ const Analytics = () => {
               📈 Revenue Trend
             </h3>
             <div className="h-64">
-              <Line data={revenueData} options={chartOptions} />
+              {hasRevenueData ? (
+                <Line data={revenueData} options={chartOptions} />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <p className="text-gray-500 text-lg mb-2">No Revenue Data</p>
+                    <p className="text-gray-400 text-sm">Add bills to see revenue trends</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -335,7 +356,16 @@ const Analytics = () => {
               🥛 Daily Production
             </h3>
             <div className="h-64">
-              <Bar data={productionData} options={chartOptions} />
+              {recentProductions.length > 0 ? (
+                <Bar data={productionData} options={chartOptions} />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <p className="text-gray-500 text-lg mb-2">No Production Data</p>
+                    <p className="text-gray-400 text-sm">Add production records to see charts</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -345,7 +375,16 @@ const Analytics = () => {
               📊 Milk Distribution
             </h3>
             <div className="h-64">
-              <Doughnut data={distributionData} options={doughnutOptions} />
+              {hasDistributionData ? (
+                <Doughnut data={distributionData} options={doughnutOptions} />
+              ) : (
+                <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <p className="text-gray-500 text-lg mb-2">No Distribution Data</p>
+                    <p className="text-gray-400 text-sm">Add production records with distribution details</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -360,7 +399,9 @@ const Analytics = () => {
                   Peak Production Day
                 </span>
                 <span className="text-green-800 font-bold">
-                  {Math.max(...productionDataSource.map(p => p.totalProduced || 0)).toFixed(1)}L
+                  {recentProductions.length > 0 
+                    ? Math.max(...recentProductions.map(p => p.totalProduced || 0)).toFixed(1)
+                    : '0.0'}L
                 </span>
               </div>
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
@@ -378,7 +419,7 @@ const Analytics = () => {
                 <span className="text-purple-800 font-bold">
                   ₹{hasRevenueData 
                     ? (totalRevenueValue / Math.max(Object.keys(monthlyRevenue).length, 1)).toFixed(0)
-                    : '18,333'
+                    : '0'
                   }
                 </span>
               </div>

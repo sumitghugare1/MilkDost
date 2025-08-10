@@ -19,20 +19,25 @@ A comprehensive mobile-first web application designed for small-scale milk distr
 
 3. **Buffalo Care Tracker**
    - Buffalo health monitoring
+   - **Milk capacity tracking** (NEW)
    - Feeding schedule management
    - Vaccination reminders
    - Veterinary appointment tracking
+   - **Production analytics** (NEW)
 
 4. **Milk Inventory Dashboard**
    - Daily milk production tracking
    - Distribution vs waste monitoring
    - Stock level alerts
    - Production analytics
+   - **Capacity utilization metrics** (NEW)
 
 5. **Analytics & Reports**
    - Revenue tracking
    - Client profitability analysis
    - Production trends
+   - **Milk production forecasting** (NEW)
+   - **Buffalo performance analytics** (NEW)
    - Business insights
 
 ## 🛠️ Tech Stack

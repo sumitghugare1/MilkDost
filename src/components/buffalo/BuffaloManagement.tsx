@@ -82,6 +82,7 @@ export default function BuffaloManagement() {
   const healthyBuffaloes = buffaloes.filter(b => b.healthStatus === 'healthy').length;
   const sickBuffaloes = buffaloes.filter(b => b.healthStatus === 'sick').length;
   const pregnantBuffaloes = buffaloes.filter(b => b.healthStatus === 'pregnant').length;
+  const totalMilkCapacity = buffaloes.reduce((sum, buffalo) => sum + (buffalo.milkCapacity || 0), 0);
 
   const completedFeedings = feedings.length;
   const totalExpectedFeedings = buffaloes.reduce((sum, buffalo) => {
@@ -198,7 +199,7 @@ export default function BuffaloManagement() {
         </div>
 
         {/* Stats Grid - Dashboard Style */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {/* Total Buffalo Card */}
           <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
             <div className="relative space-y-3">
@@ -217,6 +218,29 @@ export default function BuffaloManagement() {
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
                   In care facility
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Milk Capacity Card */}
+          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="relative space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
+                  <Activity size={24} className="text-white" />
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Daily Capacity</p>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-2xl font-black text-dark leading-none mb-1">
+                  {totalMilkCapacity.toFixed(1)}L
+                </p>
+                <p className="text-xs text-dark/60 font-medium">
+                  Milk production
                 </p>
               </div>
             </div>
@@ -473,12 +497,19 @@ export default function BuffaloManagement() {
                             </div>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm mb-4">
                             <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-sage/10 to-sage/5 rounded-xl border border-sage/20">
                               <Calendar size={16} className="text-sage" />
                               <div>
                                 <span className="text-dark/60 font-semibold">Age</span>
                                 <p className="font-black text-dark">{buffalo.age} years</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-blue-50 to-blue-100/50 rounded-xl border border-blue-200/50">
+                              <Activity size={16} className="text-blue-600" />
+                              <div>
+                                <span className="text-dark/60 font-semibold">Milk Capacity</span>
+                                <p className="font-black text-dark">{buffalo.milkCapacity || 0}L/day</p>
                               </div>
                             </div>
                             <div className="flex items-center space-x-3 p-3 bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl border border-amber-200/50">

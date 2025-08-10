@@ -32,6 +32,7 @@ export interface Buffalo {
   breed?: string;
   photo?: string;
   healthStatus: 'healthy' | 'sick' | 'pregnant' | 'dry';
+  milkCapacity: number; // Daily milk production capacity in liters
   lastVetVisit?: Date;
   nextVetVisit?: Date;
   feedingSchedule: {

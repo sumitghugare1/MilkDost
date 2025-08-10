@@ -239,6 +239,16 @@ export const deliveryService = {
       })) as Delivery[];
     } catch (error) {
       console.error('Error fetching deliveries by date range:', error);
+      return []; // Return empty array on error instead of throwing
+    }
+  },
+
+  // Delete delivery
+  async delete(id: string): Promise<void> {
+    try {
+      await deleteDoc(doc(db, COLLECTIONS.DELIVERIES, id));
+    } catch (error) {
+      console.error('Error deleting delivery:', error);
       throw error;
     }
   }
@@ -278,6 +288,7 @@ export const buffaloService = {
         age: buffaloData.age,
         healthStatus: buffaloData.healthStatus,
         feedingSchedule: buffaloData.feedingSchedule,
+        milkCapacity: buffaloData.milkCapacity || 0,
         createdAt: convertToTimestamp(now),
         updatedAt: convertToTimestamp(now)
       };

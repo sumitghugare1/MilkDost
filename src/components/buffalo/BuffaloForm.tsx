@@ -16,6 +16,7 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
     name: buffalo?.name || '',
     age: buffalo?.age || 1,
     breed: buffalo?.breed || '',
+    milkCapacity: buffalo?.milkCapacity || 5, // Default 5 liters per day
     healthStatus: buffalo?.healthStatus || 'healthy' as Buffalo['healthStatus'],
     lastVetVisit: buffalo?.lastVetVisit ? buffalo.lastVetVisit.toISOString().split('T')[0] : '',
     nextVetVisit: buffalo?.nextVetVisit ? buffalo.nextVetVisit.toISOString().split('T')[0] : '',
@@ -40,6 +41,10 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
       newErrors.age = 'Age must be between 1 and 25 years';
     }
 
+    if (formData.milkCapacity < 0 || formData.milkCapacity > 50) {
+      newErrors.milkCapacity = 'Milk capacity must be between 0 and 50 liters per day';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -55,7 +60,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
       name: formData.name,
       age: formData.age,
       healthStatus: formData.healthStatus,
-      feedingSchedule: formData.feedingSchedule
+      feedingSchedule: formData.feedingSchedule,
+      milkCapacity: formData.milkCapacity
     };
 
     // Only add optional fields if they have values
@@ -115,11 +121,13 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sage-50 to-cream-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20">
-          {/* Header */}
-          <div className="px-8 py-6 border-b border-gray-200/50">
+    <div className="fixed inset-0 bg-gradient-to-br from-sage-50 to-cream-50 overflow-hidden">
+      <div className="h-full flex flex-col">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-6 scrollbar-thin scrollbar-thumb-sage-300 scrollbar-track-transparent">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 mb-6">
+              {/* Header */}
+              <div className="px-8 py-6 border-b border-gray-200/50 sticky top-0 bg-white/95 backdrop-blur-lg rounded-t-3xl z-10">
             <div className="flex items-center space-x-4">
               <button
                 onClick={onCancel}
@@ -167,7 +175,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
                     className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 
-                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 ${
+                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200
+                               form-input min-h-[44px] text-base ${
                       errors.name ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="Enter buffalo name"
@@ -188,7 +197,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     value={formData.age}
                     onChange={(e) => handleInputChange('age', parseInt(e.target.value) || 1)}
                     className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 
-                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200 ${
+                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200
+                               form-input min-h-[44px] text-base ${
                       errors.age ? 'border-red-300' : 'border-gray-300'
                     }`}
                     placeholder="5"
@@ -200,13 +210,38 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Daily Milk Capacity (Liters) *
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="50"
+                    step="0.5"
+                    value={formData.milkCapacity}
+                    onChange={(e) => handleInputChange('milkCapacity', parseFloat(e.target.value) || 0)}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 
+                               focus:border-transparent bg-white/80 backdrop-blur-sm transition-all duration-200
+                               form-input min-h-[44px] text-base ${
+                      errors.milkCapacity ? 'border-red-300' : 'border-gray-300'
+                    }`}
+                    placeholder="5.0"
+                  />
+                  {errors.milkCapacity && (
+                    <p className="mt-2 text-sm text-red-600">{errors.milkCapacity}</p>
+                  )}
+                  <p className="mt-1 text-xs text-gray-500">Average daily milk production capacity</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Breed
                   </label>
                   <select
                     value={formData.breed}
                     onChange={(e) => handleInputChange('breed', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                               form-input min-h-[44px] text-base"
                   >
                     <option value="">Select breed...</option>
                     {commonBreeds.map(breed => (
@@ -223,7 +258,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     value={formData.healthStatus}
                     onChange={(e) => handleInputChange('healthStatus', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                               form-input min-h-[44px] text-base"
                   >
                     {healthStatusOptions.map(option => (
                       <option key={option.value} value={option.value}>
@@ -256,7 +292,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     value={formData.lastVetVisit}
                     onChange={(e) => handleInputChange('lastVetVisit', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                               form-input min-h-[44px] text-base"
                   />
                 </div>
 
@@ -269,7 +306,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     value={formData.nextVetVisit}
                     onChange={(e) => handleInputChange('nextVetVisit', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                               form-input min-h-[44px] text-base"
                   />
                 </div>
               </div>
@@ -351,7 +389,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                     onChange={(e) => handleInputChange('photo', e.target.value)}
                     placeholder="Enter photo URL or upload later"
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                               focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                               form-input min-h-[44px] text-base"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     You can paste an image URL here
@@ -377,7 +416,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                 placeholder="Add any additional notes about this buffalo..."
                 rows={4}
                 className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 
-                           focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                           focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm
+                           form-input text-base"
               />
             </div>
 
@@ -387,7 +427,8 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                 type="button"
                 onClick={onCancel}
                 className="px-6 py-3 text-dark bg-sage/20 rounded-xl hover:bg-sage/30 transition-all 
-                           duration-200 flex items-center space-x-2 hover:scale-105 transform shadow-lg hover:shadow-xl"
+                           duration-200 flex items-center space-x-2 hover:scale-105 transform shadow-lg hover:shadow-xl
+                           form-button min-h-[44px]"
               >
                 <X size={20} />
                 <span>Cancel</span>
@@ -398,13 +439,16 @@ export default function BuffaloForm({ buffalo, onSave, onCancel, loading }: Buff
                 disabled={loading}
                 className="px-6 py-4 bg-gradient-to-r from-dark to-dark/90 text-cream rounded-xl 
                            hover:scale-105 transform transition-all duration-200 shadow-lg hover:shadow-xl 
-                           flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                           flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed
+                           form-button min-h-[44px]"
               >
                 <Save size={20} />
                 <span>{loading ? 'Saving...' : (buffalo ? 'Update Buffalo' : 'Add Buffalo')}</span>
               </button>
             </div>
           </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>

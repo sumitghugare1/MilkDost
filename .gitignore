@@ -91,6 +91,56 @@ user-data/
 *.local.ts
 *.local.js
 
+# Backup and temporary files
+*.backup.*
+*_backup.*
+*_Fixed.*
+*_Complete.*
+*_clean.*
+*_new.*
+*_old.*
+*_temp.*
+*New.*
+*Old.*
+*Backup.*
+*Test.*
+*_test.*
+
+# Specific unused files
+src/components/auth/AuthForm.backup.tsx
+src/components/dashboard/Dashboard_clean.tsx
+src/components/dashboard/Dashboard_backup.tsx
+src/components/dashboard/DashboardNew.tsx
+src/components/buffalo/BuffaloManagement_Dashboard.tsx
+src/components/analytics/Analytics_Fixed.tsx
+src/components/analytics/Analytics_Complete.tsx
+
+# Development artifacts
+*.orig
+*.rej
+*.patch
+.eslintcache
+.stylelintcache
+
+# Font test pages and temporary routes
+src/app/font-test/
+src/app/test/
+src/app/temp/
+
+# Documentation drafts
+docs/drafts/
+*.draft.*
+*.wip.*
+
+# Setup scripts and temporary documentation
+setup-fonts.*
+FIREBASE_INTEGRATION_EXAMPLE.md
+FIREBASE_SETUP.md
+UI_ENHANCEMENT_SUMMARY.md
+
+# Temporary components and showcases
+src/components/common/TypographyShowcase.tsx
+
 # Secrets and keys
 secrets/
 *.key
