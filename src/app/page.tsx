@@ -6,7 +6,7 @@ import AuthForm from '@/components/auth/AuthForm';
 import Layout from '@/components/layout/Layout';
 import Header from '@/components/layout/Header';
 import MobileTabNavigation from '@/components/navigation/MobileTabNavigation';
-import Dashboard from '@/components/dashboard/DashboardNew';
+import Dashboard from '@/components/dashboard/Dashboard';
 import ClientManagement from '@/components/clients/ClientManagement';
 import DeliveryTracking from '@/components/deliveries/DeliveryTracking';
 import BillingManagement from '@/components/billing/BillingManagement';
