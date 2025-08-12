@@ -109,6 +109,7 @@ export class SmartBillingService {
       const dueDate = addDays(endDate, 10);
 
       const billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'> = {
+        userId: client.userId,
         clientId: client.id,
         month: month,
         year: year,

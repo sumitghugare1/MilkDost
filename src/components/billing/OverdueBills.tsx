@@ -66,11 +66,11 @@ export default function OverdueBills({ onClose }: OverdueBillsProps) {
 
   const handleSendReminder = (client: Client, bill: Bill) => {
     if (client.phone) {
-      const message = `Dear ${client.name}, your milk delivery bill of ${formatCurrency(bill.totalAmount)} is overdue. Please make payment at your earliest convenience. Thank you - DairyMate`;
+      const message = `Dear ${client.name}, your milk delivery bill of ${formatCurrency(bill.totalAmount)} is overdue. Please make payment at your earliest convenience. Thank you - Ksheera`;
       const whatsappUrl = `https://wa.me/${client.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
       window.open(whatsappUrl, '_blank');
     } else if (client.email) {
-      const subject = `Overdue Payment Reminder - DairyMate`;
+      const subject = `Overdue Payment Reminder - Ksheera`;
       const body = `Dear ${client.name},
 
 This is a friendly reminder that your milk delivery bill is overdue.
@@ -85,7 +85,7 @@ Please make payment at your earliest convenience.
 Thank you for your business!
 
 Best regards,
-DairyMate Team`;
+Ksheera Team`;
 
       const mailtoLink = `mailto:${client.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
       window.open(mailtoLink);

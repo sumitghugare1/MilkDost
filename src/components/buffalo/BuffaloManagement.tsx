@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Shield, Users, Zap, Activity, FileText } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, Heart, AlertCircle, CheckCircle, Calendar, Shield, Users, Zap, Activity, FileText, TrendingUp, Clock, Award, Target } from 'lucide-react';
 import { Buffalo, BuffaloFeeding } from '@/types';
 import { buffaloService, feedingService } from '@/lib/firebaseServices';
 import BuffaloForm from './BuffaloForm';
@@ -99,7 +99,7 @@ export default function BuffaloManagement() {
     setShowBuffaloForm(true);
   };
 
-  const handleSaveBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleSaveBuffalo = async (buffaloData: Omit<Buffalo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     try {
       setLoading(true);
       
@@ -154,66 +154,71 @@ export default function BuffaloManagement() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-dairy">
-      {/* Main Content with dashboard structure */}
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-cream/30 via-white to-sage/20">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
 
-        {/* Header Section */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+        {/* Enhanced Header Section */}
+        <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-sage/20">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              {/* Enhanced Icon Container */}
-              <div className="p-3 bg-gradient-to-br from-dark to-dark/80 rounded-xl shadow-lg">
-                <Shield size={28} className="text-cream" />
+              <div className="p-4 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                <Shield size={28} className="text-dark" />
               </div>
-              
               <div>
-                <h1 className="text-2xl lg:text-3xl font-black text-dark">
-                  Buffalo Care Center
-                </h1>
-                <p className="text-dark/60 text-sm lg:text-base font-medium">
-                  Manage buffalo health, feeding, and care schedules
+                <h1 className="text-3xl font-black text-dark">Buffalo Care Center</h1>
+                <p className="text-dark/60 font-medium">
+                  Comprehensive buffalo health, feeding, and care management
                 </p>
               </div>
             </div>
             
-            {/* Enhanced Action Buttons */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => setShowFeedingTracker(true)}
-                className="billing-button group relative bg-gradient-to-r from-sage to-dark text-white px-4 py-3 rounded-xl flex items-center space-x-2 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="group relative bg-gradient-to-br from-dark to-dark/90 text-white px-6 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
               >
-                <Calendar size={18} />
-                <span className="font-bold text-sm">Feeding</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+                  <Calendar size={20} className="relative" />
+                </div>
+                <span className="relative font-bold whitespace-nowrap">Feeding Tracker</span>
               </button>
               
               <button
                 onClick={handleAddBuffaloClick}
-                className="billing-button group relative bg-gradient-to-r from-dark to-sage text-cream px-6 py-3 rounded-xl flex items-center space-x-3 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="group relative bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
               >
-                <Plus size={20} />
-                <span className="font-bold text-sm lg:text-base">Add Buffalo</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+                  <Plus size={20} className="relative" />
+                </div>
+                <span className="relative font-bold whitespace-nowrap">Add Buffalo</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Stats Grid - Dashboard Style */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {/* Enhanced Stats Grid - 4 Column Layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Buffalo Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-sage/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-dark to-dark/80 shadow-lg">
-                  <Shield size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <Shield size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Total Buffalo</p>
+                  <div className="flex items-center space-x-1">
+                    <TrendingUp size={16} className="text-green-500" />
+                    <span className="text-xs text-green-500 font-bold">Active</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Total Buffalo</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {buffaloes.length}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
@@ -223,66 +228,81 @@ export default function BuffaloManagement() {
             </div>
           </div>
 
-          {/* Total Milk Capacity Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          {/* Daily Milk Capacity Card */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg">
-                  <Activity size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <Activity size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Daily Capacity</p>
+                  <div className="flex items-center space-x-1">
+                    <Target size={16} className="text-blue-500" />
+                    <span className="text-xs text-blue-500 font-bold">Daily</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Milk Capacity</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {totalMilkCapacity.toFixed(1)}L
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
-                  Milk production
+                  Production potential
                 </p>
               </div>
             </div>
           </div>
 
           {/* Healthy Buffalo Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-                  <CheckCircle size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <CheckCircle size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Healthy</p>
+                  <div className="flex items-center space-x-1">
+                    <Award size={16} className="text-green-500" />
+                    <span className="text-xs text-green-500 font-bold">Healthy</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Healthy Buffalo</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {healthyBuffaloes}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
-                  Good condition
+                  Excellent condition
                 </p>
               </div>
             </div>
           </div>
 
           {/* Need Care Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-red-500 to-red-600 shadow-lg">
-                  <AlertCircle size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <AlertCircle size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Need Care</p>
+                  <div className="flex items-center space-x-1">
+                    <Clock size={16} className="text-orange-500" />
+                    <span className="text-xs text-orange-500 font-bold">Alert</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Need Care</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {sickBuffaloes}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
@@ -291,60 +311,141 @@ export default function BuffaloManagement() {
               </div>
             </div>
           </div>
-
-          {/* Pregnant Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg">
-                  <Heart size={24} className="text-white" />
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Pregnant</p>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
-                  {pregnantBuffaloes}
-                </p>
-                <p className="text-xs text-dark/60 font-medium">
-                  Special care
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Two-column layout like dashboard */}
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Left Column - Buffalo Overview */}
+          {/* Left Column - Buffalo List */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Search Controls */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
+            {/* Enhanced Search & Controls */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-gradient-to-br from-sage to-sage/80 rounded-xl">
-                    <Search size={24} className="text-white" />
+                  <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                    <Search size={24} className="text-dark" />
                   </div>
                   <div>
                     <h2 className="text-xl font-black text-dark">Search & Filter</h2>
-                    <p className="text-sm text-dark/60 font-medium">Find buffalo records quickly</p>
+                    <p className="text-sm text-dark/60 font-medium">Find buffalo records efficiently</p>
                   </div>
                 </div>
               </div>
               
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sage" size={18} />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-dark/40" size={18} />
                 <input
                   type="text"
-                  placeholder="Search buffaloes by name or breed..."
+                  placeholder="Search buffalo by name, tag, or health status..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-300 bg-white/80 placeholder-dark/50"
+                  className="w-full pl-10 pr-4 py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 bg-white shadow-md hover:shadow-lg"
                 />
+              </div>
+            </div>
+
+            {/* Enhanced Buffalo List */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-3">
+                  <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                    <Shield size={24} className="text-dark" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-black text-dark">Buffalo Herd</h2>
+                    <p className="text-sm text-dark/60 font-medium">
+                      Showing {filteredBuffaloes.length} buffalo in care
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center space-x-2 bg-sage/10 px-4 py-2 rounded-xl border border-sage/20">
+                  <Users size={16} className="text-sage" />
+                  <span className="text-sm font-bold text-dark">
+                    {filteredBuffaloes.length} buffalo
+                  </span>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {filteredBuffaloes.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="p-4 bg-gradient-to-br from-cream to-cream/90 rounded-3xl inline-block mb-4">
+                      <Shield size={48} className="text-dark/40" />
+                    </div>
+                    <h3 className="text-lg font-bold text-dark mb-2">No Buffalo Found</h3>
+                    <p className="text-dark/60 mb-6">
+                      {searchTerm 
+                        ? `No buffalo found matching "${searchTerm}"` 
+                        : 'No buffalo registered in the system yet'}
+                    </p>
+                    <button
+                      onClick={handleAddBuffaloClick}
+                      className="bg-gradient-to-br from-sage to-sage/90 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
+                    >
+                      Add First Buffalo
+                    </button>
+                  </div>
+                ) : (
+                  filteredBuffaloes.map(buffalo => (
+                    <div key={buffalo.id} className="group relative bg-white/90 border border-sage/20 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className={`p-3 rounded-xl ${
+                            buffalo.healthStatus === 'healthy' ? 'bg-green-100' : 
+                            buffalo.healthStatus === 'sick' ? 'bg-red-100' : 'bg-orange-100'
+                          }`}>
+                            {buffalo.healthStatus === 'healthy' ? (
+                              <CheckCircle size={24} className="text-green-600" />
+                            ) : buffalo.healthStatus === 'sick' ? (
+                              <AlertCircle size={24} className="text-red-600" />
+                            ) : (
+                              <Heart size={24} className="text-orange-600" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-3 mb-2">
+                              <h3 className="font-bold text-dark text-lg">{buffalo.name}</h3>
+                              <span className="text-xs bg-sage/10 text-sage px-2 py-1 rounded-full font-medium">
+                                #{buffalo.id.slice(-6)}
+                              </span>
+                            </div>
+                            <p className="text-dark/60 text-sm mb-1">
+                              {buffalo.breed || 'Murrah'} • {buffalo.age} years old
+                            </p>
+                            <p className="text-xs text-dark/50">
+                              Daily capacity: {buffalo.milkCapacity}L
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                            buffalo.healthStatus === 'healthy' ? 'bg-green-100 text-green-800' : 
+                            buffalo.healthStatus === 'sick' ? 'bg-red-100 text-red-800' : 'bg-orange-100 text-orange-800'
+                          }`}>
+                            {buffalo.healthStatus.charAt(0).toUpperCase() + buffalo.healthStatus.slice(1)}
+                          </span>
+                          
+                          <button
+                            onClick={() => handleEditBuffaloClick(buffalo)}
+                            className="p-2 bg-sage/10 text-sage hover:bg-sage hover:text-white rounded-xl transition-all duration-300"
+                          >
+                            <Edit size={16} />
+                          </button>
+                          
+                          <button
+                            onClick={() => handleDeleteBuffalo(buffalo.id)}
+                            className="p-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-xl transition-all duration-300"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 

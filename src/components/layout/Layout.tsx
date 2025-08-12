@@ -2,6 +2,7 @@
 
 import { ReactNode } from 'react';
 import { Toaster } from 'react-hot-toast';
+import Footer from './Footer';
 
 interface LayoutProps {
   children: ReactNode;
@@ -23,6 +24,9 @@ export default function Layout({ children, header, navigation }: LayoutProps) {
       <main className="pb-20 sm:pb-24"> {/* Extra padding on larger screens for better spacing */}
         {children}
       </main>
+
+      {/* Footer */}
+      <Footer />
 
       {/* Mobile Navigation */}
       {navigation}

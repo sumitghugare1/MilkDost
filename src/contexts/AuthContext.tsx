@@ -90,7 +90,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       await authService.register(email, password, userData);
-      toast.success('Account created successfully! Welcome to DairyMate!');
+      toast.success('Account created successfully! Welcome to Ksheera!');
     } catch (error: any) {
       console.error('Sign up error:', error);
       

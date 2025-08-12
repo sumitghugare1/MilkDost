@@ -5,8 +5,8 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DairyMate - Smart Milk Business Assistant",
-  description: "Manage your milk delivery business with ease - track clients, deliveries, billing, and buffalo care",
+  title: "Ksheera - The Future of Dairy, Today.",
+  description: "The Future of Dairy, Today. Manage your milk delivery business with ease - track clients, deliveries, billing, and buffalo care",
   manifest: "/manifest.json",
 };
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="font-rubik font-sans antialiased"
+        className="font-rubik font-sans antialiased bg-cream"
       >
         <AuthProvider>
           {children}

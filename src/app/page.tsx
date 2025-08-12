@@ -1,25 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import AuthForm from '@/components/auth/AuthForm';
 import Layout from '@/components/layout/Layout';
 import Header from '@/components/layout/Header';
 import MobileTabNavigation from '@/components/navigation/MobileTabNavigation';
-import Dashboard from '@/components/dashboard/Dashboard';
+import Dashboard from '@/components/dashboard/DashboardNew';
 import ClientManagement from '@/components/clients/ClientManagement';
 import DeliveryTracking from '@/components/deliveries/DeliveryTracking';
 import BillingManagement from '@/components/billing/BillingManagement';
 import BuffaloManagement from '@/components/buffalo/BuffaloManagement';
 import InventoryManagement from '@/components/inventory/InventoryManagement';
 import AnalyticsHub from '@/components/analytics/AnalyticsHub';
+import DataMigration from '@/components/admin/DataMigration';
+import { db } from '@/lib/firebase';
+import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [needsMigration, setNeedsMigration] = useState(false);
+  const [checkingMigration, setCheckingMigration] = useState(true);
   const { user, loading } = useAuth();
 
+  // Check if user data needs migration
+  useEffect(() => {
+    const checkMigrationStatus = async () => {
+      if (!user) {
+        setCheckingMigration(false);
+        return;
+      }
+
+      try {
+        const collections = ['clients', 'deliveries', 'buffaloes', 'feedings', 'bills', 'productions'];
+        let needsMigration = false;
+
+        for (const collectionName of collections) {
+          // Check if there are any documents without userId in each collection
+          const q = query(collection(db, collectionName), limit(1));
+          const querySnapshot = await getDocs(q);
+          
+          for (const doc of querySnapshot.docs) {
+            const data = doc.data();
+            if (!data.userId) {
+              needsMigration = true;
+              break;
+            }
+          }
+          
+          if (needsMigration) break;
+        }
+
+        setNeedsMigration(needsMigration);
+      } catch (error) {
+        console.error('Error checking migration status:', error);
+      } finally {
+        setCheckingMigration(false);
+      }
+    };
+
+    checkMigrationStatus();
+  }, [user]);
+
   // Show loading screen while checking authentication
-  if (loading) {
+  if (loading || checkingMigration) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-dairy p-3 sm:p-4">
         <div className="text-center max-w-sm mx-auto">
@@ -39,9 +83,9 @@ export default function Home() {
           </div>
           <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-blue-200 border-t-blue-600 mx-auto mb-4 sm:mb-6"></div>
           <h2 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-green-600 bg-clip-text text-transparent mb-2">
-            DairyMate
+            Ksheera
           </h2>
-          <p className="text-gray-600 font-medium text-sm sm:text-base">Preparing your dairy business dashboard...</p>
+          <p className="text-gray-600 font-medium text-sm sm:text-base">The Future of Dairy, Today.</p>
           <div className="mt-3 sm:mt-4 flex justify-center space-x-1">
             <div className="h-2 w-2 bg-blue-400 rounded-full animate-bounce"></div>
             <div className="h-2 w-2 bg-green-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
@@ -57,10 +101,28 @@ export default function Home() {
     return <AuthForm />;
   }
 
+  // Show migration component if migration is needed
+  if (needsMigration) {
+    return (
+      <Layout
+        header={
+          <Header
+            title="Data Migration Required"
+            subtitle="Update your data for improved security"
+          />
+        }
+      >
+        <div className="max-w-2xl mx-auto">
+          <DataMigration />
+        </div>
+      </Layout>
+    );
+  }
+
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
-        return 'DairyMate Dashboard';
+        return 'Ksheera Dashboard';
       case 'clients':
         return 'Client Management';
       case 'deliveries':
@@ -74,14 +136,14 @@ export default function Home() {
       case 'analytics':
         return 'Analytics & Reports';
       default:
-        return 'DairyMate';
+        return 'Ksheera';
     }
   };
 
   const getPageSubtitle = () => {
     switch (activeTab) {
       case 'dashboard':
-        return 'Overview of your milk business';
+        return 'The Future of Dairy, Today.';
       case 'clients':
         return 'Manage clients and deliveries';
       case 'deliveries':

@@ -78,9 +78,10 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
         );
         onUpdateFeedings(updatedFeedings);
       } else {
-        // Create new feeding record
+        // Create new feeding record (userId will be added by the service)
         const newFeedingRecord: BuffaloFeeding = {
           id: Date.now().toString(),
+          userId: '', // This will be updated by the service
           buffaloId: buffalo.id,
           date: selectedDate,
           time,
@@ -108,6 +109,7 @@ export default function FeedingTracker({ buffaloes, feedings, onUpdateFeedings, 
 
       const customFeeding: BuffaloFeeding = {
         id: Date.now().toString(),
+        userId: '', // This will be updated by the service
         buffaloId: newFeeding.buffaloId,
         date: selectedDate,
         time: newFeeding.time,

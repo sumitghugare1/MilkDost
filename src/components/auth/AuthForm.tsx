@@ -50,7 +50,7 @@ export default function AuthForm({ onClose }: AuthFormProps) {
 
   const handleDemoLogin = async () => {
     const demoCredentials = {
-      email: 'demo@dairymate.com',
+      email: 'demo@ksheera.com',
       password: 'demo123456', // Changed to meet Firebase 6+ character requirement
       displayName: 'Demo User',
       businessName: 'Demo Dairy Business',
@@ -128,9 +128,9 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                   <div className="flex justify-center mb-4">
                     <Logo size="xl" showText={false} />
                   </div>
-                  <h1 className="text-3xl font-black text-cream mb-2">DairyMate</h1>
+                  <h1 className="text-3xl font-black text-cream mb-2">Ksheera</h1>
                   <p className="text-sage/90 text-lg font-medium">
-                    Smart Dairy Management Solution
+                    The Future of Dairy, Today.
                   </p>
                 </div>
 
@@ -185,18 +185,18 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                     <Logo size="lg" showText={false} />
                   </div>
                   <h1 className="text-2xl font-black bg-gradient-to-r from-dark to-sage bg-clip-text text-transparent mb-1">
-                    DairyMate
+                    Ksheera
                   </h1>
                 </div>
 
                 {/* Header */}
                 <div className="text-center mb-6">
                   <h2 className="text-xl lg:text-2xl font-black text-dark mb-2">
-                    {isSignUp ? 'Join DairyMate' : 'Welcome Back'}
+                    {isSignUp ? 'Join Ksheera' : 'Welcome Back'}
                   </h2>
                   <p className="text-dark/70 text-sm lg:text-base font-medium">
                     {isSignUp 
-                      ? 'Start managing your dairy business today' 
+                      ? 'The Future of Dairy, Today.' 
                       : 'Continue your dairy management journey'
                     }
                   </p>

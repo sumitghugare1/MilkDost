@@ -9,7 +9,7 @@ interface BillFormProps {
   month: number;
   year: number;
   clients: Client[];
-  onSave: (billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  onSave: (billData: Omit<Bill, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }
@@ -41,7 +41,7 @@ export default function BillForm({ month, year, clients, onSave, onCancel, loadi
       return;
     }
 
-    const billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'> = {
+    const billData: Omit<Bill, 'id' | 'userId' | 'createdAt' | 'updatedAt'> = {
       clientId: selectedClient.id,
       month,
       year,

@@ -6,7 +6,7 @@ import { Buffalo } from '@/types';
 
 interface BuffaloFormProps {
   buffalo?: Buffalo | null;
-  onSave: (buffalo: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  onSave: (buffalo: Omit<Buffalo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }

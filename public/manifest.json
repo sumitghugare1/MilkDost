@@ -1,7 +1,7 @@
 {
-  "name": "DairyMate - Smart Milk Business Assistant",
-  "short_name": "DairyMate",
-  "description": "Manage your milk delivery business with ease",
+  "name": "Ksheera - The Future of Dairy, Today.",
+  "short_name": "Ksheera",
+  "description": "The Future of Dairy, Today. Manage your milk delivery business with ease",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

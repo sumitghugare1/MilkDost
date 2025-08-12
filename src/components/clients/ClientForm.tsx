@@ -6,7 +6,7 @@ import { Client } from '@/types';
 
 interface ClientFormProps {
   client?: Client | null;
-  onSave: (client: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  onSave: (client: Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }

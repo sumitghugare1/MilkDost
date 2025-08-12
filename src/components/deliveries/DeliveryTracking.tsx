@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, CheckCircle, XCircle, Clock, MapPin, Phone, Milk, User } from 'lucide-react';
+import { Calendar, CheckCircle, XCircle, Clock, MapPin, Phone, Milk, User, Truck, Activity, TrendingUp, Star, Package, Users } from 'lucide-react';
 import { Client, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { clientService, deliveryService } from '@/lib/firebaseServices';
@@ -141,274 +141,298 @@ export default function DeliveryTracking() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dairy">
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
-        {/* Header Section */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
-                <Calendar size={24} className="text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-cream/30 via-white to-sage/20">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Enhanced Header Section */}
+        <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-sage/20">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                <Truck size={28} className="text-dark" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-[#2e2e2e]">Daily Deliveries</h2>
-                <p className="text-sm text-[#2e2e2e]/60 font-medium">
+                <h1 className="text-3xl font-black text-dark">Delivery Tracking</h1>
+                <p className="text-dark/60 font-medium">
                   Track and manage daily milk deliveries
                 </p>
               </div>
             </div>
             
-            <input
-              type="date"
-              value={selectedDate.toISOString().split('T')[0]}
-              onChange={(e) => setSelectedDate(new Date(e.target.value))}
-              className="px-4 py-3 bg-[#2e2e2e]/5 border border-[#2e2e2e]/20 rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300"
-            />
-          </div>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <div className="relative space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <CheckCircle size={24} className="text-white" />
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Completed</p>
-                </div>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 bg-dark/5 px-4 py-3 rounded-2xl">
+                <Calendar size={20} className="text-dark/60" />
+                <span className="text-sm font-medium text-dark/60">Select Date</span>
               </div>
-              
-              <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
-                  {completedDeliveries}
-                </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Delivered today</p>
-              </div>
+              <input
+                type="date"
+                value={selectedDate.toISOString().split('T')[0]}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                className="px-6 py-4 bg-white border border-sage/20 rounded-2xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              />
             </div>
           </div>
-
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <div className="relative space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <Clock size={24} className="text-white" />
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Pending</p>
-                </div>
+          
+          {/* Date Display */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-sage/20 rounded-xl">
+                <Activity size={16} className="text-sage" />
               </div>
-              
-              <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
-                  {pendingDeliveries}
-                </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Awaiting delivery</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <div className="relative space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <Milk size={24} className="text-white" />
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Total Milk</p>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
-                  {totalQuantity.toFixed(1)}L
-                </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Distributed today</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
-            <div className="relative space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <User size={24} className="text-white" />
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Total Clients</p>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
-                  {clients.length}
-                </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Active clients</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Delivery List */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
-          <div className="px-6 py-4 border-b border-[#2e2e2e]/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 rounded-xl">
-                  <User size={20} className="text-white" />
-                </div>
-                <h3 className="text-lg font-black text-[#2e2e2e]">
-                  Deliveries for {selectedDate.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
-                </h3>
-              </div>
+              <span className="text-lg font-bold text-dark">
+                {selectedDate.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </span>
               {isToday && (
-                <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-sm font-bold rounded-full">
-                  Today
+                <span className="px-3 py-1.5 bg-emerald-100 text-emerald-800 text-sm font-bold rounded-xl flex items-center space-x-1">
+                  <Clock size={12} />
+                  <span>Today</span>
                 </span>
               )}
             </div>
           </div>
+        </div>
 
-          <div className="divide-y divide-[#2e2e2e]/10">
-            {clients.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="p-4 bg-[#2e2e2e]/10 rounded-2xl w-fit mx-auto mb-4">
-                  <User className="text-[#2e2e2e]/60" size={48} />
+        {/* Enhanced Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* Completed Deliveries */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <CheckCircle size={24} className="text-white" />
                 </div>
-                <h3 className="text-lg font-black text-[#2e2e2e] mb-2">No active clients</h3>
-                <p className="text-[#2e2e2e]/60 font-medium">Add some clients to start tracking deliveries</p>
+                <div className="flex items-center space-x-1 bg-emerald-100 px-2 py-1 rounded-lg">
+                  <TrendingUp size={12} className="text-emerald-600" />
+                  <span className="text-xs font-bold text-emerald-800">Completed</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-emerald-700 mb-1 uppercase tracking-wide">Completed</p>
+                <p className="text-3xl font-black text-emerald-900 leading-none mb-1">
+                  {completedDeliveries}
+                </p>
+                <p className="text-xs text-emerald-600 font-medium">Delivered today</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pending Deliveries */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 via-transparent to-amber-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <Clock size={24} className="text-white" />
+                </div>
+                <div className="flex items-center space-x-1 bg-amber-100 px-2 py-1 rounded-lg">
+                  <Activity size={12} className="text-amber-600" />
+                  <span className="text-xs font-bold text-amber-800">Pending</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-amber-700 mb-1 uppercase tracking-wide">Pending</p>
+                <p className="text-3xl font-black text-amber-900 leading-none mb-1">
+                  {pendingDeliveries}
+                </p>
+                <p className="text-xs text-amber-600 font-medium">Awaiting delivery</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Milk */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <Milk size={24} className="text-white" />
+                </div>
+                <div className="flex items-center space-x-1 bg-blue-100 px-2 py-1 rounded-lg">
+                  <Package size={12} className="text-blue-600" />
+                  <span className="text-xs font-bold text-blue-800">Volume</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-blue-700 mb-1 uppercase tracking-wide">Total Milk</p>
+                <p className="text-3xl font-black text-blue-900 leading-none mb-1">
+                  {totalQuantity.toFixed(1)}L
+                </p>
+                <p className="text-xs text-blue-600 font-medium">Distributed today</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Active Clients */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <Users size={24} className="text-white" />
+                </div>
+                <div className="flex items-center space-x-1 bg-purple-100 px-2 py-1 rounded-lg">
+                  <Star size={12} className="text-purple-600" />
+                  <span className="text-xs font-bold text-purple-800">Active</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-purple-700 mb-1 uppercase tracking-wide">Active Clients</p>
+                <p className="text-3xl font-black text-purple-900 leading-none mb-1">
+                  {clients.length}
+                </p>
+                <p className="text-xs text-purple-600 font-medium">Ready for delivery</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Delivery List */}
+        <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl shadow-xl border border-sage/20">
+          <div className="px-8 py-6 border-b border-sage/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                  <Truck size={24} className="text-dark" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-black text-dark">Delivery List</h2>
+                  <p className="text-dark/60 font-medium">
+                    Manage deliveries for selected date
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            {clients.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="p-6 bg-dark/5 rounded-3xl w-fit mx-auto mb-6">
+                  <Users className="text-dark/40" size={64} />
+                </div>
+                <h3 className="text-2xl font-black text-dark mb-3">No active clients</h3>
+                <p className="text-dark/60 font-medium max-w-md mx-auto">
+                  Add some clients to start tracking deliveries for your dairy business
+                </p>
               </div>
             ) : (
-              clients.map(client => {
-                const isDelivered = getDeliveryStatus(client.id);
-                const quantity = getDeliveryQuantity(client.id);
-                
-                return (
-                  <div
-                    key={client.id}
-                    className={`group p-6 hover:bg-[#2e2e2e]/5 transition-all duration-300 ${
-                      isDelivered ? 'bg-emerald-50/50' : ''
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <button
-                          onClick={() => handleToggleDelivery(client.id, isDelivered)}
-                          className={`p-3 rounded-xl transition-all duration-300 transform hover:scale-110 ${
-                            isDelivered
-                              ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200 shadow-lg'
-                              : 'bg-[#2e2e2e]/10 text-[#2e2e2e]/40 hover:bg-emerald-100 hover:text-emerald-600'
-                          }`}
-                        >
-                          {isDelivered ? <CheckCircle size={24} /> : <XCircle size={24} />}
-                        </button>
-                        
-                        <div className="flex-1">
-                          <h3 className={`font-black text-lg ${isDelivered ? 'text-emerald-900' : 'text-[#2e2e2e]'}`}>
-                            {client.name}
-                          </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
-                              <MapPin size={14} />
-                              <span className="font-medium">{client.address}</span>
+              <div className="grid grid-cols-1 gap-4">
+                {clients.map(client => {
+                  const isDelivered = getDeliveryStatus(client.id);
+                  const quantity = getDeliveryQuantity(client.id);
+                  
+                  return (
+                    <div
+                      key={client.id}
+                      className={`group relative bg-gradient-to-br from-white to-white/90 rounded-2xl p-6 shadow-lg border transition-all duration-300 transform hover:-translate-y-1 overflow-hidden ${
+                        isDelivered 
+                          ? 'border-emerald-200 bg-emerald-50/20' 
+                          : 'border-sage/20 hover:shadow-xl'
+                      }`}
+                    >
+                      {/* Enhanced background gradient effect */}
+                      <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ${
+                        isDelivered 
+                          ? 'bg-gradient-to-br from-emerald-50/50 to-emerald-100/30'
+                          : 'bg-gradient-to-br from-sage/5 via-transparent to-dark/5'
+                      }`}></div>
+                      
+                      <div className="relative flex items-center justify-between">
+                        <div className="flex items-center space-x-4 flex-1">
+                          {/* Enhanced Status Button */}
+                          <button
+                            onClick={() => handleToggleDelivery(client.id, isDelivered)}
+                            className={`p-4 rounded-2xl transition-all duration-300 transform hover:scale-110 shadow-lg ${
+                              isDelivered
+                                ? 'bg-gradient-to-br from-emerald-500 to-emerald-600 text-white hover:shadow-emerald-200 hover:shadow-xl'
+                                : 'bg-gradient-to-br from-gray-100 to-gray-200 text-gray-400 hover:bg-gradient-to-br hover:from-emerald-500 hover:to-emerald-600 hover:text-white hover:shadow-emerald-200 hover:shadow-xl'
+                            }`}
+                          >
+                            {isDelivered ? <CheckCircle size={24} /> : <XCircle size={24} />}
+                          </button>
+                          
+                          {/* Client Info */}
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-3">
+                              <div className="p-2 bg-gradient-to-br from-cream to-cream/90 rounded-xl shadow-md">
+                                <User size={16} className="text-dark" />
+                              </div>
+                              <h3 className={`font-black text-xl ${isDelivered ? 'text-emerald-900' : 'text-dark'}`}>
+                                {client.name}
+                              </h3>
+                              {isDelivered && (
+                                <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-xl flex items-center space-x-1">
+                                  <CheckCircle size={12} />
+                                  <span>Delivered</span>
+                                </span>
+                              )}
                             </div>
-                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
-                              <Phone size={14} />
-                              <span className="font-medium">{client.phone}</span>
-                            </div>
-                            <div className="flex items-center space-x-2 text-sm text-[#2e2e2e]/60">
-                              <Clock size={14} />
-                              <span className="font-medium">{client.deliveryTime}</span>
+                            
+                            {/* Client Details Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div className="flex items-center space-x-2 p-3 bg-dark/5 rounded-xl">
+                                <MapPin size={14} className="text-blue-500" />
+                                <span className="text-sm font-medium text-dark/70 truncate">{client.address}</span>
+                              </div>
+                              <div className="flex items-center space-x-2 p-3 bg-dark/5 rounded-xl">
+                                <Phone size={14} className="text-green-500" />
+                                <span className="text-sm font-medium text-dark/70">{client.phone}</span>
+                              </div>
+                              <div className="flex items-center space-x-2 p-3 bg-dark/5 rounded-xl">
+                                <Clock size={14} className="text-purple-500" />
+                                <span className="text-sm font-medium text-dark/70">{client.deliveryTime}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center space-x-6">
-                        <div className="text-right">
-                          <div className="flex items-center space-x-2">
+                        {/* Quantity and Revenue Section */}
+                        <div className="flex items-center space-x-6 ml-6">
+                          <div className="text-center">
+                            <p className="text-xs font-bold text-dark/60 uppercase tracking-wide mb-2">Quantity (L)</p>
                             <input
                               type="number"
                               step="0.1"
                               min="0"
                               value={quantity}
                               onChange={(e) => handleQuantityChange(client.id, parseFloat(e.target.value) || 0)}
-                              className="w-20 px-3 py-2 text-sm border border-[#2e2e2e]/20 rounded-lg focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300"
-                              disabled={loading}
+                              className="w-24 px-3 py-2 text-center text-lg font-bold border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 shadow-md hover:shadow-lg"
                             />
-                            <span className="text-sm text-[#2e2e2e]/60 font-bold">L</span>
                           </div>
-                          <div className="text-xs text-[#2e2e2e]/60 mt-1 font-medium">
-                            @ {formatCurrency(client.rate)}/L
-                          </div>
-                        </div>
-                        
-                        <div className="text-right">
-                          <div className="font-black text-lg text-[#2e2e2e]">
-                            {formatCurrency(quantity * client.rate)}
-                          </div>
-                          <div className={`text-xs px-3 py-1 rounded-full font-bold ${
-                            isDelivered 
-                              ? 'bg-emerald-100 text-emerald-800' 
-                              : 'bg-amber-100 text-amber-800'
-                          }`}>
-                            {isDelivered ? 'Delivered' : 'Pending'}
+                          
+                          <div className="text-center bg-gradient-to-br from-sage/10 to-sage/5 p-4 rounded-xl">
+                            <p className="text-xs font-bold text-sage uppercase tracking-wide mb-1">Revenue</p>
+                            <p className="text-xl font-black text-dark">
+                              {formatCurrency(quantity * client.rate)}
+                            </p>
+                            <p className="text-xs text-dark/60 font-medium">@ {formatCurrency(client.rate)}/L</p>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })}
+              </div>
             )}
           </div>
         </div>
-
-        {/* Summary */}
-        {clients.length > 0 && (
-          <div className="bg-gradient-to-br from-[#b5cbb7]/10 to-[#2e2e2e]/5 rounded-2xl p-6 border border-white/30">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl">
-                <Calendar size={20} className="text-white" />
-              </div>
-              <h4 className="font-black text-[#2e2e2e]">Daily Summary</h4>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white/80 rounded-xl p-4">
-                <div className="text-[#2e2e2e]/60 text-sm font-medium">Total Quantity</div>
-                <div className="font-black text-xl text-[#2e2e2e]">{totalQuantity.toFixed(1)}L</div>
-              </div>
-              <div className="bg-white/80 rounded-xl p-4">
-                <div className="text-[#2e2e2e]/60 text-sm font-medium">Completed</div>
-                <div className="font-black text-xl text-[#2e2e2e]">{completedDeliveries}/{clients.length}</div>
-              </div>
-              <div className="bg-white/80 rounded-xl p-4">
-                <div className="text-[#2e2e2e]/60 text-sm font-medium">Daily Revenue</div>
-                <div className="font-black text-xl text-emerald-600">{formatCurrency(totalRevenue)}</div>
-              </div>
-              <div className="bg-white/80 rounded-xl p-4">
-                <div className="text-[#2e2e2e]/60 text-sm font-medium">Completion Rate</div>
-                <div className="font-black text-xl text-[#2e2e2e]">
-                  {clients.length > 0 ? Math.round((completedDeliveries / clients.length) * 100) : 0}%
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

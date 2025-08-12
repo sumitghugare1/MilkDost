@@ -40,8 +40,8 @@ export default function Header({
               <Milk size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-[#2e2e2e]">DairyMate</h1>
-              <p className="text-xs text-[#2e2e2e]/60 font-semibold">Smart Dairy Management</p>
+              <h1 className="text-xl font-black text-[#2e2e2e]">Ksheera</h1>
+              <p className="text-xs text-[#2e2e2e]/60 font-semibold">The Future of Dairy, Today.</p>
             </div>
           </div>
 

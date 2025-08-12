@@ -67,9 +67,9 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
               <Logo size="sm" showText={false} />
               <div className="hidden md:block">
                 <h1 className="text-lg font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">
-                  DairyMate
+                  Ksheera
                 </h1>
-                <p className="text-xs text-dark/60 font-medium">Smart Business</p>
+                <p className="text-xs text-dark/60 font-medium">The Future of Dairy</p>
               </div>
             </div>
 

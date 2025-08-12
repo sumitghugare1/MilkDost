@@ -247,6 +247,11 @@ input:-webkit-autofill:active {
   background: #2e2e2e;
 }
 
+/* Custom background classes */
+.bg-custom-cream {
+  background-color: var(--cream) !important;
+}
+
 /* Button styles with our palette */
 .btn-primary {
   background: #2e2e2e;

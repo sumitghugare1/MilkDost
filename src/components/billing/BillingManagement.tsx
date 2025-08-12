@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, AlertCircle, Crown, Sparkles, Star, TrendingUp, ArrowUp, DollarSign, Clock, Bell, ArrowRight } from 'lucide-react';
+import { Download, Eye, IndianRupee, Plus, Search, CheckCircle, XCircle, FileText, Zap, AlertCircle, Crown, Sparkles, Star, TrendingUp, ArrowUp, DollarSign, Clock, Bell, ArrowRight, Receipt, CreditCard, Users, Activity, Calendar } from 'lucide-react';
 import { Client, Bill, Delivery } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { clientService, billService } from '@/lib/firebaseServices';
@@ -70,6 +70,7 @@ export default function BillingManagement() {
   const totalRevenue = filteredBills.reduce((sum, bill) => sum + bill.totalAmount, 0);
   const paidAmount = filteredBills.filter(bill => bill.isPaid).reduce((sum, bill) => sum + bill.totalAmount, 0);
   const unpaidAmount = totalRevenue - paidAmount;
+  const uniqueClients = Array.from(new Set(filteredBills.map(bill => bill.clientId)));
 
   const handleGenerateBills = async () => {
     try {
@@ -167,7 +168,7 @@ export default function BillingManagement() {
         month={selectedMonth}
         year={selectedYear}
         clients={clients}
-        onSave={async (billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>) => {
+        onSave={async (billData: Omit<Bill, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
           try {
             setLoading(true);
             const billId = await billService.add(billData);
@@ -205,56 +206,86 @@ export default function BillingManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dairy">
-      {/* Main Content with dashboard structure */}
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-cream/30 via-white to-sage/20">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
 
-        {/* Header Section */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+        {/* Enhanced Header Section */}
+        <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-sage/20">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-4">
-              {/* Enhanced Icon Container */}
-              <div className="p-3 bg-gradient-to-br from-dark to-dark/80 rounded-xl shadow-lg">
-                <IndianRupee size={28} className="text-cream" />
+              <div className="p-4 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                <Receipt size={28} className="text-dark" />
               </div>
-              
               <div>
-                <h1 className="text-2xl lg:text-3xl font-black text-dark">
-                  Smart Billing Hub
-                </h1>
-                <p className="text-dark/60 text-sm lg:text-base font-medium">
-                  Intelligent billing system for {months[selectedMonth]} {selectedYear}
+                <h1 className="text-3xl font-black text-dark">Billing Management</h1>
+                <p className="text-dark/60 font-medium">
+                  Smart billing system for {months[selectedMonth]} {selectedYear}
                 </p>
               </div>
             </div>
             
-            {/* Enhanced Create Button */}
             <button
               onClick={() => setShowBillForm(true)}
-              className="billing-button group relative bg-gradient-to-r from-dark to-sage text-cream px-6 py-3 rounded-xl flex items-center space-x-3 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+              className="group relative bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
             >
-              <Plus size={20} />
-              <span className="font-bold text-sm lg:text-base">Create Bill</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
+                <Plus size={20} className="relative" />
+              </div>
+              <span className="relative font-bold whitespace-nowrap">Create New Bill</span>
             </button>
+          </div>
+
+          {/* Month/Year Selection */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 bg-dark/5 px-4 py-3 rounded-2xl">
+                <Calendar size={20} className="text-dark/60" />
+                <span className="text-sm font-medium text-dark/60">Billing Period</span>
+              </div>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
+                className="px-4 py-3 bg-white border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              >
+                {months.map((month, index) => (
+                  <option key={index} value={index}>{month}</option>
+                ))}
+              </select>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+                className="px-4 py-3 bg-white border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 shadow-md hover:shadow-lg font-medium"
+              >
+                {years.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Stats Grid - Dashboard Style */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {/* Enhanced Stats Grid - 4 Column Layout */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Revenue Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-sage/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-dark to-dark/80 shadow-lg">
-                  <TrendingUp size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <CreditCard size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Total Revenue</p>
+                  <div className="flex items-center space-x-1">
+                    <TrendingUp size={16} className="text-green-500" />
+                    <span className="text-xs text-green-500 font-bold">+12%</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Total Revenue</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {formatCurrency(totalRevenue)}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
@@ -265,19 +296,24 @@ export default function BillingManagement() {
           </div>
 
           {/* Paid Amount Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-                  <CheckCircle size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <CheckCircle size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Amount Paid</p>
+                  <div className="flex items-center space-x-1">
+                    <Activity size={16} className="text-green-500" />
+                    <span className="text-xs text-green-500 font-bold">Paid</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Amount Paid</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {formatCurrency(paidAmount)}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
@@ -288,123 +324,135 @@ export default function BillingManagement() {
           </div>
 
           {/* Pending Amount Card */}
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="relative space-y-3">
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg">
-                  <Clock size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <Clock size={24} className="text-dark" />
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-dark/60 uppercase tracking-wide">Pending Amount</p>
+                  <div className="flex items-center space-x-1">
+                    <AlertCircle size={16} className="text-orange-500" />
+                    <span className="text-xs text-orange-500 font-bold">Due</span>
+                  </div>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-dark leading-none mb-1">
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Pending Amount</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
                   {formatCurrency(unpaidAmount)}
                 </p>
                 <p className="text-xs text-dark/60 font-medium">
-                  {filteredBills.filter(bill => !bill.isPaid).length} unpaid bills
+                  {filteredBills.filter(bill => !bill.isPaid).length} pending bills
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Clients Card */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg group-hover:rotate-6 transition-transform duration-300">
+                  <Users size={24} className="text-dark" />
+                </div>
+                <div className="text-right">
+                  <div className="flex items-center space-x-1">
+                    <Activity size={16} className="text-blue-500" />
+                    <span className="text-xs text-blue-500 font-bold">Active</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-dark/60 uppercase tracking-wider mb-2">Total Clients</p>
+                <p className="text-2xl lg:text-3xl font-black text-dark leading-none mb-1">
+                  {uniqueClients.length}
+                </p>
+                <p className="text-xs text-dark/60 font-medium">
+                  Billing active clients
                 </p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Two-column layout like dashboard */}
+        {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          {/* Left Column - Billing Overview */}
+          {/* Left Column - Bills List */}
           <div className="lg:col-span-2 space-y-6">
             
-            {/* Smart Controls */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
+            {/* Enhanced Search & Controls */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-gradient-to-br from-sage to-sage/80 rounded-xl">
-                    <Zap size={24} className="text-white" />
+                  <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                    <Search size={24} className="text-dark" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-dark">Control Center</h2>
-                    <p className="text-sm text-dark/60 font-medium">Search, filter, and manage operations</p>
+                    <h2 className="text-xl font-black text-dark">Search & Filter</h2>
+                    <p className="text-sm text-dark/60 font-medium">Find and manage bills efficiently</p>
                   </div>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                {/* Enhanced Search */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sage" size={18} />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-dark/40" size={18} />
                   <input
                     type="text"
                     placeholder="Search clients..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-300 bg-white/80 placeholder-dark/50"
+                    className="w-full pl-10 pr-4 py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 bg-white shadow-md hover:shadow-lg"
                   />
                 </div>
 
-                {/* Month Selector */}
-                <select
-                  value={selectedMonth}
-                  onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
-                  className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-300 bg-white/80"
-                >
-                  {months.map((month, index) => (
-                    <option key={month} value={index}>{month}</option>
-                  ))}
-                </select>
-
-                {/* Year Selector */}
-                <select
-                  value={selectedYear}
-                  onChange={(e) => setSelectedYear(parseInt(e.target.value))}
-                  className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-300 bg-white/80"
-                >
-                  {years.map(year => (
-                    <option key={year} value={year}>{year}</option>
-                  ))}
-                </select>
-
-                {/* Status Filter */}
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value as 'all' | 'paid' | 'unpaid')}
-                  className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all duration-300 bg-white/80"
+                  className="px-4 py-3 border border-sage/20 rounded-xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 bg-white shadow-md hover:shadow-lg font-medium"
                 >
                   <option value="all">All Bills</option>
                   <option value="paid">Paid Bills</option>
                   <option value="unpaid">Unpaid Bills</option>
                 </select>
-              </div>
 
-              {/* Auto-Generate Button */}
-              <button
-                onClick={handleGenerateBills}
-                disabled={loading}
-                className="billing-button group relative w-full bg-gradient-to-r from-sage to-dark text-white py-4 rounded-xl flex items-center justify-center space-x-3 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 font-bold"
-              >
-                <Zap size={20} />
-                <span className="text-base lg:text-lg">
-                  {loading ? 'Generating Bills...' : `Auto-Generate Bills for ${months[selectedMonth]} ${selectedYear}`}
-                </span>
-              </button>
+                <button
+                  onClick={handleGenerateBills}
+                  disabled={loading}
+                  className="group relative bg-gradient-to-br from-sage to-sage/90 text-white px-6 py-3 rounded-xl flex items-center justify-center space-x-2 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 font-bold overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <Activity size={18} className="relative" />
+                  <span className="relative text-sm">
+                    {loading ? 'Generating...' : 'Auto Generate'}
+                  </span>
+                </button>
+              </div>
             </div>
 
-            {/* Bills List */}
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
+            {/* Enhanced Bills List */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-3">
-                  <div className="p-3 bg-gradient-to-br from-dark to-dark/80 rounded-xl">
-                    <FileText size={24} className="text-cream" />
+                  <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                    <Receipt size={24} className="text-dark" />
                   </div>
                   <div>
                     <h2 className="text-xl font-black text-dark">Bills Overview</h2>
-                    <p className="text-sm text-dark/60 font-medium">Manage and track all billing operations</p>
+                    <p className="text-sm text-dark/60 font-medium">
+                      Showing {filteredBills.length} bills for {months[selectedMonth]} {selectedYear}
+                    </p>
                   </div>
                 </div>
                 
-                <div className="px-4 py-2 bg-sage/10 rounded-xl border border-sage/20">
+                <div className="flex items-center space-x-2 bg-sage/10 px-4 py-2 rounded-xl border border-sage/20">
+                  <FileText size={16} className="text-sage" />
                   <span className="text-sm font-bold text-dark">
                     {filteredBills.length} {filteredBills.length === 1 ? 'bill' : 'bills'}
                   </span>
@@ -414,25 +462,20 @@ export default function BillingManagement() {
               <div className="space-y-4">
                 {filteredBills.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-sage/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <FileText className="text-sage" size={32} />
+                    <div className="p-4 bg-gradient-to-br from-cream to-cream/90 rounded-3xl inline-block mb-4">
+                      <Receipt size={48} className="text-dark/40" />
                     </div>
-                    <h3 className="text-lg font-bold text-dark mb-2">No bills found</h3>
-                    <p className="text-dark/60 mb-6 max-w-md mx-auto text-sm">
+                    <h3 className="text-lg font-bold text-dark mb-2">No Bills Found</h3>
+                    <p className="text-dark/60 mb-6">
                       {searchTerm 
-                        ? `No bills match your search for "${searchTerm}"`
-                        : `No bills generated for ${months[selectedMonth]} ${selectedYear} yet`
-                      }
+                        ? `No bills found matching "${searchTerm}"` 
+                        : `No bills for ${months[selectedMonth]} ${selectedYear}`}
                     </p>
                     <button
-                      onClick={handleGenerateBills}
-                      disabled={loading}
-                      className="billing-button bg-gradient-to-r from-dark to-sage text-cream px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 font-bold"
+                      onClick={() => setShowBillForm(true)}
+                      className="bg-gradient-to-br from-sage to-sage/90 text-white px-6 py-3 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
                     >
-                      <div className="flex items-center space-x-2">
-                        <Zap size={18} />
-                        <span>Generate Bills Automatically</span>
-                      </div>
+                      Create First Bill
                     </button>
                   </div>
                 ) : (
@@ -441,103 +484,51 @@ export default function BillingManagement() {
                     if (!client) return null;
 
                     return (
-                      <div
-                        key={bill.id}
-                        className={`billing-card bg-white/80 backdrop-blur-sm rounded-xl p-4 border-2 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
-                          bill.isPaid 
-                            ? 'border-green-200 hover:border-green-300' 
-                            : 'border-orange-200 hover:border-orange-300'
-                        }`}
-                      >
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                      <div key={bill.id} className="group relative bg-white/90 border border-sage/20 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-4">
-                            {/* Client Avatar */}
-                            <div className={`p-3 rounded-xl shadow-md ${
-                              bill.isPaid 
-                                ? 'bg-gradient-to-br from-green-500 to-green-600' 
-                                : 'bg-gradient-to-br from-orange-500 to-red-500'
-                            }`}>
-                              <div className="w-6 h-6 bg-white/30 rounded-lg flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">
-                                  {client.name.charAt(0).toUpperCase()}
-                                </span>
-                              </div>
+                            <div className={`p-3 rounded-xl ${bill.isPaid ? 'bg-green-100' : 'bg-orange-100'}`}>
+                              {bill.isPaid ? (
+                                <CheckCircle size={24} className="text-green-600" />
+                              ) : (
+                                <Clock size={24} className="text-orange-600" />
+                              )}
                             </div>
-
-                            {/* Bill Details */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-3 mb-2">
-                                <h4 className="text-lg font-bold text-dark truncate">
-                                  {client.name}
-                                </h4>
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                  bill.isPaid 
-                                    ? 'bg-green-100 text-green-700' 
-                                    : 'bg-orange-100 text-orange-700'
-                                }`}>
-                                  {bill.isPaid ? '✓ Paid' : '⏳ Pending'}
-                                </span>
-                              </div>
-                              
-                              <div className="flex flex-wrap items-center gap-4 text-sm text-dark/70">
-                                <div className="flex items-center space-x-2">
-                                  <IndianRupee size={16} className="text-sage" />
-                                  <span className="font-bold text-dark">
-                                    {formatCurrency(bill.totalAmount)}
-                                  </span>
-                                </div>
-                                
-                                <div className="flex items-center space-x-2">
-                                  <span className="w-2 h-2 bg-sage/60 rounded-full"></span>
-                                  <span className="font-medium">
-                                    {months[selectedMonth]} {selectedYear}
-                                  </span>
-                                </div>
-                                
-                                <div className="flex items-center space-x-2">
-                                  <span className="w-2 h-2 bg-dark/40 rounded-full"></span>
-                                  <span className="font-medium">
-                                    {bill.deliveries?.length || 0} deliveries
-                                  </span>
-                                </div>
-                              </div>
+                            <div>
+                              <h3 className="font-bold text-dark text-lg">{client.name}</h3>
+                              <p className="text-dark/60 text-sm">
+                                {bill.deliveries.length} deliveries • {formatCurrency(bill.totalAmount)}
+                              </p>
+                              <p className="text-xs text-dark/50">
+                                {new Date(bill.createdAt).toLocaleDateString()}
+                              </p>
                             </div>
                           </div>
-
-                          {/* Action Buttons */}
+                          
                           <div className="flex items-center space-x-2">
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                              bill.isPaid 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-orange-100 text-orange-800'
+                            }`}>
+                              {bill.isPaid ? 'Paid' : 'Pending'}
+                            </span>
+                            
                             <button
                               onClick={() => {
                                 setSelectedBill(bill);
                                 setShowBillPreview(true);
                               }}
-                              className="p-2 bg-dark/10 hover:bg-dark/20 text-dark rounded-lg transition-colors"
+                              className="p-2 bg-sage/10 text-sage hover:bg-sage hover:text-white rounded-xl transition-all duration-300"
                             >
                               <Eye size={16} />
                             </button>
-
+                            
                             <button
                               onClick={() => handleDownloadBill(bill)}
-                              disabled={loading}
-                              className="p-2 bg-sage/10 hover:bg-sage/20 text-sage rounded-lg transition-colors disabled:opacity-50"
+                              className="p-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-xl transition-all duration-300"
                             >
                               <Download size={16} />
-                            </button>
-
-                            <button
-                              onClick={() => bill.isPaid ? handleMarkAsUnpaid(bill.id) : handleMarkAsPaid(bill.id)}
-                              disabled={loading}
-                              className={`p-2 rounded-lg transition-colors disabled:opacity-50 ${
-                                bill.isPaid
-                                  ? 'bg-red-100 hover:bg-red-200 text-red-600'
-                                  : 'bg-green-100 hover:bg-green-200 text-green-600'
-                              }`}
-                            >
-                              {bill.isPaid ? (
-                                <XCircle size={16} />
-                              ) : (
-                                <CheckCircle size={16} />
-                              )}
                             </button>
                           </div>
                         </div>
@@ -550,73 +541,117 @@ export default function BillingManagement() {
           </div>
 
           {/* Right Column - Quick Actions like dashboard */}
+          {/* Right Column - Enhanced Analytics & Quick Actions */}
           <div className="space-y-6">
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 p-6">
+            
+            {/* Quick Actions Card */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
               <div className="flex items-center space-x-3 mb-6">
-                <div className="p-2 bg-gradient-to-br from-sage to-sage/80 rounded-xl">
-                  <Zap size={20} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                  <Activity size={24} className="text-dark" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-black text-dark">Billing Actions</h2>
-                  <p className="text-xs text-dark/60 font-medium">Essential features</p>
+                  <h3 className="text-lg font-black text-dark">Quick Actions</h3>
+                  <p className="text-sm text-dark/60">Essential billing tools</p>
                 </div>
               </div>
-
-              <div className="space-y-3">
+              
+              <div className="space-y-4">
                 <button
                   onClick={() => setShowBillForm(true)}
-                  className="group relative bg-white/80 backdrop-blur-lg rounded-xl p-4 shadow-lg border border-white/40 text-left hover:shadow-xl transition-all duration-300 w-full transform hover:-translate-y-0.5"
+                  className="group relative w-full bg-gradient-to-br from-sage to-sage/90 text-white p-4 rounded-2xl flex items-center space-x-3 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-dark to-dark/80 shadow-md flex-shrink-0">
-                      <Plus size={18} className="text-cream" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-dark text-sm mb-0.5">Create New Bill</h3>
-                      <p className="text-xs text-dark/60 font-medium">Generate manual billing entry</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-dark/40 group-hover:text-sage transition-colors" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative p-2 bg-white/20 rounded-xl">
+                    <Plus size={20} className="relative" />
+                  </div>
+                  <div className="relative text-left">
+                    <p className="font-bold">Create New Bill</p>
+                    <p className="text-xs text-white/80">Manual billing entry</p>
                   </div>
                 </button>
 
                 <button
                   onClick={handleGenerateBills}
                   disabled={loading}
-                  className="group relative bg-white/80 backdrop-blur-lg rounded-xl p-4 shadow-lg border border-white/40 text-left hover:shadow-xl transition-all duration-300 w-full transform hover:-translate-y-0.5 disabled:opacity-50"
+                  className="group relative w-full bg-gradient-to-br from-dark to-dark/90 text-white p-4 rounded-2xl flex items-center space-x-3 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 disabled:opacity-50 overflow-hidden"
                 >
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 rounded-lg bg-gradient-to-br from-sage to-sage/80 shadow-md flex-shrink-0">
-                      <Zap size={18} className="text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-dark text-sm mb-0.5">Auto Generate</h3>
-                      <p className="text-xs text-dark/60 font-medium">Create bills automatically</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-dark/40 group-hover:text-sage transition-colors" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  <div className="relative p-2 bg-white/20 rounded-xl">
+                    <Activity size={20} className="relative" />
+                  </div>
+                  <div className="relative text-left">
+                    <p className="font-bold">Auto Generate</p>
+                    <p className="text-xs text-white/80">
+                      {loading ? 'Processing...' : 'Create bills automatically'}
+                    </p>
                   </div>
                 </button>
-
-                <div className="pt-4 border-t border-gray-200">
-                  <h3 className="font-bold text-dark text-sm mb-3">Quick Stats</h3>
-                  <div className="space-y-3">
+              </div>
+            </div>
+            
+            {/* Quick Stats Card */}
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="p-3 bg-gradient-to-br from-cream to-cream/90 rounded-2xl shadow-lg">
+                  <Receipt size={24} className="text-dark" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-dark">Quick Stats</h3>
+                  <p className="text-sm text-dark/60">Billing insights</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-sage/10 to-sage/5 rounded-xl border border-sage/20">
+                  <div>
+                    <span className="text-sm font-medium text-dark/70">Collection Rate</span>
+                    <p className="text-2xl font-black text-sage">
+                      {totalRevenue > 0 ? Math.round((paidAmount / totalRevenue) * 100) : 0}%
+                    </p>
+                  </div>
+                  <TrendingUp size={24} className="text-sage" />
+                </div>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="p-3 bg-blue-50 rounded-xl border border-blue-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-dark/60">Collection Rate</span>
-                      <span className="text-sm font-bold text-green-600">
-                        {totalRevenue > 0 ? Math.round((paidAmount / totalRevenue) * 100) : 0}%
-                      </span>
+                      <span className="text-xs text-dark/60">Average Bill</span>
+                      <CreditCard size={14} className="text-blue-500" />
                     </div>
+                    <p className="text-lg font-bold text-blue-600">
+                      {formatCurrency(filteredBills.length > 0 ? totalRevenue / filteredBills.length : 0)}
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-green-50 rounded-xl border border-green-100">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-dark/60">Avg. Bill Amount</span>
-                      <span className="text-sm font-bold text-dark">
-                        {formatCurrency(filteredBills.length > 0 ? totalRevenue / filteredBills.length : 0)}
-                      </span>
+                      <span className="text-xs text-dark/60">Paid Bills</span>
+                      <CheckCircle size={14} className="text-green-500" />
                     </div>
+                    <p className="text-lg font-bold text-green-600">
+                      {filteredBills.filter(bill => bill.isPaid).length}
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-orange-50 rounded-xl border border-orange-100">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-dark/60">Pending Bills</span>
+                      <Clock size={14} className="text-orange-500" />
+                    </div>
+                    <p className="text-lg font-bold text-orange-600">
+                      {filteredBills.filter(bill => !bill.isPaid).length}
+                    </p>
+                  </div>
+                  
+                  <div className="p-3 bg-purple-50 rounded-xl border border-purple-100">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-dark/60">Active Clients</span>
-                      <span className="text-sm font-bold text-dark">
-                        {new Set(filteredBills.map(bill => bill.clientId)).size}
-                      </span>
+                      <Users size={14} className="text-purple-500" />
                     </div>
+                    <p className="text-lg font-bold text-purple-600">
+                      {new Set(filteredBills.map(bill => bill.clientId)).size}
+                    </p>
                   </div>
                 </div>
               </div>

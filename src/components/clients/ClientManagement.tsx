@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, User, MapPin, Phone, Clock, IndianRupee } from 'lucide-react';
+import { Plus, Search, Edit, Trash2, User, MapPin, Phone, Clock, IndianRupee, Users, TrendingUp, Star, Shield, CheckCircle, XCircle, Eye, Activity, UserCheck, Contact, UsersRound } from 'lucide-react';
 import { Client } from '@/types';
 import { clientService } from '@/lib/firebaseServices';
 import { formatCurrency } from '@/lib/utils';
@@ -90,7 +90,7 @@ export default function ClientManagement() {
     }
   };
 
-  const handleSaveClient = async (clientData: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const handleSaveClient = async (clientData: Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     try {
       setLoading(true);
       
@@ -129,213 +129,307 @@ export default function ClientManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dairy">
-      <div className="max-w-5xl mx-auto p-4 space-y-6">
-        {/* Header Section */}
-        <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
-                <User size={24} className="text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-cream/30 via-white to-sage/20">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        
+        {/* Enhanced Header Section */}
+        <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-sage/20">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="p-4 bg-gradient-to-br from-dark to-dark/90 rounded-2xl shadow-lg">
+                <UserCheck size={28} className="text-cream" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-[#2e2e2e]">Client Management</h2>
-                <p className="text-sm text-[#2e2e2e]/60 font-medium">
-                  {activeClients.length} active • {inactiveClients.length} inactive
+                <h1 className="text-3xl font-black text-dark">Client Management</h1>
+                <p className="text-dark/60 font-medium">
+                  Manage your dairy customers and delivery preferences
                 </p>
               </div>
             </div>
             <button
               onClick={handleAddClient}
-              className="group relative bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 text-[#f3efe6] px-6 py-3 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
+              className="group relative bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-[#b5cbb7]/10 via-transparent to-[#b5cbb7]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
                 <Plus size={20} className="relative" />
               </div>
-              <span className="relative font-bold whitespace-nowrap">Add Client</span>
+              <span className="relative font-bold whitespace-nowrap">Add New Client</span>
             </button>
           </div>
 
-          {/* Search Bar */}
+          {/* Enhanced Search Bar */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-[#2e2e2e]/40" size={20} />
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Search className="h-5 w-5 text-dark/40" />
+            </div>
             <input
               type="text"
-              placeholder="Search clients by name, phone, or address..."
+              placeholder="Search clients by name, phone, address, or delivery time..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-[#2e2e2e]/5 border border-[#2e2e2e]/20 rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 placeholder-[#2e2e2e]/60"
+              className="block w-full pl-12 pr-4 py-4 bg-dark/5 border border-dark/10 rounded-2xl focus:ring-2 focus:ring-sage focus:border-transparent transition-all duration-300 placeholder-dark/40 text-dark font-medium"
             />
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        {/* Enhanced Stats Dashboard */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {/* Active Clients */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-emerald-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-emerald-500/10 rounded-full blur-xl group-hover:bg-emerald-500/20 transition-colors duration-300"></div>
             
-            <div className="relative space-y-3">
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <User size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <CheckCircle size={24} className="text-white" />
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Active Clients</p>
+                <div className="flex items-center space-x-1 bg-emerald-100 px-2 py-1 rounded-lg">
+                  <TrendingUp size={12} className="text-emerald-600" />
+                  <span className="text-xs font-bold text-emerald-800">Active</span>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                <p className="text-xs font-bold text-emerald-700 mb-1 uppercase tracking-wide">Active Clients</p>
+                <p className="text-3xl font-black text-emerald-900 leading-none mb-1">
                   {activeClients.length}
                 </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Ready for delivery</p>
+                <p className="text-xs text-emerald-600 font-medium">Ready for deliveries</p>
               </div>
             </div>
           </div>
 
-          <div className="group relative bg-white/95 backdrop-blur-lg rounded-2xl p-4 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {/* Total Clients */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-blue-500/10 rounded-full blur-xl group-hover:bg-blue-500/20 transition-colors duration-300"></div>
             
-            <div className="relative space-y-3">
+            <div className="relative space-y-4">
               <div className="flex items-center justify-between">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-all duration-300 group-hover:scale-105">
-                  <IndianRupee size={24} className="text-white" />
+                <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <UsersRound size={24} className="text-white" />
                 </div>
-                <div className="text-right">
-                  <p className="text-xs font-bold text-[#2e2e2e]/60 uppercase tracking-wide">Daily Revenue</p>
+                <div className="flex items-center space-x-1 bg-blue-100 px-2 py-1 rounded-lg">
+                  <Activity size={12} className="text-blue-600" />
+                  <span className="text-xs font-bold text-blue-800">Total</span>
                 </div>
               </div>
               
               <div>
-                <p className="text-2xl font-black text-[#2e2e2e] leading-none mb-1">
+                <p className="text-xs font-bold text-blue-700 mb-1 uppercase tracking-wide">Total Clients</p>
+                <p className="text-3xl font-black text-blue-900 leading-none mb-1">
+                  {clients.length}
+                </p>
+                <p className="text-xs text-blue-600 font-medium">In your database</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Daily Revenue */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-purple-500/10 rounded-full blur-xl group-hover:bg-purple-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <IndianRupee size={24} className="text-white" />
+                </div>
+                <div className="flex items-center space-x-1 bg-purple-100 px-2 py-1 rounded-lg">
+                  <Star size={12} className="text-purple-600" />
+                  <span className="text-xs font-bold text-purple-800">Revenue</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-purple-700 mb-1 uppercase tracking-wide">Daily Revenue</p>
+                <p className="text-2xl font-black text-purple-900 leading-none mb-1">
                   {formatCurrency(activeClients.reduce((sum, client) => sum + (client.milkQuantity * client.rate), 0))}
                 </p>
-                <p className="text-xs text-[#2e2e2e]/60 font-medium">Expected today</p>
+                <p className="text-xs text-purple-600 font-medium">Expected daily income</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Average Order */}
+          <div className="group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-transparent to-orange-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute -top-2 -right-2 w-16 h-16 bg-orange-500/10 rounded-full blur-xl group-hover:bg-orange-500/20 transition-colors duration-300"></div>
+            
+            <div className="relative space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                  <TrendingUp size={24} className="text-white" />
+                </div>
+                <div className="flex items-center space-x-1 bg-orange-100 px-2 py-1 rounded-lg">
+                  <Shield size={12} className="text-orange-600" />
+                  <span className="text-xs font-bold text-orange-800">Avg</span>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-xs font-bold text-orange-700 mb-1 uppercase tracking-wide">Avg Order Value</p>
+                <p className="text-2xl font-black text-orange-900 leading-none mb-1">
+                  {activeClients.length > 0 
+                    ? formatCurrency(activeClients.reduce((sum, client) => sum + (client.milkQuantity * client.rate), 0) / activeClients.length)
+                    : formatCurrency(0)
+                  }
+                </p>
+                <p className="text-xs text-orange-600 font-medium">Per client daily</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Client List */}
-        <div className="space-y-4">
+        {/* Enhanced Client List */}
+        <div className="space-y-6">
           {filteredClients.length === 0 ? (
-            <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/30 text-center">
-              <div className="p-4 bg-[#2e2e2e]/10 rounded-2xl w-fit mx-auto mb-4">
-                <User className="text-[#2e2e2e]/60" size={48} />
+            <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-12 shadow-xl border border-sage/20 text-center">
+              <div className="p-6 bg-dark/5 rounded-3xl w-fit mx-auto mb-6">
+                <Contact className="text-dark/40" size={64} />
               </div>
-              <h3 className="text-lg font-black text-[#2e2e2e] mb-2">
+              <h3 className="text-2xl font-black text-dark mb-3">
                 {searchTerm ? 'No clients found' : 'No clients yet'}
               </h3>
-              <p className="text-[#2e2e2e]/60 font-medium mb-4">
+              <p className="text-dark/60 font-medium mb-6 max-w-md mx-auto">
                 {searchTerm 
-                  ? `No clients match "${searchTerm}"`
-                  : 'Add your first client to get started'
+                  ? `No clients match "${searchTerm}". Try adjusting your search terms.`
+                  : 'Start building your customer base by adding your first client.'
                 }
               </p>
               {!searchTerm && (
                 <button
                   onClick={handleAddClient}
-                  className="bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 text-[#f3efe6] px-6 py-3 rounded-xl hover:shadow-xl transition-all duration-300 font-bold"
+                  className="bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 font-bold inline-flex items-center space-x-2"
                 >
-                  Add First Client
+                  <Plus size={20} />
+                  <span>Add First Client</span>
                 </button>
               )}
             </div>
           ) : (
-            filteredClients.map(client => (
-              <div
-                key={client.id}
-                className={`group relative bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden ${
-                  !client.isActive ? 'opacity-75' : ''
-                }`}
-              >
-                {/* Background gradient effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#b5cbb7]/5 via-transparent to-[#2e2e2e]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
-                <div className="relative flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <div className="p-2 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 rounded-xl">
-                        <User size={20} className="text-white" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredClients.map(client => (
+                <div
+                  key={client.id}
+                  className={`group relative bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-sage/20 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden ${
+                    !client.isActive ? 'opacity-75' : ''
+                  }`}
+                >
+                  {/* Enhanced background gradient effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-sage/5 via-transparent to-dark/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="relative">
+                    {/* Client Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2.5 bg-gradient-to-br from-cream to-cream/80 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
+                          <User size={18} className="text-dark" />
+                        </div>
+                        <div>
+                          <h3 className={`font-bold text-lg ${client.isActive ? 'text-dark' : 'text-dark/60'}`}>
+                            {client.name}
+                          </h3>
+                          <span
+                            className={`px-2 py-1 rounded-lg text-xs font-bold flex items-center space-x-1 w-fit ${
+                              client.isActive
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-gray-100 text-gray-600'
+                            }`}
+                          >
+                            {client.isActive ? (
+                              <>
+                                <CheckCircle size={10} />
+                                <span>Active</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle size={10} />
+                                <span>Inactive</span>
+                              </>
+                            )}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className={`font-black text-lg ${client.isActive ? 'text-[#2e2e2e]' : 'text-[#2e2e2e]/60'}`}>
-                          {client.name}
-                        </h3>
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      
+                      {/* Action Buttons */}
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleToggleStatus(client.id)}
+                          className={`p-2 rounded-xl transition-all duration-300 ${
                             client.isActive
-                              ? 'bg-emerald-100 text-emerald-800'
-                              : 'bg-gray-100 text-gray-600'
+                              ? 'text-orange-600 hover:bg-orange-50'
+                              : 'text-green-600 hover:bg-green-50'
                           }`}
+                          title={client.isActive ? 'Deactivate Client' : 'Activate Client'}
                         >
-                          {client.isActive ? 'Active' : 'Inactive'}
-                        </span>
+                          {client.isActive ? (
+                            <XCircle size={16} />
+                          ) : (
+                            <CheckCircle size={16} />
+                          )}
+                        </button>
+                        
+                        <button
+                          onClick={() => handleEditClient(client)}
+                          className="p-2 text-sage hover:bg-sage/20 rounded-xl transition-all duration-300"
+                          title="Edit Client"
+                        >
+                          <Edit size={16} />
+                        </button>
+                        
+                        <button
+                          onClick={() => handleDeleteClient(client.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-xl transition-all duration-300"
+                          title="Delete Client"
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                      <div className="flex items-center space-x-3 p-3 bg-[#2e2e2e]/5 rounded-xl">
-                        <MapPin size={16} className="text-[#2e2e2e]/60" />
-                        <span className="text-sm font-medium text-[#2e2e2e]">{client.address}</span>
+                    {/* Client Details */}
+                    <div className="space-y-3 mb-4">
+                      <div className="flex items-center space-x-2 text-sm">
+                        <MapPin size={14} className="text-blue-500" />
+                        <span className="text-dark/70 font-medium truncate">{client.address}</span>
                       </div>
-                      <div className="flex items-center space-x-3 p-3 bg-[#2e2e2e]/5 rounded-xl">
-                        <Phone size={16} className="text-[#2e2e2e]/60" />
-                        <span className="text-sm font-medium text-[#2e2e2e]">{client.phone}</span>
+                      
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Phone size={14} className="text-green-500" />
+                        <span className="text-dark/70 font-medium">{client.phone}</span>
                       </div>
-                      <div className="flex items-center space-x-3 p-3 bg-[#2e2e2e]/5 rounded-xl">
-                        <Clock size={16} className="text-[#2e2e2e]/60" />
-                        <span className="text-sm font-medium text-[#2e2e2e]">{client.deliveryTime}</span>
-                      </div>
-                      <div className="flex items-center space-x-3 p-3 bg-[#2e2e2e]/5 rounded-xl">
-                        <IndianRupee size={16} className="text-[#2e2e2e]/60" />
-                        <span className="text-sm font-medium text-[#2e2e2e]">{client.milkQuantity}L @ {formatCurrency(client.rate)}/L</span>
+                      
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Clock size={14} className="text-purple-500" />
+                        <span className="text-dark/70 font-medium">{client.deliveryTime}</span>
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3">
-                        <p className="text-xs font-bold text-blue-700 mb-1">Daily Amount</p>
-                        <p className="text-lg font-black text-blue-900">{formatCurrency(client.milkQuantity * client.rate)}</p>
+                    {/* Revenue Summary */}
+                    <div className="bg-gradient-to-br from-sage/10 to-sage/5 rounded-xl p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-bold text-sage uppercase tracking-wide">Daily Order</span>
+                        <div className="flex items-center space-x-1">
+                          <IndianRupee size={12} className="text-sage" />
+                          <span className="text-xs font-bold text-sage">Revenue</span>
+                        </div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-3">
-                        <p className="text-xs font-bold text-green-700 mb-1">Monthly Amount</p>
-                        <p className="text-lg font-black text-green-900">{formatCurrency(client.milkQuantity * client.rate * 30)}</p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-black text-dark">{client.milkQuantity}L</span>
+                        <span className="text-lg font-black text-dark">{formatCurrency(client.milkQuantity * client.rate)}</span>
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <span className="text-xs text-dark/60">@ {formatCurrency(client.rate)}/L</span>
+                        <span className="text-xs text-dark/60">per day</span>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="flex flex-col space-y-2 ml-6">
-                    <button
-                      onClick={() => handleToggleStatus(client.id)}
-                      className={`p-3 rounded-xl transition-all duration-300 ${
-                        client.isActive
-                          ? 'text-orange-600 hover:bg-orange-50 bg-orange-50/50'
-                          : 'text-green-600 hover:bg-green-50 bg-green-50/50'
-                      }`}
-                      title={client.isActive ? 'Deactivate' : 'Activate'}
-                    >
-                      {client.isActive ? <Trash2 size={18} /> : <User size={18} />}
-                    </button>
-                    <button
-                      onClick={() => handleEditClient(client)}
-                      className="p-3 text-[#b5cbb7] hover:bg-[#b5cbb7]/20 bg-[#b5cbb7]/10 rounded-xl transition-all duration-300"
-                      title="Edit"
-                    >
-                      <Edit size={18} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClient(client.id)}
-                      className="p-3 text-red-600 hover:bg-red-50 bg-red-50/50 rounded-xl transition-all duration-300"
-                      title="Delete"
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>

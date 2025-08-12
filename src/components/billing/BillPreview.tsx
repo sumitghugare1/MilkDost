@@ -41,7 +41,7 @@ export default function BillPreview({ bill, client, onClose, onDownload }: BillP
   };
 
   const handleSendEmail = () => {
-    const subject = `Invoice for ${months[bill.month]} ${bill.year} - DairyMate`;
+    const subject = `Invoice for ${months[bill.month]} ${bill.year} - Ksheera`;
     const body = `Dear ${client.name},
 
 Please find your invoice for milk delivery services for ${months[bill.month]} ${bill.year}.

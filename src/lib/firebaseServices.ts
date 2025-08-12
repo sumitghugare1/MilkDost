@@ -15,6 +15,7 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { authService } from './authService';
 import { 
   Client, 
   Delivery, 
@@ -47,33 +48,51 @@ const convertToTimestamp = (date: Date) => {
   return Timestamp.fromDate(date);
 };
 
+// Helper function to get current user ID
+const getCurrentUserId = (): string => {
+  const currentUser = authService.getCurrentUser();
+  if (!currentUser) {
+    throw new Error('User must be authenticated to access data');
+  }
+  return currentUser.uid;
+};
+
 // ===== CLIENT SERVICES =====
 
 export const clientService = {
-  // Get all clients
+  // Get all clients for current user
   async getAll(): Promise<Client[]> {
     try {
+      const userId = getCurrentUserId();
       const querySnapshot = await getDocs(
-        query(collection(db, COLLECTIONS.CLIENTS), orderBy('createdAt', 'desc'))
+        query(
+          collection(db, COLLECTIONS.CLIENTS), 
+          where('userId', '==', userId)
+        )
       );
-      return querySnapshot.docs.map(doc => ({
+      const clients = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Client[];
+      
+      // Sort by createdAt in JavaScript instead of Firestore
+      return clients.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching clients:', error);
       throw error;
     }
   },
 
-  // Add new client
-  async add(clientData: Omit<Client, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  // Add new client for current user
+  async add(clientData: Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const now = new Date();
       const docRef = await addDoc(collection(db, COLLECTIONS.CLIENTS), {
         ...clientData,
+        userId,
         createdAt: convertToTimestamp(now),
         updatedAt: convertToTimestamp(now)
       });
@@ -84,10 +103,25 @@ export const clientService = {
     }
   },
 
-  // Update client
+  // Update client (only if user owns it)
   async update(id: string, updates: Partial<Client>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const clientRef = doc(db, COLLECTIONS.CLIENTS, id);
+      
+      // First verify the client belongs to the current user
+      const clientDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.CLIENTS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const clientExists = clientDoc.docs.some(doc => doc.id === id);
+      if (!clientExists) {
+        throw new Error('Client not found or access denied');
+      }
+      
       await updateDoc(clientRef, {
         ...updates,
         updatedAt: convertToTimestamp(new Date())
@@ -98,9 +132,24 @@ export const clientService = {
     }
   },
 
-  // Delete client
+  // Delete client (only if user owns it)
   async delete(id: string): Promise<void> {
     try {
+      const userId = getCurrentUserId();
+      
+      // First verify the client belongs to the current user
+      const clientDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.CLIENTS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const clientExists = clientDoc.docs.some(doc => doc.id === id);
+      if (!clientExists) {
+        throw new Error('Client not found or access denied');
+      }
+      
       await deleteDoc(doc(db, COLLECTIONS.CLIENTS, id));
     } catch (error) {
       console.error('Error deleting client:', error);
@@ -108,62 +157,84 @@ export const clientService = {
     }
   },
 
-  // Listen to clients in real-time
+  // Listen to clients in real-time for current user
   onSnapshot(callback: (clients: Client[]) => void) {
-    return onSnapshot(
-      query(collection(db, COLLECTIONS.CLIENTS), orderBy('createdAt', 'desc')),
-      (snapshot) => {
-        const clients = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: convertTimestamp(doc.data().createdAt),
-          updatedAt: convertTimestamp(doc.data().updatedAt)
-        })) as Client[];
-        callback(clients);
-      }
-    );
+    try {
+      const userId = getCurrentUserId();
+      return onSnapshot(
+        query(
+          collection(db, COLLECTIONS.CLIENTS), 
+          where('userId', '==', userId)
+        ),
+        (snapshot) => {
+          const clients = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+            createdAt: convertTimestamp(doc.data().createdAt),
+            updatedAt: convertTimestamp(doc.data().updatedAt)
+          })) as Client[];
+          
+          // Sort by createdAt in JavaScript instead of Firestore
+          const sortedClients = clients.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          callback(sortedClients);
+        }
+      );
+    } catch (error) {
+      console.error('Error setting up client snapshot:', error);
+      throw error;
+    }
   }
 };
 
 // ===== DELIVERY SERVICES =====
 
 export const deliveryService = {
-  // Get deliveries by date
+  // Get deliveries by date for current user
   async getByDate(date: Date): Promise<Delivery[]> {
     try {
+      const userId = getCurrentUserId();
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
+      // Get all user deliveries first, then filter by date
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.DELIVERIES),
-          where('date', '>=', convertToTimestamp(startOfDay)),
-          where('date', '<=', convertToTimestamp(endOfDay)),
-          orderBy('date', 'asc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const allDeliveries = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: convertTimestamp(doc.data().date),
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Delivery[];
+
+      // Filter by date in JavaScript
+      const dateDeliveries = allDeliveries.filter(delivery => 
+        delivery.date >= startOfDay && delivery.date <= endOfDay
+      );
+
+      // Sort by date
+      return dateDeliveries.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {
       console.error('Error fetching deliveries:', error);
       throw error;
     }
   },
 
-  // Add new delivery
-  async add(deliveryData: Omit<Delivery, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  // Add new delivery for current user
+  async add(deliveryData: Omit<Delivery, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const now = new Date();
       const docRef = await addDoc(collection(db, COLLECTIONS.DELIVERIES), {
         ...deliveryData,
+        userId,
         date: convertToTimestamp(deliveryData.date),
         createdAt: convertToTimestamp(now),
         updatedAt: convertToTimestamp(now)
@@ -175,10 +246,25 @@ export const deliveryService = {
     }
   },
 
-  // Update delivery
+  // Update delivery (only if user owns it)
   async update(id: string, updates: Partial<Delivery>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const deliveryRef = doc(db, COLLECTIONS.DELIVERIES, id);
+      
+      // First verify the delivery belongs to the current user
+      const deliveryDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.DELIVERIES),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const deliveryExists = deliveryDoc.docs.some(doc => doc.id === id);
+      if (!deliveryExists) {
+        throw new Error('Delivery not found or access denied');
+      }
+      
       const updateData: any = {
         ...updates,
         updatedAt: convertToTimestamp(new Date())
@@ -195,57 +281,85 @@ export const deliveryService = {
     }
   },
 
-  // Get all deliveries
+  // Get all deliveries for current user
   async getAll(): Promise<Delivery[]> {
     try {
+      const userId = getCurrentUserId();
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.DELIVERIES),
-          orderBy('date', 'desc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const deliveries = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: convertTimestamp(doc.data().date),
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Delivery[];
+
+      // Sort by date in JavaScript instead of Firestore
+      return deliveries.sort((a, b) => b.date.getTime() - a.date.getTime());
     } catch (error) {
       console.error('Error fetching all deliveries:', error);
       throw error;
     }
   },
 
-  // Get deliveries by date range
+  // Get deliveries by date range for current user
   async getByDateRange(startDate: Date, endDate: Date): Promise<Delivery[]> {
     try {
+      const userId = getCurrentUserId();
+      
+      // Get all user deliveries first, then filter by date range
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.DELIVERIES),
-          where('date', '>=', convertToTimestamp(startDate)),
-          where('date', '<=', convertToTimestamp(endDate)),
-          orderBy('date', 'asc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const allDeliveries = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: convertTimestamp(doc.data().date),
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Delivery[];
+
+      // Filter by date range in JavaScript
+      const dateRangeDeliveries = allDeliveries.filter(delivery => 
+        delivery.date >= startDate && delivery.date <= endDate
+      );
+
+      // Sort by date
+      return dateRangeDeliveries.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {
       console.error('Error fetching deliveries by date range:', error);
       return []; // Return empty array on error instead of throwing
     }
   },
 
-  // Delete delivery
+  // Delete delivery (only if user owns it)
   async delete(id: string): Promise<void> {
     try {
+      const userId = getCurrentUserId();
+      
+      // First verify the delivery belongs to the current user
+      const deliveryDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.DELIVERIES),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const deliveryExists = deliveryDoc.docs.some(doc => doc.id === id);
+      if (!deliveryExists) {
+        throw new Error('Delivery not found or access denied');
+      }
+      
       await deleteDoc(doc(db, COLLECTIONS.DELIVERIES, id));
     } catch (error) {
       console.error('Error deleting delivery:', error);
@@ -257,13 +371,17 @@ export const deliveryService = {
 // ===== BUFFALO SERVICES =====
 
 export const buffaloService = {
-  // Get all buffaloes
+  // Get all buffaloes for current user
   async getAll(): Promise<Buffalo[]> {
     try {
+      const userId = getCurrentUserId();
       const querySnapshot = await getDocs(
-        query(collection(db, COLLECTIONS.BUFFALOES), orderBy('createdAt', 'desc'))
+        query(
+          collection(db, COLLECTIONS.BUFFALOES), 
+          where('userId', '==', userId)
+        )
       );
-      return querySnapshot.docs.map(doc => ({
+      const buffaloes = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         lastVetVisit: doc.data().lastVetVisit ? convertTimestamp(doc.data().lastVetVisit) : undefined,
@@ -271,19 +389,24 @@ export const buffaloService = {
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Buffalo[];
+      
+      // Sort by createdAt in JavaScript instead of Firestore
+      return buffaloes.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching buffaloes:', error);
       throw error;
     }
   },
 
-  // Add new buffalo
-  async add(buffaloData: Omit<Buffalo, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  // Add new buffalo for current user
+  async add(buffaloData: Omit<Buffalo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const now = new Date();
       
       // Create document data without undefined values
       const docData: any = {
+        userId,
         name: buffaloData.name,
         age: buffaloData.age,
         healthStatus: buffaloData.healthStatus,
@@ -318,10 +441,25 @@ export const buffaloService = {
     }
   },
 
-  // Update buffalo
+  // Update buffalo (only if user owns it)
   async update(id: string, updates: Partial<Buffalo>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const buffaloRef = doc(db, COLLECTIONS.BUFFALOES, id);
+      
+      // First verify the buffalo belongs to the current user
+      const buffaloDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BUFFALOES),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const buffaloExists = buffaloDoc.docs.some(doc => doc.id === id);
+      if (!buffaloExists) {
+        throw new Error('Buffalo not found or access denied');
+      }
+      
       const updateData: any = {
         ...updates,
         updatedAt: convertToTimestamp(new Date())
@@ -341,9 +479,24 @@ export const buffaloService = {
     }
   },
 
-  // Delete buffalo
+  // Delete buffalo (only if user owns it)
   async delete(id: string): Promise<void> {
     try {
+      const userId = getCurrentUserId();
+      
+      // First verify the buffalo belongs to the current user
+      const buffaloDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BUFFALOES),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const buffaloExists = buffaloDoc.docs.some(doc => doc.id === id);
+      if (!buffaloExists) {
+        throw new Error('Buffalo not found or access denied');
+      }
+      
       await deleteDoc(doc(db, COLLECTIONS.BUFFALOES, id));
     } catch (error) {
       console.error('Error deleting buffalo:', error);
@@ -355,40 +508,50 @@ export const buffaloService = {
 // ===== FEEDING SERVICES =====
 
 export const feedingService = {
-  // Get feedings by date
+  // Get feedings by date for current user
   async getByDate(date: Date): Promise<BuffaloFeeding[]> {
     try {
+      const userId = getCurrentUserId();
       const startOfDay = new Date(date);
       startOfDay.setHours(0, 0, 0, 0);
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
+      // Get all user feedings first, then filter by date
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.FEEDINGS),
-          where('date', '>=', convertToTimestamp(startOfDay)),
-          where('date', '<=', convertToTimestamp(endOfDay)),
-          orderBy('date', 'asc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const allFeedings = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: convertTimestamp(doc.data().date),
         createdAt: convertTimestamp(doc.data().createdAt)
       })) as BuffaloFeeding[];
+
+      // Filter by date in JavaScript
+      const dateFeedings = allFeedings.filter(feeding => 
+        feeding.date >= startOfDay && feeding.date <= endOfDay
+      );
+
+      // Sort by date
+      return dateFeedings.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {
       console.error('Error fetching feedings:', error);
       throw error;
     }
   },
 
-  // Add new feeding
-  async add(feedingData: Omit<BuffaloFeeding, 'id' | 'createdAt'>): Promise<string> {
+  // Add new feeding for current user
+  async add(feedingData: Omit<BuffaloFeeding, 'id' | 'userId' | 'createdAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const docRef = await addDoc(collection(db, COLLECTIONS.FEEDINGS), {
         ...feedingData,
+        userId,
         date: convertToTimestamp(feedingData.date),
         createdAt: convertToTimestamp(new Date())
       });
@@ -399,13 +562,53 @@ export const feedingService = {
     }
   },
 
-  // Update feeding
+  // Update feeding (only if user owns it)
   async update(id: string, updates: Partial<BuffaloFeeding>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const feedingRef = doc(db, COLLECTIONS.FEEDINGS, id);
+      
+      // First verify the feeding belongs to the current user
+      const feedingDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.FEEDINGS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const feedingExists = feedingDoc.docs.some(doc => doc.id === id);
+      if (!feedingExists) {
+        throw new Error('Feeding record not found or access denied');
+      }
+      
       await updateDoc(feedingRef, updates);
     } catch (error) {
       console.error('Error updating feeding:', error);
+      throw error;
+    }
+  },
+
+  // Delete feeding (only if user owns it)
+  async delete(id: string): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      
+      // First verify the feeding belongs to the current user
+      const feedingDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.FEEDINGS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const feedingExists = feedingDoc.docs.some(doc => doc.id === id);
+      if (!feedingExists) {
+        throw new Error('Feeding record not found or access denied');
+      }
+      
+      await deleteDoc(doc(db, COLLECTIONS.FEEDINGS, id));
+    } catch (error) {
+      console.error('Error deleting feeding:', error);
       throw error;
     }
   }
@@ -414,17 +617,18 @@ export const feedingService = {
 // ===== BILL SERVICES =====
 
 export const billService = {
-  // Get all bills
+  // Get all bills for current user
   async getAll(): Promise<Bill[]> {
     try {
+      const userId = getCurrentUserId();
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.BILLS),
-          orderBy('createdAt', 'desc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const bills = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         paidDate: doc.data().paidDate ? convertTimestamp(doc.data().paidDate) : undefined,
@@ -432,19 +636,24 @@ export const billService = {
         createdAt: convertTimestamp(doc.data().createdAt),
         updatedAt: convertTimestamp(doc.data().updatedAt)
       })) as Bill[];
+
+      // Sort by createdAt in JavaScript instead of Firestore
+      return bills.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching all bills:', error);
       throw error;
     }
   },
 
-  // Get bills by month and year
+  // Get bills by month and year for current user
   async getByMonth(month: number, year: number): Promise<Bill[]> {
     try {
+      const userId = getCurrentUserId();
       // Use simpler query to avoid index requirement
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.BILLS),
+          where('userId', '==', userId),
           where('month', '==', month),
           where('year', '==', year)
         )
@@ -467,13 +676,15 @@ export const billService = {
     }
   },
 
-  // Add new bill
-  async add(billData: Omit<Bill, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
+  // Add new bill for current user
+  async add(billData: Omit<Bill, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const now = new Date();
       
       // Create document data without undefined values
       const docData: any = {
+        userId,
         clientId: billData.clientId,
         month: billData.month,
         year: billData.year,
@@ -499,10 +710,25 @@ export const billService = {
     }
   },
 
-  // Update bill
+  // Update bill (only if user owns it)
   async update(id: string, updates: Partial<Bill>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const billRef = doc(db, COLLECTIONS.BILLS, id);
+      
+      // First verify the bill belongs to the current user
+      const billDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BILLS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const billExists = billDoc.docs.some(doc => doc.id === id);
+      if (!billExists) {
+        throw new Error('Bill not found or access denied');
+      }
+      
       const updateData: any = {
         ...updates,
         updatedAt: convertToTimestamp(new Date())
@@ -520,41 +746,77 @@ export const billService = {
       console.error('Error updating bill:', error);
       throw error;
     }
+  },
+
+  // Delete bill (only if user owns it)
+  async delete(id: string): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      
+      // First verify the bill belongs to the current user
+      const billDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BILLS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const billExists = billDoc.docs.some(doc => doc.id === id);
+      if (!billExists) {
+        throw new Error('Bill not found or access denied');
+      }
+      
+      await deleteDoc(doc(db, COLLECTIONS.BILLS, id));
+    } catch (error) {
+      console.error('Error deleting bill:', error);
+      throw error;
+    }
   }
 };
 
 // ===== PRODUCTION SERVICES =====
 
 export const productionService = {
-  // Get productions by date range
+  // Get productions by date range for current user
   async getByDateRange(startDate: Date, endDate: Date): Promise<MilkProduction[]> {
     try {
+      const userId = getCurrentUserId();
+      
+      // Get all user productions first, then filter by date range
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.PRODUCTIONS),
-          where('date', '>=', convertToTimestamp(startDate)),
-          where('date', '<=', convertToTimestamp(endDate)),
-          orderBy('date', 'asc')
+          where('userId', '==', userId)
         )
       );
 
-      return querySnapshot.docs.map(doc => ({
+      const allProductions = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
         date: convertTimestamp(doc.data().date),
         createdAt: convertTimestamp(doc.data().createdAt)
       })) as MilkProduction[];
+
+      // Filter by date range in JavaScript
+      const dateRangeProductions = allProductions.filter(production => 
+        production.date >= startDate && production.date <= endDate
+      );
+
+      // Sort by date
+      return dateRangeProductions.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {
       console.error('Error fetching productions:', error);
       throw error;
     }
   },
 
-  // Add new production
-  async add(productionData: Omit<MilkProduction, 'id' | 'createdAt'>): Promise<string> {
+  // Add new production for current user
+  async add(productionData: Omit<MilkProduction, 'id' | 'userId' | 'createdAt'>): Promise<string> {
     try {
+      const userId = getCurrentUserId();
       const docRef = await addDoc(collection(db, COLLECTIONS.PRODUCTIONS), {
         ...productionData,
+        userId,
         date: convertToTimestamp(productionData.date),
         createdAt: convertToTimestamp(new Date())
       });
@@ -565,10 +827,25 @@ export const productionService = {
     }
   },
 
-  // Update production
+  // Update production (only if user owns it)
   async update(id: string, updates: Partial<MilkProduction>): Promise<void> {
     try {
+      const userId = getCurrentUserId();
       const productionRef = doc(db, COLLECTIONS.PRODUCTIONS, id);
+      
+      // First verify the production belongs to the current user
+      const productionDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.PRODUCTIONS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const productionExists = productionDoc.docs.some(doc => doc.id === id);
+      if (!productionExists) {
+        throw new Error('Production record not found or access denied');
+      }
+      
       await updateDoc(productionRef, updates);
     } catch (error) {
       console.error('Error updating production:', error);
@@ -576,9 +853,24 @@ export const productionService = {
     }
   },
 
-  // Delete production
+  // Delete production (only if user owns it)
   async delete(id: string): Promise<void> {
     try {
+      const userId = getCurrentUserId();
+      
+      // First verify the production belongs to the current user
+      const productionDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.PRODUCTIONS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const productionExists = productionDoc.docs.some(doc => doc.id === id);
+      if (!productionExists) {
+        throw new Error('Production record not found or access denied');
+      }
+      
       await deleteDoc(doc(db, COLLECTIONS.PRODUCTIONS, id));
     } catch (error) {
       console.error('Error deleting production:', error);

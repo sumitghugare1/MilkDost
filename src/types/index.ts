@@ -2,6 +2,7 @@
 
 export interface Client {
   id: string;
+  userId: string; // Owner of this client record
   name: string;
   address: string;
   phone: string;
@@ -16,6 +17,7 @@ export interface Client {
 
 export interface Delivery {
   id: string;
+  userId: string; // Owner of this delivery record
   clientId: string;
   date: Date;
   quantity: number;
@@ -27,6 +29,7 @@ export interface Delivery {
 
 export interface Buffalo {
   id: string;
+  userId: string; // Owner of this buffalo record
   name: string;
   age: number;
   breed?: string;
@@ -46,6 +49,7 @@ export interface Buffalo {
 
 export interface BuffaloFeeding {
   id: string;
+  userId: string; // Owner of this feeding record
   buffaloId: string;
   date: Date;
   time: 'morning' | 'evening';
@@ -58,6 +62,7 @@ export interface BuffaloFeeding {
 
 export interface MilkProduction {
   id: string;
+  userId: string; // Owner of this production record
   date: Date;
   totalProduced: number;
   totalSold: number;
@@ -69,6 +74,7 @@ export interface MilkProduction {
 
 export interface Bill {
   id: string;
+  userId: string; // Owner of this bill record
   clientId: string;
   month: number;
   year: number;
@@ -84,6 +90,7 @@ export interface Bill {
 
 export interface Payment {
   id: string;
+  userId: string; // Owner of this payment record
   billId: string;
   clientId: string;
   amount: number;
