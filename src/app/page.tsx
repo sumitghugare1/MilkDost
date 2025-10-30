@@ -8,12 +8,18 @@ import Header from '@/components/layout/Header';
 import MobileTabNavigation from '@/components/navigation/MobileTabNavigation';
 import Dashboard from '@/components/dashboard/Dashboard';
 import ClientManagement from '@/components/clients/ClientManagement';
+import UserAccountManagement from '@/components/clients/UserAccountManagement';
 import DeliveryTracking from '@/components/deliveries/DeliveryTracking';
 import BillingManagement from '@/components/billing/BillingManagement';
 import BuffaloManagement from '@/components/buffalo/BuffaloManagement';
 import InventoryManagement from '@/components/inventory/InventoryManagement';
 import AnalyticsHub from '@/components/analytics/AnalyticsHub';
 import DataMigration from '@/components/admin/DataMigration';
+import RoleBasedRoute from '@/components/auth/RoleBasedRoute';
+import ClientDashboard from '@/components/dashboard/ClientDashboard';
+import ClientNavigation from '@/components/navigation/ClientNavigation';
+import AuthDebugger from '@/components/debug/AuthDebugger';
+import UserProfileMigrator from '@/components/debug/UserProfileMigrator';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 
@@ -21,7 +27,18 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [needsMigration, setNeedsMigration] = useState(false);
   const [checkingMigration, setCheckingMigration] = useState(true);
-  const { user, loading } = useAuth();
+  const { user, userProfile, loading, isDairyOwner, isClient } = useAuth();
+
+  // Debug logging
+  useEffect(() => {
+    console.log('App Debug:', {
+      user: user ? { uid: user.uid, email: user.email } : null,
+      userProfile,
+      loading,
+      isDairyOwner,
+      isClient
+    });
+  }, [user, userProfile, loading, isDairyOwner, isClient]);
 
   // Check if user data needs migration
   useEffect(() => {
@@ -36,8 +53,14 @@ export default function Home() {
         let needsMigration = false;
 
         for (const collectionName of collections) {
-          // Check if there are any documents without userId in each collection
-          const q = query(collection(db, collectionName), limit(1));
+          // Query only documents that belong to the authenticated user.
+          // This prevents permission-denied errors for collections that
+          // contain documents owned by other users (or seeded/demo data).
+          const q = query(
+            collection(db, collectionName),
+            where('userId', '==', user.uid),
+            limit(1)
+          );
           const querySnapshot = await getDocs(q);
           
           for (const doc of querySnapshot.docs) {
@@ -101,8 +124,8 @@ export default function Home() {
     return <AuthForm />;
   }
 
-  // Show migration component if migration is needed
-  if (needsMigration) {
+  // Show migration component if migration is needed (dairy owners only)
+  if (needsMigration && isDairyOwner) {
     return (
       <Layout
         header={
@@ -119,6 +142,7 @@ export default function Home() {
     );
   }
 
+  // Dairy Owner Functions
   const getPageTitle = () => {
     switch (activeTab) {
       case 'dashboard':
@@ -146,6 +170,8 @@ export default function Home() {
         return 'The Future of Dairy, Today.';
       case 'clients':
         return 'Manage clients and deliveries';
+      case 'user-accounts':
+        return 'Manage user account activations';
       case 'deliveries':
         return 'Track daily milk deliveries';
       case 'billing':
@@ -167,6 +193,8 @@ export default function Home() {
         return <Dashboard onNavigate={setActiveTab} />;
       case 'clients':
         return <ClientManagement />;
+      case 'user-accounts':
+        return <UserAccountManagement />;
       case 'deliveries':
         return <DeliveryTracking />;
       case 'billing':
@@ -182,22 +210,129 @@ export default function Home() {
     }
   };
 
+  // Client Functions
+  const getClientPageTitle = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return 'My Dashboard';
+      case 'bills':
+        return 'My Bills';
+      case 'payments':
+        return 'Payment History';
+      case 'deliveries':
+        return 'My Deliveries';
+      case 'profile':
+        return 'My Profile';
+      default:
+        return 'MilkDost Client Portal';
+    }
+  };
+
+  const getClientPageSubtitle = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return 'Your dairy delivery overview';
+      case 'bills':
+        return 'View and pay your bills';
+      case 'payments':
+        return 'Track your payment history';
+      case 'deliveries':
+        return 'Monitor your milk deliveries';
+      case 'profile':
+        return 'Manage your account settings';
+      default:
+        return 'Welcome to your client portal';
+    }
+  };
+
+  const renderClientContent = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <ClientDashboard />;
+      case 'bills':
+        return <div className="p-8 text-center">Bills view coming soon...</div>;
+      case 'payments':
+        return <div className="p-8 text-center">Payment history coming soon...</div>;
+      case 'deliveries':
+        return <div className="p-8 text-center">Delivery tracking coming soon...</div>;
+      case 'profile':
+        return <div className="p-8 text-center">Profile settings coming soon...</div>;
+      default:
+        return <ClientDashboard />;
+    }
+  };
+
+  // If user profile is available, determine interface based on role
+  if (user && userProfile) {
+    // Client Interface
+    if (userProfile.role === 'client') {
+      return (
+        <RoleBasedRoute allowedRoles={['client']}>
+          <Layout
+            header={
+              <Header
+                title={getClientPageTitle()}
+                subtitle={getClientPageSubtitle()}
+              />
+            }
+            navigation={
+              <ClientNavigation
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+            }
+          >
+            {renderClientContent()}
+          </Layout>
+          <AuthDebugger />
+        </RoleBasedRoute>
+      );
+    }
+
+    // Dairy Owner Interface (default for 'dairy_owner' role and backward compatibility)
+    return (
+      <RoleBasedRoute allowedRoles={['dairy_owner']}>
+        <Layout
+          header={
+            <Header
+              title={getPageTitle()}
+              subtitle={getPageSubtitle()}
+            />
+          }
+          navigation={
+            <MobileTabNavigation
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
+          }
+        >
+          {renderContent()}
+        </Layout>
+        <AuthDebugger />
+      </RoleBasedRoute>
+    );
+  }
+
+  // Fallback: Show loading or auth form
+  if (!user) {
+    return (
+      <>
+        <AuthForm />
+        <AuthDebugger />
+      </>
+    );
+  }
+
+  // Loading state while profile is being fetched
   return (
-    <Layout
-      header={
-        <Header
-          title={getPageTitle()}
-          subtitle={getPageSubtitle()}
-        />
-      }
-      navigation={
-        <MobileTabNavigation
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
-      }
-    >
-      {renderContent()}
-    </Layout>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading your profile...</p>
+        <p className="text-xs text-gray-500 mt-2">User: {user.email}</p>
+      </div>
+      <AuthDebugger />
+      <UserProfileMigrator />
+    </div>
   );
 }

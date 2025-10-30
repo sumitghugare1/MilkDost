@@ -95,10 +95,37 @@ export interface Payment {
   clientId: string;
   amount: number;
   paymentDate: Date;
-  paymentMethod: 'cash' | 'upi' | 'bank_transfer' | 'cheque';
+  paymentMethod: 'cash' | 'upi' | 'bank_transfer' | 'cheque' | 'razorpay';
   transactionId?: string;
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
+  razorpaySignature?: string;
   notes?: string;
   createdAt: Date;
+}
+
+export interface RazorpayPaymentData {
+  razorpay_order_id?: string;
+  razorpay_payment_id: string;
+  razorpay_signature?: string;
+}
+
+export interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id?: string; // Optional for client-side payments
+  handler: (response: RazorpayPaymentData) => void;
+  prefill: {
+    name: string;
+    email?: string;
+    contact?: string;
+  };
+  theme: {
+    color: string;
+  };
 }
 
 export interface DashboardStats {

@@ -9,10 +9,14 @@ interface AuthContextType {
   user: User | null;
   userProfile: UserProfile | null;
   loading: boolean;
+  isDairyOwner: boolean;
+  isClient: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, userData: {
     displayName: string;
     businessName: string;
+    role?: 'dairy_owner' | 'client';
+    dairyOwnerId?: string;
     phone?: string;
     address?: string;
   }) => Promise<void>;
@@ -33,6 +37,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDairyOwner, setIsDairyOwner] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     const unsubscribe = authService.onAuthStateChanged(async (user) => {
@@ -42,12 +48,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
           const profile = await authService.getUserProfile(user.uid);
           setUserProfile(profile);
+          
+          // Set role-based flags
+          if (profile) {
+            setIsDairyOwner(profile.role === 'dairy_owner' && profile.isActive);
+            setIsClient(profile.role === 'client' && profile.isActive);
+            console.log('User profile loaded:', {
+              role: profile.role,
+              isActive: profile.isActive,
+              isDairyOwner: profile.role === 'dairy_owner' && profile.isActive,
+              isClient: profile.role === 'client' && profile.isActive
+            });
+          } else {
+            console.warn('No profile found for user:', user.uid);
+            setIsDairyOwner(false);
+            setIsClient(false);
+          }
         } catch (error) {
           console.error('Error loading user profile:', error);
           setUserProfile(null);
+          setIsDairyOwner(false);
+          setIsClient(false);
         }
       } else {
         setUserProfile(null);
+        setIsDairyOwner(false);
+        setIsClient(false);
       }
       
       setLoading(false);
@@ -84,11 +110,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (email: string, password: string, userData: {
     displayName: string;
     businessName: string;
+    role?: 'dairy_owner' | 'client';
+    dairyOwnerId?: string;
     phone?: string;
     address?: string;
   }) => {
     try {
       setLoading(true);
+      console.log('Signing up user with role:', userData.role); // Debug log
       await authService.register(email, password, userData);
       toast.success('Account created successfully! Welcome to Ksheera!');
     } catch (error: any) {
@@ -125,6 +154,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     user,
     userProfile,
     loading,
+    isDairyOwner,
+    isClient,
     signIn,
     signUp,
     signOut

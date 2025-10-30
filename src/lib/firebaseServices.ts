@@ -22,7 +22,8 @@ import {
   Buffalo, 
   BuffaloFeeding, 
   Bill, 
-  MilkProduction 
+  MilkProduction,
+  Payment 
 } from '@/types';
 
 // Collection names
@@ -32,7 +33,8 @@ const COLLECTIONS = {
   BUFFALOES: 'buffaloes',
   FEEDINGS: 'feedings',
   BILLS: 'bills',
-  PRODUCTIONS: 'productions'
+  PRODUCTIONS: 'productions',
+  PAYMENTS: 'payments'
 };
 
 // Helper function to convert Firestore timestamp to Date
@@ -874,6 +876,172 @@ export const productionService = {
       await deleteDoc(doc(db, COLLECTIONS.PRODUCTIONS, id));
     } catch (error) {
       console.error('Error deleting production:', error);
+      throw error;
+    }
+  }
+};
+
+// Payment Service
+export const paymentService = {
+  // Create new payment (with user authentication)
+  async create(paymentData: Omit<Payment, 'id' | 'createdAt'>): Promise<string> {
+    try {
+      const userId = getCurrentUserId();
+      
+      const docData = {
+        ...paymentData,
+        userId,
+        createdAt: convertToTimestamp(new Date()),
+        paymentDate: convertToTimestamp(paymentData.paymentDate)
+      };
+      
+      const docRef = await addDoc(collection(db, COLLECTIONS.PAYMENTS), docData);
+      return docRef.id;
+    } catch (error) {
+      console.error('Error creating payment:', error);
+      throw error;
+    }
+  },
+
+  // Get all payments for current user
+  async getAll(): Promise<Payment[]> {
+    try {
+      const userId = getCurrentUserId();
+      const q = query(
+        collection(db, COLLECTIONS.PAYMENTS),
+        where('userId', '==', userId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const payments = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: convertTimestamp(data.createdAt),
+          paymentDate: convertTimestamp(data.paymentDate)
+        } as Payment;
+      });
+      
+      // Sort by paymentDate in JavaScript instead of Firestore
+      return payments.sort((a, b) => b.paymentDate.getTime() - a.paymentDate.getTime());
+    } catch (error) {
+      console.error('Error getting payments:', error);
+      throw error;
+    }
+  },
+
+  // Get payments by bill ID
+  async getByBillId(billId: string): Promise<Payment[]> {
+    try {
+      const userId = getCurrentUserId();
+      const q = query(
+        collection(db, COLLECTIONS.PAYMENTS),
+        where('userId', '==', userId),
+        where('billId', '==', billId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const payments = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: convertTimestamp(data.createdAt),
+          paymentDate: convertTimestamp(data.paymentDate)
+        } as Payment;
+      });
+      
+      // Sort by paymentDate in JavaScript instead of Firestore
+      return payments.sort((a, b) => b.paymentDate.getTime() - a.paymentDate.getTime());
+    } catch (error) {
+      console.error('Error getting payments by bill ID:', error);
+      throw error;
+    }
+  },
+
+  // Get payments by client ID
+  async getByClientId(clientId: string): Promise<Payment[]> {
+    try {
+      const userId = getCurrentUserId();
+      const q = query(
+        collection(db, COLLECTIONS.PAYMENTS),
+        where('userId', '==', userId),
+        where('clientId', '==', clientId)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      const payments = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: convertTimestamp(data.createdAt),
+          paymentDate: convertTimestamp(data.paymentDate)
+        } as Payment;
+      });
+      
+      // Sort by paymentDate in JavaScript instead of Firestore
+      return payments.sort((a, b) => b.paymentDate.getTime() - a.paymentDate.getTime());
+    } catch (error) {
+      console.error('Error getting payments by client ID:', error);
+      throw error;
+    }
+  },
+
+  // Update payment (only if user owns it)
+  async update(id: string, updates: Partial<Payment>): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      const paymentRef = doc(db, COLLECTIONS.PAYMENTS, id);
+      
+      // First verify the payment belongs to the current user
+      const paymentDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.PAYMENTS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const paymentExists = paymentDoc.docs.some(doc => doc.id === id);
+      if (!paymentExists) {
+        throw new Error('Payment not found or access denied');
+      }
+      
+      const updateData: any = { ...updates };
+      
+      if (updates.paymentDate) {
+        updateData.paymentDate = convertToTimestamp(updates.paymentDate);
+      }
+      
+      await updateDoc(paymentRef, updateData);
+    } catch (error) {
+      console.error('Error updating payment:', error);
+      throw error;
+    }
+  },
+
+  // Delete payment (only if user owns it)
+  async delete(id: string): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      
+      // First verify the payment belongs to the current user
+      const paymentDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.PAYMENTS),
+          where('userId', '==', userId)
+        )
+      );
+      
+      const paymentExists = paymentDoc.docs.some(doc => doc.id === id);
+      if (!paymentExists) {
+        throw new Error('Payment not found or access denied');
+      }
+      
+      await deleteDoc(doc(db, COLLECTIONS.PAYMENTS, id));
+    } catch (error) {
+      console.error('Error deleting payment:', error);
       throw error;
     }
   }

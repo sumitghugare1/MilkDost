@@ -5,6 +5,7 @@ import { ArrowLeft, Download, Mail, Phone, Calendar, CreditCard, FileText, Print
 import { Bill, Client } from '@/types';
 import { formatCurrency } from '@/lib/utils';
 import { PDFInvoiceGenerator } from '@/lib/pdfGenerator';
+import PaymentButton from './PaymentButton';
 import toast from 'react-hot-toast';
 
 interface BillPreviewProps {
@@ -12,9 +13,10 @@ interface BillPreviewProps {
   client: Client;
   onClose: () => void;
   onDownload: () => void;
+  onPaymentSuccess?: () => void;
 }
 
-export default function BillPreview({ bill, client, onClose, onDownload }: BillPreviewProps) {
+export default function BillPreview({ bill, client, onClose, onDownload, onPaymentSuccess }: BillPreviewProps) {
   const [loading, setLoading] = useState(false);
 
   const months = [
@@ -89,6 +91,17 @@ DairyMate Team`;
           </div>
 
           <div className="flex items-center space-x-3">
+            {/* Payment Button - Show if bill is not paid */}
+            {!bill.isPaid && (
+              <PaymentButton
+                bill={bill}
+                client={client}
+                onPaymentSuccess={() => {
+                  if (onPaymentSuccess) onPaymentSuccess();
+                }}
+              />
+            )}
+            
             {client.email && (
               <button
                 onClick={handleSendEmail}

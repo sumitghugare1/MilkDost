@@ -3,7 +3,14 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Users can read and write their own profile
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Allow access if the authenticated user's UID matches the document ID
+      // or if the stored document 'uid' field matches the authenticated user.
+      // This helps when demo/seed data uses different document IDs but stores
+      // the correct uid in the document data.
+      allow read, write: if request.auth != null && (
+        request.auth.uid == userId ||
+        (resource.data != null && resource.data.uid == request.auth.uid)
+      );
     }
     
     // Users can only read and write their own clients

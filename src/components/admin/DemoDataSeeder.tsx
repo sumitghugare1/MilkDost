@@ -1,14 +1,93 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Database, Users, Milk, FileText, Heart } from 'lucide-react';
+import { Plus, Database, Users, Milk, FileText, Heart, Building } from 'lucide-react';
 import { clientService, deliveryService, billService, buffaloService, productionService } from '@/lib/firebaseServices';
 import { useAuth } from '@/contexts/AuthContext';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
 import toast from 'react-hot-toast';
 
 export default function DemoDataSeeder() {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [dairyOwnerLoading, setDairyOwnerLoading] = useState(false);
+
+  const createDemoDairyOwners = async () => {
+    setDairyOwnerLoading(true);
+    try {
+      const demoOwners = [
+        {
+          email: 'fresh.valley@ksheera.com',
+          password: 'demo123456',
+          displayName: 'Rajesh Kumar',
+          businessName: 'Fresh Valley Dairy',
+          phone: '+91 98765 43210',
+          address: 'Fresh Valley Farm, Dairy Street, Bangalore, Karnataka 560001'
+        },
+        {
+          email: 'green.meadows@ksheera.com',
+          password: 'demo123456',
+          displayName: 'Anjali Sharma',
+          businessName: 'Green Meadows Dairy',
+          phone: '+91 98765 43211',
+          address: 'Green Meadows Farm, Village Road, Pune, Maharashtra 411001'
+        },
+        {
+          email: 'sunrise.dairy@ksheera.com',
+          password: 'demo123456',
+          displayName: 'Mohan Reddy',
+          businessName: 'Sunrise Organic Dairy',
+          phone: '+91 98765 43212',
+          address: 'Sunrise Farm, Organic Lane, Hyderabad, Telangana 500001'
+        }
+      ];
+
+      let created = 0;
+      let existing = 0;
+
+      for (const owner of demoOwners) {
+        try {
+          // Create the user account
+          const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            owner.email,
+            owner.password
+          );
+          
+          // Create user profile in Firestore
+          await setDoc(doc(db, 'users', userCredential.user.uid), {
+            uid: userCredential.user.uid,
+            email: owner.email,
+            displayName: owner.displayName,
+            businessName: owner.businessName,
+            role: 'dairy_owner',
+            phone: owner.phone,
+            address: owner.address,
+            isActive: true,
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+          });
+          
+          created++;
+        } catch (error: any) {
+          if (error.code === 'auth/email-already-in-use') {
+            existing++;
+          } else {
+            console.error('Error creating dairy owner:', error);
+          }
+        }
+      }
+
+      toast.success(`Demo dairy owners ready! Created: ${created}, Existing: ${existing}`);
+    } catch (error) {
+      console.error('Error creating demo dairy owners:', error);
+      toast.error('Failed to create demo dairy owners');
+    } finally {
+      setDairyOwnerLoading(false);
+    }
+  };
 
   const seedDemoData = async () => {
     if (!user) {
@@ -173,6 +252,25 @@ export default function DemoDataSeeder() {
           </div>
         </div>
       </div>
+
+      {/* Create Demo Dairy Owners Button */}
+      <button
+        onClick={createDemoDairyOwners}
+        disabled={dairyOwnerLoading}
+        className="w-full bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2 mb-3"
+      >
+        {dairyOwnerLoading ? (
+          <>
+            <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+            <span>Creating Dairy Owners...</span>
+          </>
+        ) : (
+          <>
+            <Building size={16} />
+            <span>Create Demo Dairy Owners</span>
+          </>
+        )}
+      </button>
 
       <button
         onClick={seedDemoData}

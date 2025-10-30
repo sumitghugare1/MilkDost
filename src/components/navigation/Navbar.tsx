@@ -29,6 +29,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'dashboard', label: 'Dashboard', icon: Home, description: 'Overview & insights' },
   { id: 'clients', label: 'Clients', icon: Users, description: 'Customer management' },
+  { id: 'user-accounts', label: 'User Accounts', icon: Shield, description: 'Activate client accounts' },
   { id: 'deliveries', label: 'Deliveries', icon: Truck, description: 'Route tracking' },
   { id: 'billing', label: 'Billing', icon: FileText, description: 'Payments & invoices' },
   { id: 'buffalo', label: 'Buffalo', icon: Heart, description: 'Health & care' },
