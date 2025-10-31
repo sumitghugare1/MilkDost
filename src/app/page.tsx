@@ -18,6 +18,9 @@ import DataMigration from '@/components/admin/DataMigration';
 import RoleBasedRoute from '@/components/auth/RoleBasedRoute';
 import ClientDashboard from '@/components/dashboard/ClientDashboard';
 import ClientNavigation from '@/components/navigation/ClientNavigation';
+import ClientBillsView from '@/components/clients/ClientBillsView';
+import ClientDeliveriesView from '@/components/clients/ClientDeliveriesView';
+import ClientPaymentsView from '@/components/clients/ClientPaymentsView';
 import AuthDebugger from '@/components/debug/AuthDebugger';
 import UserProfileMigrator from '@/components/debug/UserProfileMigrator';
 import { db } from '@/lib/firebase';
@@ -250,11 +253,11 @@ export default function Home() {
       case 'dashboard':
         return <ClientDashboard />;
       case 'bills':
-        return <ClientDashboard />;
+        return <ClientBillsView />;
       case 'payments':
-        return <ClientDashboard />;
+        return <ClientPaymentsView />;
       case 'deliveries':
-        return <ClientDashboard />;
+        return <ClientDeliveriesView />;
       case 'profile':
         return <ClientDashboard />;
       default:

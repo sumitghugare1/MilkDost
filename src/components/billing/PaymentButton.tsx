@@ -123,9 +123,9 @@ export default function PaymentButton({
     return (
       <button
         disabled
-        className={`flex items-center space-x-2 px-4 py-2 bg-green-100 text-green-800 rounded-lg border border-green-200 cursor-not-allowed ${className}`}
+        className={`flex items-center justify-center space-x-2 px-4 py-2 bg-sage/20 text-sage rounded-xl border border-sage/30 cursor-not-allowed ${className}`}
       >
-        <CheckCircle size={16} />
+        <CheckCircle size={16} className="flex-shrink-0" />
         <span className="text-sm font-medium">Paid</span>
       </button>
     );
@@ -135,17 +135,17 @@ export default function PaymentButton({
     <button
       onClick={handlePayment}
       disabled={isProcessing}
-      className={`group relative flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${className}`}
+      className={`group relative flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-sage to-sage/90 text-white rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none ${className}`}
     >
       {isProcessing ? (
         <>
-          <Loader2 size={16} className="animate-spin" />
-          <span className="text-sm font-medium">Processing...</span>
+          <Loader2 size={18} className="animate-spin flex-shrink-0" />
+          <span className="text-sm font-bold">Processing...</span>
         </>
       ) : (
         <>
-          <CreditCard size={16} />
-          <span className="text-sm font-medium">Pay with Razorpay</span>
+          <CreditCard size={18} className="flex-shrink-0" />
+          <span className="text-sm font-bold">Pay with Razorpay</span>
         </>
       )}
       
