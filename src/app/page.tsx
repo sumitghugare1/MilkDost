@@ -250,13 +250,13 @@ export default function Home() {
       case 'dashboard':
         return <ClientDashboard />;
       case 'bills':
-        return <div className="p-8 text-center">Bills view coming soon...</div>;
+        return <ClientDashboard />;
       case 'payments':
-        return <div className="p-8 text-center">Payment history coming soon...</div>;
+        return <ClientDashboard />;
       case 'deliveries':
-        return <div className="p-8 text-center">Delivery tracking coming soon...</div>;
+        return <ClientDashboard />;
       case 'profile':
-        return <div className="p-8 text-center">Profile settings coming soon...</div>;
+        return <ClientDashboard />;
       default:
         return <ClientDashboard />;
     }

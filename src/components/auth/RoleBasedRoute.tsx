@@ -3,6 +3,7 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { ReactNode } from 'react';
 import AuthForm from '@/components/auth/AuthForm';
+import { LogOut } from 'lucide-react';
 
 interface RoleBasedRouteProps {
   children: ReactNode;
@@ -15,7 +16,7 @@ export default function RoleBasedRoute({
   allowedRoles, 
   fallback 
 }: RoleBasedRouteProps) {
-  const { user, userProfile, loading } = useAuth();
+  const { user, userProfile, loading, signOut } = useAuth();
 
   // Debug logging
   console.log('RoleBasedRoute Debug:', {
@@ -90,8 +91,8 @@ export default function RoleBasedRoute({
 
   if (!isActiveUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center">
-        <div className="bg-white rounded-2xl p-8 shadow-xl text-center max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl p-8 shadow-xl text-center max-w-md w-full">
           <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-yellow-600 text-2xl">⏳</span>
           </div>
@@ -99,12 +100,20 @@ export default function RoleBasedRoute({
           <p className="text-gray-600 mb-4">
             Your account is pending approval. Please contact your dairy provider for activation.
           </p>
-          <div className="bg-gray-50 rounded-lg p-4">
+          <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-500">
+              <strong>Email:</strong> {user.email}<br />
               <strong>Role:</strong> {userProfile.role}<br />
               <strong>Business:</strong> {userProfile.businessName}
             </p>
           </div>
+          <button
+            onClick={() => signOut()}
+            className="w-full bg-gradient-to-br from-red-600 to-red-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 hover:from-red-700 hover:to-red-800"
+          >
+            <LogOut size={20} />
+            <span>Logout</span>
+          </button>
         </div>
       </div>
     );

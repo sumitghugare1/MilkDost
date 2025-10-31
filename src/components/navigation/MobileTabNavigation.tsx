@@ -10,13 +10,15 @@ import {
   Truck,
   Milk,
   Sparkles,
-  Zap
+  Zap,
+  UserCheck
 } from 'lucide-react';
 import type { TabItem } from '@/types';
 
 const tabs: TabItem[] = [
   { id: 'dashboard', label: 'Home', icon: Home },
   { id: 'clients', label: 'Clients', icon: Users },
+  { id: 'user-accounts', label: 'Accounts', icon: UserCheck },
   { id: 'deliveries', label: 'Delivery', icon: Truck },
   { id: 'billing', label: 'Bills', icon: FileText },
   { id: 'buffalo', label: 'Buffalo', icon: Heart },

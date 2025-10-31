@@ -66,12 +66,17 @@ export const clientService = {
   async getAll(): Promise<Client[]> {
     try {
       const userId = getCurrentUserId();
+      console.log('clientService.getAll() - Querying with userId:', userId);
+      
       const querySnapshot = await getDocs(
         query(
           collection(db, COLLECTIONS.CLIENTS), 
           where('userId', '==', userId)
         )
       );
+      
+      console.log('clientService.getAll() - Found documents:', querySnapshot.docs.length);
+      
       const clients = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
@@ -163,18 +168,28 @@ export const clientService = {
   onSnapshot(callback: (clients: Client[]) => void) {
     try {
       const userId = getCurrentUserId();
+      console.log('clientService.onSnapshot() - Setting up listener with userId:', userId);
+      
       return onSnapshot(
         query(
           collection(db, COLLECTIONS.CLIENTS), 
           where('userId', '==', userId)
         ),
         (snapshot) => {
+          console.log('clientService.onSnapshot() - Received update, documents:', snapshot.docs.length);
+          
           const clients = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data(),
             createdAt: convertTimestamp(doc.data().createdAt),
             updatedAt: convertTimestamp(doc.data().updatedAt)
           })) as Client[];
+          
+          console.log('clientService.onSnapshot() - Parsed clients:', clients.map(c => ({
+            id: c.id,
+            name: c.name,
+            userId: c.userId
+          })));
           
           // Sort by createdAt in JavaScript instead of Firestore
           const sortedClients = clients.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
@@ -225,6 +240,32 @@ export const deliveryService = {
       return dateDeliveries.sort((a, b) => a.date.getTime() - b.date.getTime());
     } catch (error) {
       console.error('Error fetching deliveries:', error);
+      throw error;
+    }
+  },
+
+  // Get deliveries by clientId (for client dashboard)
+  async getByClientId(clientId: string): Promise<Delivery[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, COLLECTIONS.DELIVERIES),
+          where('clientId', '==', clientId)
+        )
+      );
+
+      const deliveries = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        date: convertTimestamp(doc.data().date),
+        createdAt: convertTimestamp(doc.data().createdAt),
+        updatedAt: convertTimestamp(doc.data().updatedAt)
+      })) as Delivery[];
+
+      // Sort by date (most recent first)
+      return deliveries.sort((a, b) => b.date.getTime() - a.date.getTime());
+    } catch (error) {
+      console.error('Error fetching deliveries by client:', error);
       throw error;
     }
   },
@@ -674,6 +715,33 @@ export const billService = {
       return bills.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     } catch (error) {
       console.error('Error fetching bills:', error);
+      throw error;
+    }
+  },
+
+  // Get bills by clientId (for client dashboard)
+  async getByClientId(clientId: string): Promise<Bill[]> {
+    try {
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BILLS),
+          where('clientId', '==', clientId)
+        )
+      );
+
+      const bills = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        paidDate: doc.data().paidDate ? convertTimestamp(doc.data().paidDate) : undefined,
+        dueDate: convertTimestamp(doc.data().dueDate),
+        createdAt: convertTimestamp(doc.data().createdAt),
+        updatedAt: convertTimestamp(doc.data().updatedAt)
+      })) as Bill[];
+
+      // Sort by createdAt (most recent first)
+      return bills.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    } catch (error) {
+      console.error('Error fetching bills by client:', error);
       throw error;
     }
   },

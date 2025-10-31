@@ -61,7 +61,7 @@ function StatCard({ title, value, icon: Icon, color, subtitle }: StatCardProps) 
 }
 
 export default function ClientDashboard() {
-  const { user, userProfile } = useAuth();
+  const { user, userProfile, signOut } = useAuth();
   const [stats, setStats] = useState<ClientDashboardStats | null>(null);
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
   const [recentDeliveries, setRecentDeliveries] = useState<Delivery[]>([]);
@@ -83,17 +83,12 @@ export default function ClientDashboard() {
 
       setLoading(true);
 
-      // For clients, we need to get data related to them specifically
-      // Using existing methods and filtering on client side for now
-      const [allBills, allDeliveries, payments] = await Promise.all([
-        billService.getAll(), // Get user's bills
-        deliveryService.getAll(), // Get user's deliveries 
-        paymentService.getByClientId(user.uid) // We already have this method
+      // For clients, fetch data where clientId matches their user ID
+      const [bills, deliveries, payments] = await Promise.all([
+        billService.getByClientId(user.uid), // Get bills for this client
+        deliveryService.getByClientId(user.uid), // Get deliveries for this client
+        paymentService.getByClientId(user.uid) // Get payments for this client
       ]);
-
-      // For bills and deliveries, they're already filtered by the current user
-      const bills = allBills;
-      const deliveries = allDeliveries;
 
       // Calculate stats
       const totalBills = bills.length;
@@ -161,11 +156,30 @@ export default function ClientDashboard() {
             <p className="text-gray-600 mb-6">
               Your account is pending activation. Please contact your dairy service provider for account activation.
             </p>
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="text-sm text-gray-700">
                 <strong>Your Email:</strong> {userProfile?.email}
               </p>
             </div>
+            <button
+              onClick={signOut}
+              className="w-full bg-gradient-to-br from-red-600 to-red-700 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 flex items-center justify-center space-x-2 hover:from-red-700 hover:to-red-800"
+            >
+              <svg 
+                className="w-5 h-5" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+                />
+              </svg>
+              <span>Logout</span>
+            </button>
           </div>
         )}
 

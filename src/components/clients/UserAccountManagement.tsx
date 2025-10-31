@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Users, UserCheck, UserX, Search, Mail, Clock, MapPin, Phone, Shield, CheckCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { collection, query, where, getDocs, doc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, updateDoc, onSnapshot, setDoc, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { UserProfile } from '@/lib/authService';
+import { clientService } from '@/lib/firebaseServices';
 import toast from 'react-hot-toast';
 
 export default function UserAccountManagement() {
@@ -86,13 +87,58 @@ export default function UserAccountManagement() {
 
   const activateUser = async (userId: string, userName: string) => {
     try {
+      // Validate owner is logged in
+      if (!user?.uid) {
+        toast.error('Owner authentication required');
+        return;
+      }
+
+      // Get the user profile to access all details
+      const userToActivate = allUsers.find(u => u.uid === userId);
+      if (!userToActivate) {
+        toast.error('User not found');
+        return;
+      }
+
+      // 1. Update user profile to active
       await updateDoc(doc(db, 'users', userId), {
         isActive: true,
-        dairyOwnerId: user?.uid, // Assign to current dairy owner
+        dairyOwnerId: user.uid, // Assign to current dairy owner
         updatedAt: new Date()
       });
       
-      toast.success(`${userName}'s account has been activated!`);
+      // 2. Create a client record in the clients collection
+      // This makes the user appear in Client Management and enables tracking
+      const clientData = {
+        userId: user.uid, // Owner's ID (MUST be set for queries to work)
+        name: userToActivate.displayName,
+        address: userToActivate.address || 'Not provided',
+        phone: userToActivate.phone || 'Not provided',
+        email: userToActivate.email,
+        milkQuantity: 1, // Default 1 liter - owner can update later
+        deliveryTime: '07:00 AM', // Default time - owner can update later
+        rate: 50, // Default rate - owner can update later
+        isActive: true,
+        createdAt: Timestamp.fromDate(new Date()),
+        updatedAt: Timestamp.fromDate(new Date())
+      };
+
+      console.log('Creating client record:', {
+        documentId: userId,
+        ownerId: user.uid,
+        clientName: userToActivate.displayName,
+        clientData
+      });
+
+      // Create client document with client's userId as document ID for easy reference
+      await setDoc(doc(db, 'clients', userId), clientData);
+      
+      console.log('Client record created successfully in Firestore');
+      
+      toast.success(`${userName}'s account has been activated and added to Client Management!`);
+      
+      // Reload the user list to reflect changes
+      loadUsers();
     } catch (error) {
       console.error('Error activating user:', error);
       toast.error('Failed to activate user account');
@@ -101,10 +147,23 @@ export default function UserAccountManagement() {
 
   const deactivateUser = async (userId: string, userName: string) => {
     try {
+      // 1. Update user profile to inactive
       await updateDoc(doc(db, 'users', userId), {
         isActive: false,
         updatedAt: new Date()
       });
+      
+      // 2. Also deactivate the corresponding client record
+      const clientDocRef = doc(db, 'clients', userId);
+      try {
+        await updateDoc(clientDocRef, {
+          isActive: false,
+          updatedAt: Timestamp.fromDate(new Date())
+        });
+      } catch (clientError) {
+        // Client record might not exist, that's okay
+        console.log('No client record to deactivate');
+      }
       
       toast.success(`${userName}'s account has been deactivated`);
     } catch (error) {

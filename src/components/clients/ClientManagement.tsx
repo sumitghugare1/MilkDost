@@ -31,6 +31,15 @@ export default function ClientManagement() {
     try {
       setLoading(true);
       const clientsData = await clientService.getAll();
+      console.log('Client Management - Loaded clients:', {
+        count: clientsData.length,
+        clients: clientsData.map(c => ({
+          id: c.id,
+          name: c.name,
+          userId: c.userId,
+          isActive: c.isActive
+        }))
+      });
       setClients(clientsData);
     } catch (error) {
       toast.error('Failed to load clients');
