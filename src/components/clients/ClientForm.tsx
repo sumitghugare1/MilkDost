@@ -86,38 +86,39 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
   ];
 
   return (
-    <div className="fixed inset-0 bg-gradient-dairy overflow-hidden">
+    <div className="fixed inset-0 bg-gradient-to-br from-cream/30 via-white to-sage/20 overflow-hidden z-50">
       <div className="h-full flex flex-col">
-        <div className="flex-1 overflow-y-auto overscroll-contain p-4 scrollbar-thin scrollbar-thumb-sage-300 scrollbar-track-transparent">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-4 pb-8 scrollbar-thin scrollbar-thumb-sage-300 scrollbar-track-transparent">
           <div className="max-w-4xl mx-auto">
             <div className="bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30 mb-6">
               {/* Header */}
               <div className="px-6 py-4 border-b border-[#2e2e2e]/10 sticky top-0 bg-white/95 backdrop-blur-lg rounded-t-2xl z-10">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={onCancel}
-                className="group p-3 text-[#2e2e2e]/60 hover:bg-[#b5cbb7]/20 rounded-xl transition-all duration-300 hover:scale-110"
-              >
-                <ArrowLeft size={20} className="group-hover:text-[#b5cbb7] transition-colors" />
-              </button>
-              <div className="flex items-center space-x-3">
-                <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
-                  <Save size={24} className="text-white" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-black text-[#2e2e2e]">
-                    {client ? 'Edit Client' : 'Add New Client'}
-                  </h2>
-                  <p className="text-sm text-[#2e2e2e]/60 font-medium">
-                    {client ? 'Update client information' : 'Fill in the client details below'}
-                  </p>
+                <div className="flex items-center space-x-4">
+                  <button
+                    type="button"
+                    onClick={onCancel}
+                    className="group p-3 text-[#2e2e2e]/60 hover:bg-[#b5cbb7]/20 rounded-xl transition-all duration-300 hover:scale-110"
+                  >
+                    <ArrowLeft size={20} className="group-hover:text-[#b5cbb7] transition-colors" />
+                  </button>
+                  <div className="flex items-center space-x-3">
+                    <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
+                      <Save size={24} className="text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-black text-[#2e2e2e]">
+                        {client ? 'Edit Client' : 'Add New Client'}
+                      </h2>
+                      <p className="text-sm text-[#2e2e2e]/60 font-medium">
+                        {client ? 'Update client information' : 'Fill in the client details below'}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-8">
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="p-6 space-y-8">
             {/* Basic Information */}
             <div className="space-y-6">
               <div className="flex items-center space-x-3 mb-6">
@@ -342,7 +343,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                 <span className="font-bold">{loading ? 'Saving...' : (client ? 'Update Client' : 'Add Client')}</span>
               </button>
             </div>
-          </form>
+              </form>
             </div>
           </div>
         </div>

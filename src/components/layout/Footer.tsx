@@ -4,7 +4,7 @@ import { Crown, Shield, Sparkles, Star, Heart, Zap, Coffee, Globe, User, Github,
 
 export default function Footer() {
   return (
-    <footer className="relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream py-8 mt-16 overflow-hidden">
+    <footer className="relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream py-8 mt-16 overflow-hidden z-10">
       {/* Enhanced background decoration */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-sage/15 to-transparent rounded-full -translate-y-32 translate-x-32 animate-pulse"></div>
