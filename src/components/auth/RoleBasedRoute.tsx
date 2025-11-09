@@ -7,7 +7,8 @@ import { LogOut } from 'lucide-react';
 
 interface RoleBasedRouteProps {
   children: ReactNode;
-  allowedRoles: ('dairy_owner' | 'client')[];
+  // Include 'admin' as a possible allowed role to match userProfile.role union
+  allowedRoles: ('admin' | 'dairy_owner' | 'client')[];
   fallback?: ReactNode;
 }
 

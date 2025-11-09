@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import Logo from '@/components/common/Logo';
 import OverdueBills from '@/components/billing/OverdueBills';
 import DemoDataSeeder from '@/components/admin/DemoDataSeeder';
+import SubscriptionStatus from '@/components/subscription/SubscriptionStatus';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface DashboardStats {
@@ -317,6 +318,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             </div>
           </div>
         </div>
+
+      {/* Subscription Status */}
+      <SubscriptionStatus />
 
       {/* Overdue Bills Alert */}
       {overdueBillsCount > 0 && (

@@ -16,7 +16,7 @@ export interface UserProfile {
   email: string;
   displayName: string;
   businessName: string;
-  role: 'dairy_owner' | 'client'; // Add role field
+  role: 'dairy_owner' | 'client' | 'admin'; // Add admin role
   dairyOwnerId?: string; // For clients - which dairy they belong to
   phone?: string;
   address?: string;

@@ -11,6 +11,7 @@ interface AuthContextType {
   loading: boolean;
   isDairyOwner: boolean;
   isClient: boolean;
+  isAdmin: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, userData: {
     displayName: string;
@@ -39,6 +40,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
   const [isDairyOwner, setIsDairyOwner] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const unsubscribe = authService.onAuthStateChanged(async (user) => {
@@ -51,29 +53,36 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // Set role-based flags
           if (profile) {
+            setUserProfile(profile);
             setIsDairyOwner(profile.role === 'dairy_owner' && profile.isActive);
             setIsClient(profile.role === 'client' && profile.isActive);
+            setIsAdmin(profile.role === 'admin' && profile.isActive);
             console.log('User profile loaded:', {
               role: profile.role,
               isActive: profile.isActive,
               isDairyOwner: profile.role === 'dairy_owner' && profile.isActive,
-              isClient: profile.role === 'client' && profile.isActive
+              isClient: profile.role === 'client' && profile.isActive,
+              isAdmin: profile.role === 'admin' && profile.isActive
             });
           } else {
             console.warn('No profile found for user:', user.uid);
+            setUserProfile(null);
             setIsDairyOwner(false);
             setIsClient(false);
+            setIsAdmin(false);
           }
         } catch (error) {
           console.error('Error loading user profile:', error);
           setUserProfile(null);
           setIsDairyOwner(false);
           setIsClient(false);
+          setIsAdmin(false);
         }
       } else {
         setUserProfile(null);
         setIsDairyOwner(false);
         setIsClient(false);
+        setIsAdmin(false);
       }
       
       setLoading(false);
@@ -156,6 +165,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     isDairyOwner,
     isClient,
+    isAdmin,
     signIn,
     signUp,
     signOut
