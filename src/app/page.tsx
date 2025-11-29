@@ -21,6 +21,7 @@ import ClientNavigation from '@/components/navigation/ClientNavigation';
 import ClientBillsView from '@/components/clients/ClientBillsView';
 import ClientDeliveriesView from '@/components/clients/ClientDeliveriesView';
 import ClientPaymentsView from '@/components/clients/ClientPaymentsView';
+import ClientProfile from '@/components/clients/ClientProfile';
 import AuthDebugger from '@/components/debug/AuthDebugger';
 import UserProfileMigrator from '@/components/debug/UserProfileMigrator';
 import { db } from '@/lib/firebase';
@@ -30,7 +31,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [needsMigration, setNeedsMigration] = useState(false);
   const [checkingMigration, setCheckingMigration] = useState(true);
-  const { user, userProfile, loading, isDairyOwner, isClient } = useAuth();
+  const { user, userProfile, loading, isDairyOwner, isClient, signOut } = useAuth();
 
   // Debug logging
   useEffect(() => {
@@ -259,7 +260,7 @@ export default function Home() {
       case 'deliveries':
         return <ClientDeliveriesView />;
       case 'profile':
-        return <ClientDashboard />;
+        return <ClientProfile />;
       default:
         return <ClientDashboard />;
     }
@@ -292,8 +293,9 @@ export default function Home() {
       );
     }
 
-    // Dairy Owner Interface (default for 'dairy_owner' role and backward compatibility)
-    return (
+    // Dairy Owner Interface (only if role explicitly set to 'dairy_owner')
+    if (userProfile.role === 'dairy_owner') {
+      return (
       <RoleBasedRoute allowedRoles={['dairy_owner']}>
         <Layout
           header={
@@ -313,6 +315,61 @@ export default function Home() {
         </Layout>
         <AuthDebugger />
       </RoleBasedRoute>
+      );
+    }
+
+    // Admins may be treated as dairy owners. If role === 'admin', render dairy owner UI
+    if (userProfile.role === 'admin') {
+      return (
+        <RoleBasedRoute allowedRoles={['dairy_owner', 'admin']}>
+          <Layout
+            header={
+              <Header
+                title={getPageTitle()}
+                subtitle={getPageSubtitle()}
+              />
+            }
+            navigation={
+              <MobileTabNavigation
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+              />
+            }
+          >
+            {renderContent()}
+          </Layout>
+          <AuthDebugger />
+        </RoleBasedRoute>
+      );
+    }
+
+    // Unknown or pending role: show a minimal fallback informing user of status.
+    return (
+      <Layout
+        header={
+          <Header
+            title="Access Pending"
+            subtitle="Your account is being set up"
+          />
+        }
+      >
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-sage/20 max-w-2xl text-center">
+            <h2 className="text-2xl font-bold text-dark mb-2">Account Pending</h2>
+            <p className="text-dark/70 mb-4">
+              Your account role was not fully established yet. Please check your email or contact support for more information.
+            </p>
+            <div className="flex justify-center gap-3">
+              <button
+                onClick={() => signOut()}
+                className="px-4 py-2 rounded-xl bg-red-600 text-white hover:bg-red-700"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </Layout>
     );
   }
 

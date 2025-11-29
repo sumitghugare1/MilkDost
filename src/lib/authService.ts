@@ -8,7 +8,7 @@ import {
   User,
   updateProfile
 } from 'firebase/auth';
-import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, setDoc, getDoc, collection, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
 
 export interface UserProfile {
@@ -69,6 +69,23 @@ export const authService = {
       return user;
     } catch (error: any) {
       console.error('Registration error:', error);
+      
+      // If email already exists error, try to clean up orphaned Firestore document
+      if (error.code === 'auth/email-already-in-use') {
+        console.log('Email already in use error, checking for orphaned profile...');
+        const cleaned = await this.cleanupOrphanedProfile(email);
+        if (cleaned) {
+          // Try registration again after cleanup
+          console.log('Retrying registration after cleanup...');
+          try {
+            return await this.register(email, password, userData);
+          } catch (retryError: any) {
+            console.error('Retry registration failed:', retryError);
+            throw new Error(this.getAuthErrorMessage(retryError.code));
+          }
+        }
+      }
+      
       throw new Error(this.getAuthErrorMessage(error.code));
     }
   },
@@ -257,6 +274,33 @@ export const authService = {
     } catch (error) {
       console.error('Error updating client status:', error);
       throw error;
+    }
+  },
+
+  // Clean up orphaned Firestore document when Firebase Auth user is deleted
+  async cleanupOrphanedProfile(email: string): Promise<boolean> {
+    try {
+      // Check if there's a Firestore document with this email but no Firebase Auth user
+      const q = query(
+        collection(db, 'users'),
+        where('email', '==', email)
+      );
+      
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty) {
+        // Delete the orphaned Firestore document
+        for (const docSnap of querySnapshot.docs) {
+          await deleteDoc(doc(db, 'users', docSnap.id));
+          console.log('Cleaned up orphaned profile for email:', email);
+        }
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error cleaning up orphaned profile:', error);
+      return false;
     }
   },
 

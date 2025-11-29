@@ -17,6 +17,7 @@ import {
   Settings
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import Logo from '@/components/common/Logo';
 
 interface NavItem {
@@ -45,6 +46,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, userProfile } = useAuth();
+  const { settings } = useSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,7 +70,7 @@ export default function Navbar({ activeTab, onTabChange }: NavbarProps) {
               <Logo size="sm" showText={false} />
               <div className="hidden md:block">
                 <h1 className="text-lg font-black bg-gradient-to-r from-dark via-sage to-dark bg-clip-text text-transparent">
-                  Ksheera
+                  {settings.platformName}
                 </h1>
                 <p className="text-xs text-dark/60 font-medium">The Future of Dairy</p>
               </div>

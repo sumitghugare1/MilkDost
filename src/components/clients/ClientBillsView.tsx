@@ -7,6 +7,7 @@ import { billService, clientService } from '@/lib/firebaseServices';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatCurrency } from '@/lib/utils';
 import PaymentButton from '@/components/billing/PaymentButton';
+import { PDFInvoiceGenerator } from '@/lib/pdfGenerator';
 import toast from 'react-hot-toast';
 
 export default function ClientBillsView() {
@@ -70,6 +71,21 @@ export default function ClientBillsView() {
   const totalPaid = bills.filter(b => b.isPaid).reduce((sum, b) => sum + b.totalAmount, 0);
   const totalPending = bills.filter(b => !b.isPaid).reduce((sum, b) => sum + b.totalAmount, 0);
 
+  const handleDownloadBill = async (bill: Bill) => {
+    try {
+      if (!clientData) {
+        toast.error('Client data not available');
+        return;
+      }
+      
+      await PDFInvoiceGenerator.downloadInvoice(bill, clientData);
+      toast.success(`Bill downloaded successfully!`);
+    } catch (error) {
+      console.error('Error downloading bill:', error);
+      toast.error('Failed to download bill');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -103,7 +119,7 @@ export default function ClientBillsView() {
               <p className="text-3xl font-black text-dark">{totalBills}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Receipt size={24} className="text-white flex-shrink-0" />
+              <Receipt size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -115,7 +131,7 @@ export default function ClientBillsView() {
               <p className="text-3xl font-black text-sage">{paidBills}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <CheckCircle size={24} className="text-white flex-shrink-0" />
+              <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -127,7 +143,7 @@ export default function ClientBillsView() {
               <p className="text-2xl font-black text-sage">{formatCurrency(totalPaid)}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <IndianRupee size={24} className="text-white flex-shrink-0" />
+              <IndianRupee size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -139,7 +155,7 @@ export default function ClientBillsView() {
               <p className="text-2xl font-black text-dark">{formatCurrency(totalPending)}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <XCircle size={24} className="text-cream flex-shrink-0" />
+              <XCircle size={24} className="text-cream stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -193,9 +209,9 @@ export default function ClientBillsView() {
                 <div className="flex items-start space-x-4">
                   <div className={`p-3 rounded-xl ${bill.isPaid ? 'bg-sage/20' : 'bg-dark/10'}`}>
                     {bill.isPaid ? (
-                      <CheckCircle size={24} className="text-sage" />
+                      <CheckCircle size={24} className="text-sage stroke-2" />
                     ) : (
-                      <Clock size={24} className="text-dark" />
+                      <Clock size={24} className="text-dark stroke-2" />
                     )}
                   </div>
                   
@@ -258,10 +274,10 @@ export default function ClientBillsView() {
                   )}
                   
                   <button
-                    onClick={() => toast.success('Download feature coming soon!')}
+                    onClick={() => handleDownloadBill(bill)}
                     className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-sage to-sage/90 text-white rounded-xl hover:shadow-lg transition-all duration-300 text-sm font-medium w-full justify-center"
                   >
-                    <Download size={16} className="flex-shrink-0" />
+                    <Download size={16} className="flex-shrink-0 text-white stroke-2" />
                     <span>Download</span>
                   </button>
                 </div>

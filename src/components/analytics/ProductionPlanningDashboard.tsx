@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { Buffalo, MilkProduction } from '@/types';
 import { buffaloService, productionService } from '@/lib/firebaseServices';
 import { MilkAnalyticsCalculator, MilkAnalytics } from '@/utils/milkAnalytics';
-import { Activity, TrendingUp, AlertTriangle, Target, DollarSign, Calendar } from 'lucide-react';
+import { Activity, AlertTriangle, DollarSign, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductionPlanningDashboard() {
@@ -95,8 +95,8 @@ export default function ProductionPlanningDashboard() {
                 min="1"
                 max="200"
                 value={pricePerLiter}
-                onChange={(e) => setPricePerLiter(Number(e.target.value) || 60)}
-                className="w-32 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) => setPricePerLiter(e.target.value === '' ? 0 : Number(e.target.value))}
+                className="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -117,31 +117,7 @@ export default function ProductionPlanningDashboard() {
             <p className="text-xs text-gray-500">Maximum daily production potential</p>
           </div>
 
-          <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-green-500 to-green-600 rounded-xl">
-                <TrendingUp className="text-white" size={24} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Current Production</p>
-                <p className="text-2xl font-bold text-dark">{analytics.actualProduction}L</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500">Average daily production</p>
-          </div>
-
-          <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
-                <Target className="text-white" size={24} />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-600">Efficiency</p>
-                <p className="text-2xl font-bold text-dark">{analytics.efficiency}%</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-500">Healthy buffalo performance</p>
-          </div>
+          {/* Current Production and Efficiency cards removed as requested */}
 
           <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-white/30">
             <div className="flex items-center space-x-3 mb-4">

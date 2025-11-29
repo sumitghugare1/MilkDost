@@ -65,7 +65,7 @@ export default function ClientNavigation({
             >
               <Icon 
                 size={20} 
-                className={`transition-all duration-300 ${
+                className={`transition-all duration-300 stroke-2 ${
                   isActive ? 'scale-110' : 'scale-100'
                 }`} 
               />

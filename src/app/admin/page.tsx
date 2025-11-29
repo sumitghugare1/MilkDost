@@ -7,13 +7,11 @@ import AdminDashboard from '@/components/admin/AdminDashboard';
 import DairyOwnerManagement from '@/components/admin/DairyOwnerManagement';
 import SubscriptionManagement from '@/components/admin/SubscriptionManagement';
 import SystemSettings from '@/components/admin/SystemSettings';
-import Analytics from '@/components/admin/AdminAnalytics';
 import { 
   LayoutDashboard, 
   Users, 
   CreditCard, 
   Settings, 
-  BarChart3,
   Shield,
   LogOut
 } from 'lucide-react';
@@ -94,8 +92,6 @@ export default function AdminPage() {
         return <DairyOwnerManagement />;
       case 'subscriptions':
         return <SubscriptionManagement />;
-      case 'analytics':
-        return <Analytics />;
       case 'settings':
         return <SystemSettings />;
       default:
@@ -179,17 +175,7 @@ export default function AdminPage() {
               <span>Subscriptions</span>
             </button>
 
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg font-semibold transition-all duration-200 whitespace-nowrap ${
-                activeTab === 'analytics'
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/25'
-                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-200'
-              }`}
-            >
-              <BarChart3 size={18} />
-              <span>Analytics</span>
-            </button>
+            {/* Analytics tab removed */}
 
             <button
               onClick={() => setActiveTab('settings')}

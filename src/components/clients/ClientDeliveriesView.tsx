@@ -89,7 +89,7 @@ export default function ClientDeliveriesView() {
               <p className="text-3xl font-black text-dark">{totalDeliveries}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Package size={24} className="text-white flex-shrink-0" />
+              <Package size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@ export default function ClientDeliveriesView() {
               <p className="text-3xl font-black text-sage">{deliveredCount}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <CheckCircle size={24} className="text-white flex-shrink-0" />
+              <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function ClientDeliveriesView() {
               <p className="text-3xl font-black text-dark">{pendingCount}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Clock size={24} className="text-cream flex-shrink-0" />
+              <Clock size={24} className="text-cream stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -125,7 +125,7 @@ export default function ClientDeliveriesView() {
               <p className="text-3xl font-black text-sage">{totalQuantity}L</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <TrendingUp size={24} className="text-white flex-shrink-0" />
+              <TrendingUp size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -189,9 +189,9 @@ export default function ClientDeliveriesView() {
                   <div className="flex items-center space-x-3">
                     <div className={`p-3 rounded-xl flex-shrink-0 ${delivery.isDelivered ? 'bg-sage/20' : 'bg-dark/10'}`}>
                       {delivery.isDelivered ? (
-                        <CheckCircle size={24} className="text-sage flex-shrink-0" />
+                        <CheckCircle size={24} className="text-sage stroke-2 flex-shrink-0" />
                       ) : (
-                        <Clock size={24} className="text-dark flex-shrink-0" />
+                        <Clock size={24} className="text-dark stroke-2 flex-shrink-0" />
                       )}
                     </div>
                     <div>

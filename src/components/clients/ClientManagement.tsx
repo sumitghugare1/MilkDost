@@ -170,7 +170,7 @@ export default function ClientManagement() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               <div className="relative p-2 bg-white/20 rounded-xl group-hover:rotate-12 transition-transform duration-300">
-                <Plus size={20} className="relative" />
+                <Plus size={20} className="relative text-white stroke-2" />
               </div>
               <span className="relative font-bold whitespace-nowrap">Add New Client</span>
             </button>
@@ -202,7 +202,7 @@ export default function ClientManagement() {
             <div className="relative space-y-4">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <CheckCircle size={24} className="text-white" />
+                  <CheckCircle size={24} className="text-white stroke-2" />
                 </div>
                 <div className="flex items-center space-x-1 bg-emerald-100 px-2 py-1 rounded-lg">
                   <TrendingUp size={12} className="text-emerald-600" />
@@ -228,7 +228,7 @@ export default function ClientManagement() {
             <div className="relative space-y-4">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <UsersRound size={24} className="text-white" />
+                  <UsersRound size={24} className="text-white stroke-2" />
                 </div>
                 <div className="flex items-center space-x-1 bg-blue-100 px-2 py-1 rounded-lg">
                   <Activity size={12} className="text-blue-600" />
@@ -254,7 +254,7 @@ export default function ClientManagement() {
             <div className="relative space-y-4">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <IndianRupee size={24} className="text-white" />
+                  <IndianRupee size={24} className="text-white stroke-2" />
                 </div>
                 <div className="flex items-center space-x-1 bg-purple-100 px-2 py-1 rounded-lg">
                   <Star size={12} className="text-purple-600" />
@@ -280,7 +280,7 @@ export default function ClientManagement() {
             <div className="relative space-y-4">
               <div className="flex items-center justify-between">
                 <div className="p-3 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl shadow-md group-hover:scale-105 transition-transform duration-300">
-                  <TrendingUp size={24} className="text-white" />
+                  <TrendingUp size={24} className="text-white stroke-2" />
                 </div>
                 <div className="flex items-center space-x-1 bg-orange-100 px-2 py-1 rounded-lg">
                   <Shield size={12} className="text-orange-600" />

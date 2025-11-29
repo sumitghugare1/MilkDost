@@ -74,33 +74,33 @@ export default function AdminSetupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
-      <div className="bg-black/30 backdrop-blur-xl rounded-3xl p-8 border border-purple-500/30 w-full max-w-md">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-3xl p-8 border border-gray-200 w-full max-w-md shadow-lg">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg shadow-purple-500/50">
             <Shield size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white mb-2">Admin Setup</h1>
-          <p className="text-purple-300">Create your master admin account</p>
+          <h1 className="text-3xl font-black text-gray-900 mb-2">Admin Setup</h1>
+          <p className="text-gray-600">Create your master admin account</p>
         </div>
 
         <form onSubmit={handleCreateAdmin} className="space-y-6">
           <div>
-            <label className="block text-purple-200 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-medium mb-2">
               Email Address
             </label>
             <input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full bg-black/30 border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:border-purple-500/50 focus:outline-none"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-indigo-500 focus:outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block text-purple-200 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-medium mb-2">
               Password
             </label>
             <div className="relative">
@@ -108,13 +108,13 @@ export default function AdminSetupPage() {
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full bg-black/30 border border-purple-500/30 rounded-xl px-4 py-3 pr-12 text-white focus:border-purple-500/50 focus:outline-none"
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-12 text-gray-900 focus:border-indigo-500 focus:outline-none"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-purple-400 hover:text-purple-300"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -122,14 +122,14 @@ export default function AdminSetupPage() {
           </div>
 
           <div>
-            <label className="block text-purple-200 text-sm font-bold mb-2">
+            <label className="block text-gray-700 text-sm font-medium mb-2">
               Display Name
             </label>
             <input
               type="text"
               value={formData.displayName}
               onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
-              className="w-full bg-black/30 border border-purple-500/30 rounded-xl px-4 py-3 text-white focus:border-purple-500/50 focus:outline-none"
+              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:border-indigo-500 focus:outline-none"
               required
             />
           </div>
@@ -137,20 +137,20 @@ export default function AdminSetupPage() {
           <button
             type="submit"
             disabled={isCreating}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center space-x-2"
+            className="w-full bg-gradient-to-r from-indigo-600 to-emerald-500 hover:from-indigo-700 hover:to-emerald-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 disabled:opacity-50 flex items-center justify-center space-x-2"
           >
             <UserPlus size={20} className="flex-shrink-0" />
             <span>{isCreating ? 'Creating Admin...' : 'Create Admin User'}</span>
           </button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-purple-500/30">
-          <p className="text-center text-purple-300 text-sm mb-4">
+        <div className="mt-6 pt-6 border-t border-gray-200">
+          <p className="text-center text-gray-600 text-sm mb-4">
             For testing purposes only:
           </p>
           <button
             onClick={handleTestAdmin}
-            className="w-full bg-orange-600/20 hover:bg-orange-600/30 border border-orange-500/50 text-orange-300 font-bold py-2 px-4 rounded-xl transition-all duration-300"
+            className="w-full bg-orange-100 hover:bg-orange-200 border border-orange-300 text-orange-600 font-bold py-2 px-4 rounded-xl transition-all duration-300"
           >
             Test Admin Panel (Bypass Auth)
           </button>

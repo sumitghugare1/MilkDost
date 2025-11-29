@@ -3,12 +3,23 @@
 import { format, startOfMonth, endOfMonth, isToday, parseISO } from 'date-fns';
 
 /**
- * Format currency in Indian Rupees
+ * Format currency with optional currency code
+ * @param amount - The amount to format
+ * @param currency - The currency code (INR, USD, EUR, GBP) - defaults to INR
  */
-export const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat('en-IN', {
+export const formatCurrency = (amount: number, currency: string = 'INR'): string => {
+  const localeMap: Record<string, string> = {
+    'INR': 'en-IN',
+    'USD': 'en-US',
+    'EUR': 'en-GB',
+    'GBP': 'en-GB'
+  };
+  
+  const locale = localeMap[currency] || 'en-IN';
+  
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'INR',
+    currency: currency,
   }).format(amount);
 };
 

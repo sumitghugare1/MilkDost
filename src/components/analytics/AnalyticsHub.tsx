@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BarChart3, TrendingUp, Settings, PieChart, Calendar } from 'lucide-react';
+import { BarChart3, TrendingUp } from 'lucide-react';
 import Analytics from './Analytics';
-import ComprehensiveAnalytics from './ComprehensiveAnalytics';
 import ProductionPlanningDashboard from './ProductionPlanningDashboard';
-import DailyOperationsDashboard from './DailyOperationsDashboard';
 
-type AnalyticsView = 'daily' | 'comprehensive' | 'charts' | 'production';
+type AnalyticsView = 'charts' | 'production';
 
 interface AnalyticsTab {
   id: AnalyticsView;
@@ -17,18 +15,6 @@ interface AnalyticsTab {
 }
 
 const tabs: AnalyticsTab[] = [
-  {
-    id: 'daily',
-    name: 'Daily Operations',
-    icon: <Calendar size={20} />,
-    description: 'Today\'s deliveries, production & status'
-  },
-  {
-    id: 'comprehensive',
-    name: 'Business Overview',
-    icon: <PieChart size={20} />,
-    description: 'Complete business analytics dashboard'
-  },
   {
     id: 'charts',
     name: 'Charts & Trends',
@@ -44,20 +30,16 @@ const tabs: AnalyticsTab[] = [
 ];
 
 export default function AnalyticsHub() {
-  const [activeView, setActiveView] = useState<AnalyticsView>('daily');
+  const [activeView, setActiveView] = useState<AnalyticsView>('charts');
 
   const renderActiveView = () => {
     switch (activeView) {
-      case 'daily':
-        return <DailyOperationsDashboard />;
-      case 'comprehensive':
-        return <ComprehensiveAnalytics />;
       case 'charts':
         return <Analytics />;
       case 'production':
         return <ProductionPlanningDashboard />;
       default:
-        return <DailyOperationsDashboard />;
+        return <Analytics />;
     }
   };
 

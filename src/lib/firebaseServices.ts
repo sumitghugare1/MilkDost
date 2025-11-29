@@ -842,6 +842,44 @@ export const billService = {
     }
   },
 
+  // Update bill for client (allows clients to update bills they are associated with)
+  async updateForClient(id: string, updates: Partial<Bill>): Promise<void> {
+    try {
+      const userId = getCurrentUserId();
+      const billRef = doc(db, COLLECTIONS.BILLS, id);
+      
+      // First verify the bill is associated with the current user as client
+      const billDoc = await getDocs(
+        query(
+          collection(db, COLLECTIONS.BILLS),
+          where('clientId', '==', userId)
+        )
+      );
+      
+      const billExists = billDoc.docs.some(doc => doc.id === id);
+      if (!billExists) {
+        throw new Error('Bill not found or access denied');
+      }
+      
+      const updateData: any = {
+        ...updates,
+        updatedAt: convertToTimestamp(new Date())
+      };
+      
+      if (updates.paidDate) {
+        updateData.paidDate = convertToTimestamp(updates.paidDate);
+      }
+      if (updates.dueDate) {
+        updateData.dueDate = convertToTimestamp(updates.dueDate);
+      }
+      
+      await updateDoc(billRef, updateData);
+    } catch (error) {
+      console.error('Error updating bill for client:', error);
+      throw error;
+    }
+  },
+
   // Delete bill (only if user owns it)
   async delete(id: string): Promise<void> {
     try {

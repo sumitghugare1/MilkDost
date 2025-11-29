@@ -94,7 +94,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                   </button>
                   <div className="flex items-center space-x-3">
                     <div className="p-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 rounded-xl shadow-lg">
-                      <Save size={24} className="text-white" />
+                      <Save size={24} className="text-white stroke-2" />
                     </div>
                     <div>
                       <h2 className="text-xl font-black text-[#2e2e2e]">
@@ -114,7 +114,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <div className="space-y-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="p-2 bg-gradient-to-br from-[#b5cbb7] to-[#b5cbb7]/80 rounded-xl">
-                  <Save size={20} className="text-white" />
+                  <Save size={20} className="text-white stroke-2" />
                 </div>
                 <h3 className="text-lg font-black text-[#2e2e2e]">Basic Information</h3>
               </div>
@@ -183,7 +183,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <div className="space-y-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
-                  <Save size={20} className="text-white" />
+                  <Save size={20} className="text-white stroke-2" />
                 </div>
                 <h3 className="text-lg font-black text-[#2e2e2e]">Delivery Details</h3>
               </div>
@@ -243,7 +243,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <div className="space-y-6">
               <div className="flex items-center space-x-3 mb-6">
                 <div className="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
-                  <Save size={20} className="text-white" />
+                  <Save size={20} className="text-white stroke-2" />
                 </div>
                 <h3 className="text-lg font-black text-[#2e2e2e]">Status</h3>
               </div>
@@ -271,7 +271,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
             <div className="bg-gradient-to-br from-[#b5cbb7]/10 to-[#2e2e2e]/5 rounded-2xl p-6 space-y-4">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="p-2 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl">
-                  <Save size={20} className="text-white" />
+                  <Save size={20} className="text-white stroke-2" />
                 </div>
                 <h4 className="font-black text-[#2e2e2e]">Calculation Preview</h4>
               </div>
@@ -298,7 +298,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                 onClick={onCancel}
                 className="group px-6 py-3 text-[#2e2e2e] bg-[#b5cbb7]/20 rounded-xl hover:bg-[#b5cbb7]/30 transition-all duration-300 flex items-center space-x-3 hover:scale-105"
               >
-                <X size={18} className="group-hover:rotate-90 transition-transform duration-300" />
+                <X size={18} className="group-hover:rotate-90 transition-transform duration-300 text-[#2e2e2e] stroke-2" />
                 <span className="font-bold">Cancel</span>
               </button>
               
@@ -308,7 +308,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                 onClick={() => console.log('ClientForm Submit clicked, loading:', loading)}
                 className="group px-6 py-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 text-[#f3efe6] rounded-xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 pointer-events-auto"
               >
-                <Save size={18} className="group-hover:scale-110 transition-transform duration-300" />
+                <Save size={18} className="group-hover:scale-110 transition-transform duration-300 text-[#f3efe6] stroke-2" />
                 <span className="font-bold">{loading ? 'Saving...' : (client ? 'Update Client' : 'Add Client')}</span>
               </button>
             </div>

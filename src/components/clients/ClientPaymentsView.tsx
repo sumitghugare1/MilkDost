@@ -119,7 +119,7 @@ export default function ClientPaymentsView() {
               <p className="text-3xl font-black text-dark">{totalPayments}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <CheckCircle size={24} className="text-white flex-shrink-0" />
+              <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -131,7 +131,7 @@ export default function ClientPaymentsView() {
               <p className="text-2xl font-black text-sage">{formatCurrency(totalAmount)}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <IndianRupee size={24} className="text-white flex-shrink-0" />
+              <IndianRupee size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function ClientPaymentsView() {
               <p className="text-2xl font-black text-sage">{formatCurrency(averagePayment)}</p>
             </div>
             <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <TrendingUp size={24} className="text-white flex-shrink-0" />
+              <TrendingUp size={24} className="text-white stroke-2 flex-shrink-0" />
             </div>
           </div>
         </div>
@@ -234,7 +234,7 @@ export default function ClientPaymentsView() {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-start space-x-4">
                   <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-                    <CheckCircle size={24} className="text-white flex-shrink-0" />
+                    <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
                   </div>
                   
                   <div>

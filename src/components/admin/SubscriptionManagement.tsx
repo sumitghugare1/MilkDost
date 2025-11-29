@@ -13,6 +13,7 @@ import {
 import { db } from '@/lib/firebase';
 import { collection, getDocs, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { formatCurrency } from '@/lib/utils';
+import { useSettings } from '@/contexts/SettingsContext';
 import toast from 'react-hot-toast';
 
 interface Subscription {
@@ -35,35 +36,19 @@ interface SubscriptionPlan {
   duration: string;
 }
 
-const PLANS: SubscriptionPlan[] = [
-  {
-    name: 'Basic',
-    price: 499,
-    duration: 'Monthly',
-    features: ['Up to 50 clients', 'Basic analytics', 'Email support']
-  },
-  {
-    name: 'Professional',
-    price: 999,
-    duration: 'Monthly',
-    features: ['Up to 200 clients', 'Advanced analytics', 'Priority support', 'Custom branding']
-  },
-  {
-    name: 'Enterprise',
-    price: 1999,
-    duration: 'Monthly',
-    features: ['Unlimited clients', 'Full analytics suite', '24/7 support', 'API access', 'White label']
-  }
-];
+// PLANS array is now dynamic from SettingsContext
 
 export default function SubscriptionManagement() {
+  const { getPlansForAdmin, getCurrencySymbol, settings, loading: settingsLoading } = useSettings();
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
-    loadSubscriptions();
-  }, []);
+    if (!settingsLoading) {
+      loadSubscriptions();
+    }
+  }, [settingsLoading]);
 
   const loadSubscriptions = async () => {
     try {
@@ -139,7 +124,7 @@ export default function SubscriptionManagement() {
             <p className="text-gray-600 text-sm font-medium">Monthly Revenue</p>
             <DollarSign size={20} className="text-green-600" />
           </div>
-          <p className="text-3xl font-black text-gray-900">{formatCurrency(totalRevenue)}</p>
+          <p className="text-3xl font-black text-gray-900">{formatCurrency(totalRevenue, settings.currency)}</p>
         </div>
 
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
@@ -168,52 +153,58 @@ export default function SubscriptionManagement() {
       </div>
 
       {/* Subscription Plans */}
-      <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
-        <h3 className="text-xl font-bold text-white mb-4">Available Plans</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {PLANS.map((plan, index) => (
-            <div
-              key={index}
-              className="bg-black/30 rounded-xl p-6 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300"
-            >
-              <h4 className="text-2xl font-black text-white mb-2">{plan.name}</h4>
-              <p className="text-3xl font-black text-purple-400 mb-4">
-                {formatCurrency(plan.price)}
-                <span className="text-sm text-purple-300 font-normal">/{plan.duration}</span>
-              </p>
-              <ul className="space-y-2">
-                {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center space-x-2 text-purple-200">
-                    <CheckCircle size={16} className="text-green-400 flex-shrink-0" />
-                    <span className="text-sm">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+      <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Available Plans</h3>
+        {settingsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {getPlansForAdmin().map((plan, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl p-6 border border-gray-200 hover:border-gray-300 transition-all duration-300"
+              >
+                <h4 className="text-2xl font-black text-gray-900 mb-2">{plan.name}</h4>
+                <p className="text-3xl font-black text-gray-900 mb-4">
+                  {formatCurrency(plan.price, settings.currency)}
+                  <span className="text-sm text-gray-500 font-normal">/{plan.duration}</span>
+                </p>
+                <ul className="space-y-2">
+                  {plan.features.map((feature, i) => (
+                    <li key={i} className="flex items-center space-x-2 text-gray-700">
+                      <CheckCircle size={16} className="text-green-400 flex-shrink-0" />
+                      <span className="text-sm">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Subscriptions List */}
-      <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/30 backdrop-blur-lg rounded-2xl p-6 border border-purple-500/30">
-        <h3 className="text-xl font-bold text-white mb-4">Active Subscriptions</h3>
+      <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+        <h3 className="text-xl font-bold text-gray-900 mb-4">Active Subscriptions</h3>
         
         {subscriptions.length === 0 ? (
           <div className="text-center py-12">
-            <CreditCard size={64} className="mx-auto text-purple-400/40 mb-4" />
-            <p className="text-purple-300">No subscriptions yet</p>
+            <CreditCard size={64} className="mx-auto text-indigo-400/40 mb-4" />
+            <p className="text-gray-500">No subscriptions yet</p>
           </div>
         ) : (
           <div className="space-y-3">
             {subscriptions.map(sub => (
               <div
                 key={sub.id}
-                className="bg-black/30 rounded-xl p-4 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300"
+                className="bg-white rounded-xl p-4 border border-gray-200 hover:border-gray-300 transition-all duration-300"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h4 className="text-white font-bold">{sub.ownerName}</h4>
+                      <h4 className="text-gray-900 font-bold">{sub.ownerName}</h4>
                       <span className={`px-3 py-1 text-xs font-bold rounded-full ${
                         sub.status === 'active'
                           ? 'bg-green-500/20 text-green-400 border border-green-500/30'
@@ -224,10 +215,10 @@ export default function SubscriptionManagement() {
                         {sub.status.toUpperCase()}
                       </span>
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-purple-200">
+                    <div className="flex items-center space-x-4 text-sm text-gray-700">
                       <span>{sub.planName} Plan</span>
                       <span>•</span>
-                      <span>{formatCurrency(sub.amount)}/month</span>
+                      <span>{formatCurrency(sub.amount, settings.currency)}/month</span>
                       <span>•</span>
                       <span>{sub.ownerEmail}</span>
                     </div>

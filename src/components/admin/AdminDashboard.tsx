@@ -8,8 +8,7 @@ import {
   TrendingUp,
   UserCheck,
   UserX,
-  Activity,
-  DollarSign
+  Activity
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -198,33 +197,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
-        <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center space-x-3">
-          <Activity size={20} className="text-indigo-600" />
-          <span>Recent Activity</span>
-        </h3>
-        <div className="space-y-4">
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mr-4">
-              <UserCheck size={18} className="text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-gray-900 font-medium">New dairy owner registered</p>
-              <p className="text-gray-600 text-sm">2 hours ago</p>
-            </div>
-          </div>
-          <div className="flex items-center p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center mr-4">
-              <DollarSign size={18} className="text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-gray-900 font-medium">Subscription payment received</p>
-              <p className="text-gray-600 text-sm">5 hours ago</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Recent Activity removed from Admin Dashboard home page */}
     </div>
   );
 }

@@ -22,6 +22,7 @@ interface AuthContextType {
     address?: string;
   }) => Promise<void>;
   signOut: () => Promise<void>;
+  refreshUserProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -54,15 +55,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           // Set role-based flags
           if (profile) {
             setUserProfile(profile);
-            setIsDairyOwner(profile.role === 'dairy_owner' && profile.isActive);
-            setIsClient(profile.role === 'client' && profile.isActive);
-            setIsAdmin(profile.role === 'admin' && profile.isActive);
+            setIsDairyOwner(profile.role === 'dairy_owner');
+            setIsClient(profile.role === 'client');
+            setIsAdmin(profile.role === 'admin');
             console.log('User profile loaded:', {
               role: profile.role,
               isActive: profile.isActive,
-              isDairyOwner: profile.role === 'dairy_owner' && profile.isActive,
-              isClient: profile.role === 'client' && profile.isActive,
-              isAdmin: profile.role === 'admin' && profile.isActive
+              isDairyOwner: profile.role === 'dairy_owner',
+              isClient: profile.role === 'client',
+              isAdmin: profile.role === 'admin'
             });
           } else {
             console.warn('No profile found for user:', user.uid);
@@ -159,6 +160,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const refreshUserProfile = async () => {
+    if (user) {
+      try {
+        const profile = await authService.getUserProfile(user.uid);
+        setUserProfile(profile);
+        
+        if (profile) {
+          setIsDairyOwner(profile.role === 'dairy_owner');
+          setIsClient(profile.role === 'client');
+          setIsAdmin(profile.role === 'admin');
+        }
+      } catch (error) {
+        console.error('Error refreshing user profile:', error);
+      }
+    }
+  };
+
   const value: AuthContextType = {
     user,
     userProfile,
@@ -168,7 +186,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isAdmin,
     signIn,
     signUp,
-    signOut
+    signOut,
+    refreshUserProfile
   };
 
   return (

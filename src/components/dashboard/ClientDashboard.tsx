@@ -37,16 +37,16 @@ interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ComponentType<{ size?: number; className?: string }>;
-  color: string;
+  iconBgClass?: string; // Tailwind classes for icon background
   subtitle?: string;
 }
 
-function StatCard({ title, value, icon: Icon, color, subtitle }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, iconBgClass = 'bg-gradient-to-br from-sage to-sage/90', subtitle }: StatCardProps) {
   return (
     <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-sage/20 group hover:shadow-2xl transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
-        <div className="p-3 rounded-xl bg-gradient-to-br from-sage to-sage/90 shadow-lg group-hover:scale-110 transition-transform duration-300">
-          <Icon size={24} className="text-white" />
+        <div className={`w-14 h-14 flex items-center justify-center p-3 rounded-xl ${iconBgClass} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+          <Icon size={32} className="text-white stroke-2" />
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-dark">{value}</p>
@@ -196,7 +196,7 @@ export default function ClientDashboard() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex items-center space-x-4">
               <div className="p-4 bg-gradient-to-br from-sage to-sage/90 rounded-2xl shadow-lg">
-                <User className="text-white" size={32} />
+                <User className="text-white stroke-2" size={32} />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-dark">
@@ -205,11 +205,11 @@ export default function ClientDashboard() {
                 <p className="text-dark/70 text-lg">Your dairy delivery dashboard</p>
                 <div className="flex items-center space-x-4 mt-2">
                   <div className="flex items-center space-x-1 text-sage">
-                    <Milk size={16} />
+                    <Milk size={16} className="text-sage stroke-2" />
                     <span className="text-sm font-medium">{userProfile?.businessName}</span>
                   </div>
                   <div className="flex items-center space-x-1 text-sage">
-                    <Calendar size={16} />
+                    <Calendar size={16} className="text-sage stroke-2" />
                     <span className="text-sm font-medium">
                       {new Date().toLocaleDateString('en-IN', { 
                         weekday: 'long', 
@@ -231,7 +231,7 @@ export default function ClientDashboard() {
             title="Total Bills"
             value={stats?.totalBills || 0}
             icon={FileText}
-            color=""
+            iconBgClass="bg-gradient-to-br from-blue-500 to-blue-600"
             subtitle={`${stats?.paidBills || 0} paid, ${stats?.unpaidBills || 0} pending`}
           />
           
@@ -239,7 +239,7 @@ export default function ClientDashboard() {
             title="Total Spent"
             value={formatCurrency(stats?.totalSpent || 0)}
             icon={IndianRupee}
-            color=""
+            iconBgClass="bg-gradient-to-br from-green-500 to-green-600"
             subtitle="All-time payments"
           />
           
@@ -247,7 +247,7 @@ export default function ClientDashboard() {
             title="Pending Amount"
             value={formatCurrency(stats?.pendingAmount || 0)}
             icon={CreditCard}
-            color=""
+            iconBgClass="bg-gradient-to-br from-orange-500 to-orange-600"
             subtitle="Outstanding payments"
           />
           
@@ -255,7 +255,7 @@ export default function ClientDashboard() {
             title="Recent Deliveries"
             value={stats?.recentDeliveries || 0}
             icon={Truck}
-            color=""
+            iconBgClass="bg-gradient-to-br from-sage to-sage/90"
             subtitle="Last 7 days"
           />
           
@@ -263,7 +263,7 @@ export default function ClientDashboard() {
             title="Payment Rate"
             value={`${stats?.totalBills ? Math.round((stats.paidBills / stats.totalBills) * 100) : 0}%`}
             icon={TrendingUp}
-            color=""
+            iconBgClass="bg-gradient-to-br from-purple-500 to-purple-600"
             subtitle="Bills paid on time"
           />
           
@@ -271,7 +271,7 @@ export default function ClientDashboard() {
             title="This Month"
             value={new Date().toLocaleDateString('en-IN', { month: 'long' })}
             icon={Calendar}
-            color=""
+            iconBgClass="bg-gradient-to-br from-sage to-sage/90"
             subtitle="Current billing period"
           />
         </div>
@@ -282,7 +282,7 @@ export default function ClientDashboard() {
           <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-dark flex items-center space-x-2">
-                <FileText className="text-sage" size={24} />
+                <FileText className="text-sage stroke-2" size={24} />
                 <span>Recent Bills</span>
               </h2>
             </div>
@@ -301,9 +301,9 @@ export default function ClientDashboard() {
                       <p className="font-bold text-dark">{formatCurrency(bill.totalAmount)}</p>
                       <div className="flex items-center space-x-1">
                         {bill.isPaid ? (
-                          <CheckCircle size={16} className="text-sage" />
+                          <CheckCircle size={16} className="text-sage stroke-2" />
                         ) : (
-                          <Clock size={16} className="text-sage/70" />
+                          <Clock size={16} className="text-sage/70 stroke-2" />
                         )}
                         <span className={`text-xs font-medium ${
                           bill.isPaid ? 'text-sage' : 'text-sage/70'
@@ -316,7 +316,7 @@ export default function ClientDashboard() {
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <FileText className="mx-auto mb-2 text-sage/30" size={48} />
+                  <FileText className="mx-auto mb-2 text-sage/30 stroke-2" size={48} />
                   <p className="text-dark/60">No bills found</p>
                 </div>
               )}
@@ -327,7 +327,7 @@ export default function ClientDashboard() {
           <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-dark flex items-center space-x-2">
-                <Truck className="text-sage" size={24} />
+                <Truck className="text-sage stroke-2" size={24} />
                 <span>Recent Deliveries</span>
               </h2>
             </div>
@@ -345,9 +345,9 @@ export default function ClientDashboard() {
                     <div className="text-right">
                       <div className="flex items-center space-x-1">
                         {delivery.isDelivered ? (
-                          <CheckCircle size={16} className="text-sage" />
+                          <CheckCircle size={16} className="text-sage stroke-2" />
                         ) : (
-                          <Clock size={16} className="text-sage/70" />
+                          <Clock size={16} className="text-sage/70 stroke-2" />
                         )}
                         <span className={`text-xs font-medium ${
                           delivery.isDelivered ? 'text-sage' : 'text-sage/70'
@@ -360,7 +360,7 @@ export default function ClientDashboard() {
                 ))
               ) : (
                 <div className="text-center py-8">
-                  <Truck className="mx-auto mb-2 text-sage/30" size={48} />
+                  <Truck className="mx-auto mb-2 text-sage/30 stroke-2" size={48} />
                   <p className="text-dark/60">No recent deliveries</p>
                 </div>
               )}

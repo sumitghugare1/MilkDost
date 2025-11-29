@@ -14,6 +14,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { RazorpayService } from '@/services/razorpayService';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, doc, getDoc, query, where, getDocs, orderBy, limit, serverTimestamp } from 'firebase/firestore';
@@ -51,80 +52,11 @@ interface UserSubscription {
   createdAt: any;
 }
 
-const PLANS: SubscriptionPlan[] = [
-  {
-    id: 'basic',
-    name: 'Basic',
-    price: 499,
-    duration: 'monthly',
-    features: [
-      'Up to 50 clients',
-      'Basic delivery tracking',
-      'Monthly billing',
-      'Email support',
-      'Mobile app access'
-    ],
-    limits: {
-      clients: 50,
-      analytics: false,
-      support: 'email',
-      customBranding: false,
-      apiAccess: false
-    },
-    color: 'blue'
-  },
-  {
-    id: 'professional',
-    name: 'Professional',
-    price: 999,
-    duration: 'monthly',
-    features: [
-      'Up to 200 clients',
-      'Advanced analytics',
-      'Automated billing',
-      'Priority support',
-      'Custom branding',
-      'Buffalo management',
-      'Production tracking'
-    ],
-    limits: {
-      clients: 200,
-      analytics: true,
-      support: 'priority',
-      customBranding: true,
-      apiAccess: false
-    },
-    popular: true,
-    color: 'purple'
-  },
-  {
-    id: 'enterprise',
-    name: 'Enterprise',
-    price: 1999,
-    duration: 'monthly',
-    features: [
-      'Unlimited clients',
-      'Full analytics suite',
-      '24/7 phone support',
-      'White-label solution',
-      'API access',
-      'Multi-location support',
-      'Advanced reporting',
-      'Dedicated account manager'
-    ],
-    limits: {
-      clients: -1, // unlimited
-      analytics: true,
-      support: '24/7',
-      customBranding: true,
-      apiAccess: true
-    },
-    color: 'gold'
-  }
-];
+// PLANS array is now dynamic from SettingsContext
 
 export default function SubscriptionPayment() {
   const { user, userProfile } = useAuth();
+  const { settings } = useSettings();
   const [currentSubscription, setCurrentSubscription] = useState<UserSubscription | null>(null);
   const [loading, setLoading] = useState(true);
   const [processingPayment, setProcessingPayment] = useState<string | null>(null);
@@ -133,7 +65,7 @@ export default function SubscriptionPayment() {
     if (user && userProfile?.role === 'dairy_owner') {
       loadCurrentSubscription();
     }
-  }, [user, userProfile]);
+  }, [user, userProfile, settings]);
 
   const loadCurrentSubscription = async () => {
     try {
@@ -293,7 +225,7 @@ export default function SubscriptionPayment() {
 
   // Show current subscription status if user has active subscription
   if (currentSubscription) {
-    const currentPlan = PLANS.find(p => p.id === currentSubscription.planId);
+    const currentPlan = settings.subscriptionPlans.find(p => p.id === currentSubscription.planId);
     const endDate = currentSubscription.endDate?.toDate ? 
       currentSubscription.endDate.toDate() : 
       new Date(currentSubscription.endDate);
@@ -313,7 +245,7 @@ export default function SubscriptionPayment() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-green-600">{formatCurrency(currentSubscription.amount)}</p>
+              <p className="text-2xl font-bold text-green-600">{formatCurrency(currentSubscription.amount, settings.currency)}</p>
               <p className="text-sm text-gray-600">per month</p>
             </div>
           </div>
@@ -348,12 +280,12 @@ export default function SubscriptionPayment() {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-lg">
           <h3 className="text-lg font-bold text-gray-900 mb-4">Upgrade Your Plan</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {PLANS.filter(plan => plan.price > currentSubscription.amount).map((plan) => (
+            {settings.subscriptionPlans.filter(plan => plan.price > currentSubscription.amount).map((plan) => (
               <div key={plan.id} className={`relative border-2 ${getColorClasses(plan.color, 'border')} rounded-xl p-4`}>
                 <div className="text-center mb-4">
                   <h4 className="text-lg font-bold text-gray-900">{plan.name}</h4>
                   <p className="text-2xl font-bold text-gray-900 mt-2">
-                    {formatCurrency(plan.price)}
+                    {formatCurrency(plan.price, settings.currency)}
                     <span className="text-sm text-gray-600 font-normal">/month</span>
                   </p>
                 </div>
@@ -383,7 +315,7 @@ export default function SubscriptionPayment() {
 
       {/* Plans Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {PLANS.map((plan) => (
+        {settings.subscriptionPlans.map((plan) => (
           <div 
             key={plan.id} 
             className={`relative bg-white border-2 ${
@@ -402,7 +334,7 @@ export default function SubscriptionPayment() {
             <div className="text-center mb-6">
               <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
               <div className="mb-4">
-                <span className="text-3xl font-bold text-gray-900">{formatCurrency(plan.price)}</span>
+                <span className="text-3xl font-bold text-gray-900">{formatCurrency(plan.price, settings.currency)}</span>
                 <span className="text-gray-600">/month</span>
               </div>
             </div>

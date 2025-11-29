@@ -39,6 +39,13 @@ export default function AuthForm({ onClose }: AuthFormProps) {
     }
   }, [formData.role, dairyOwners.length]);
 
+  // Clear businessName when the user switches to client role
+  useEffect(() => {
+    if (formData.role === 'client' && formData.businessName) {
+      setFormData(prev => ({ ...prev, businessName: '' }));
+    }
+  }, [formData.role]);
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -292,18 +299,20 @@ export default function AuthForm({ onClose }: AuthFormProps) {
                         />
                       </div>
                       
-                      <div className="relative">
-                        <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-dark" />
-                        <input
-                          name="businessName"
-                          type="text"
-                          required
-                          value={formData.businessName}
-                          onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-2.5 lg:py-3 border-2 border-sage/30 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all bg-white/80 backdrop-blur-sm text-sm text-dark placeholder:text-dark/60"
-                          placeholder="Business Name *"
-                        />
-                      </div>
+                      {formData.role === 'dairy_owner' && (
+                        <div className="relative">
+                          <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-dark" />
+                          <input
+                            name="businessName"
+                            type="text"
+                            required={formData.role === 'dairy_owner'}
+                            value={formData.businessName}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-2.5 lg:py-3 border-2 border-sage/30 rounded-xl focus:ring-2 focus:ring-sage focus:border-sage transition-all bg-white/80 backdrop-blur-sm text-sm text-dark placeholder:text-dark/60"
+                            placeholder={formData.role === 'dairy_owner' ? 'Business Name *' : 'Business Name'}
+                          />
+                        </div>
+                      )}
 
                       {/* Role Selection */}
                       <div className="space-y-2">

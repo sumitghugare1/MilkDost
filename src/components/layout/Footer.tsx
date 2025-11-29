@@ -1,8 +1,10 @@
 'use client';
 
 import { Crown, Shield, Sparkles, Star, Heart, Zap, Coffee, Globe, User, Github, Mail, Calendar, Rocket, Award } from 'lucide-react';
+import { useSettings } from '@/contexts/SettingsContext';
 
 export default function Footer() {
+  const { settings } = useSettings();
   return (
     <footer className="relative bg-gradient-to-br from-dark via-dark/95 to-dark/85 text-cream py-8 mt-16 overflow-hidden z-10">
       {/* Enhanced background decoration */}
@@ -27,7 +29,7 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-xl font-black bg-gradient-to-r from-cream via-sage to-cream bg-clip-text text-transparent">
-                  Ksheera
+                  {settings.platformName}
                 </h3>
                 <div className="flex items-center space-x-1">
                   <Shield size={10} className="text-sage" />
@@ -150,7 +152,7 @@ export default function Footer() {
             <div className="flex items-center space-x-2">
               <Crown size={14} className="text-sage animate-pulse" />
               <p className="text-cream/70 text-sm font-semibold">
-                © 2025 Ksheera. Empowering dairy businesses across India.
+                © 2025 {settings.platformName}. Empowering dairy businesses across India.
               </p>
               <Crown size={14} className="text-sage animate-pulse delay-500" />
             </div>

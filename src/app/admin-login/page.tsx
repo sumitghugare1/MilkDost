@@ -41,15 +41,15 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="bg-slate-800/80 border border-slate-700 rounded-2xl p-8 w-full max-w-md shadow-2xl">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="bg-white border border-gray-200 rounded-2xl p-8 w-full max-w-md shadow-lg">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
             <Shield size={32} className="text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 tracking-tight">Admin Login</h1>
-          <p className="text-slate-400">Sign in to access the admin panel</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">Admin Login</h1>
+          <p className="text-gray-600">Sign in to access the admin panel</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -63,7 +63,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-400"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                 placeholder="Enter your admin email"
                 required
               />
@@ -80,14 +80,14 @@ export default function AdminLoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full pl-10 pr-12 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-white placeholder-slate-400"
+                className="w-full pl-10 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 placeholder-gray-400"
                 placeholder="Enter your password"
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300 flex-shrink-0"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-gray-800 flex-shrink-0"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -97,7 +97,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 shadow-lg"
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 shadow-md"
           >
             {isLoading ? (
               <div className="flex items-center justify-center space-x-2">
@@ -111,11 +111,11 @@ export default function AdminLoginPage() {
         </form>
 
         <div className="mt-6 text-center">
-          <p className="text-slate-400 text-sm">
+          <p className="text-gray-600 text-sm">
             Need to create an admin account?{' '}
             <button
               onClick={() => router.push('/admin-setup')}
-              className="text-indigo-400 hover:text-indigo-300 font-medium"
+              className="text-indigo-600 hover:text-indigo-500 font-medium"
             >
               Setup Admin
             </button>

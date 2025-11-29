@@ -3,6 +3,7 @@
 import { Bell, Search, Menu, User, LogOut, Sparkles, Crown, Settings, Shield, Zap, Star, Gem, Milk } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 
 interface HeaderProps {
   title: string;
@@ -20,6 +21,7 @@ export default function Header({
   rightAction 
 }: HeaderProps) {
   const { user, userProfile, signOut } = useAuth();
+  const { settings } = useSettings();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const handleSignOut = async () => {
@@ -40,7 +42,7 @@ export default function Header({
               <Milk size={24} className="text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-[#2e2e2e]">Ksheera</h1>
+              <h1 className="text-xl font-black text-[#2e2e2e]">{settings.platformName}</h1>
               <p className="text-xs text-[#2e2e2e]/60 font-semibold">The Future of Dairy, Today.</p>
             </div>
           </div>

@@ -86,8 +86,8 @@ export default function PaymentButton({
             const paymentId = await paymentService.create(paymentRecord);
             console.log('Payment record created:', paymentId);
 
-            // Update bill status
-            await billService.update(bill.id, {
+            // Update bill status using client-specific method
+            await billService.updateForClient(bill.id, {
               isPaid: true,
               paidDate: new Date(),
               updatedAt: new Date()

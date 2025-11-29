@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useSettings } from '@/contexts/SettingsContext';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl';
@@ -9,6 +10,7 @@ interface LogoProps {
 }
 
 export default function Logo({ size = 'md', showText = true, className = '' }: LogoProps) {
+  const { settings } = useSettings();
   const sizeClasses = {
     sm: 'h-8 w-8',
     md: 'h-12 w-12',
@@ -74,7 +76,7 @@ export default function Logo({ size = 'md', showText = true, className = '' }: L
       {showText && (
         <div className="relative">
           <h1 className={`${textSizeClasses[size]} font-black text-[#2e2e2e] transition-all duration-700`}>
-            Ksheera
+            {settings.platformName}
           </h1>
           {/* Text glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#b5cbb7]/20 to-[#2e2e2e]/20 blur-lg opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
