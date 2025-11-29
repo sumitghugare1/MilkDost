@@ -1,6 +1,11 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper to identify admins (users with role == 'admin' in users collection)
+    function isAdmin() {
+      return request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
     // Users can read and write their own profile
     match /users/{userId} {
       // Allow access if the authenticated user's UID matches the document ID
@@ -15,8 +20,14 @@ service cloud.firestore {
     
     // Users can only read and write their own clients
     match /clients/{document} {
-      allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // Allow create if the creator is owner of the client, or admin
+      allow create: if request.auth != null && (
+        request.auth.uid == request.resource.data.userId || isAdmin()
+      );
+      // Allow read/update/delete for admins or the owner
+      allow read, update, delete: if request.auth != null && (
+        isAdmin() || resource.data.userId == request.auth.uid
+      );
     }
     
     // Users can only read and write their own deliveries
@@ -47,6 +58,33 @@ service cloud.firestore {
     match /productions/{document} {
       allow read, write: if request.auth != null && resource.data.userId == request.auth.uid;
       allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    // Users can only read and write their own subscriptions
+    match /subscriptions/{document} {
+      // Create only if the creator is the owner of the subscription
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.userId;
+      // Read allowed for admins or the owner
+      allow get, list: if request.auth != null && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid ||
+        (resource.data.ownerId != null && resource.data.ownerId == request.auth.uid)
+      );
+      // Updates allowed for admins, or owners who don't change `userId`/`ownerId` fields
+      allow update: if request.auth != null && (
+        isAdmin() ||
+        (
+          (resource.data.userId == request.auth.uid || (resource.data.ownerId != null && resource.data.ownerId == request.auth.uid)) &&
+          request.resource.data.userId == resource.data.userId &&
+          (request.resource.data.ownerId == resource.data.ownerId || !("ownerId" in request.resource.data))
+        )
+      );
+      // Delete allowed for admins or owners
+      allow delete: if request.auth != null && (
+        isAdmin() ||
+        resource.data.userId == request.auth.uid ||
+        (resource.data.ownerId != null && resource.data.ownerId == request.auth.uid)
+      );
     }
   }
 }

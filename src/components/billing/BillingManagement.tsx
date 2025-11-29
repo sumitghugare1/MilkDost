@@ -9,7 +9,6 @@ import { SmartBillingService } from '@/services/smartBillingService';
 import { PDFInvoiceGenerator } from '@/lib/pdfGenerator';
 import BillForm from './BillForm';
 import BillPreview from './BillPreview';
-import PaymentButton from './PaymentButton';
 import PaymentManagement from './PaymentManagement';
 import toast from 'react-hot-toast';
 
@@ -148,6 +147,7 @@ export default function BillingManagement() {
           setSelectedBill(null);
           toast.success('Payment completed successfully!');
         }}
+        showPaymentButton={false}
       />
     );
   }
@@ -312,16 +312,6 @@ export default function BillingManagement() {
                           </div>
                           
                           <div className="flex items-center space-x-2">
-                            {!bill.isPaid && (
-                              <PaymentButton
-                                bill={bill}
-                                client={client}
-                                onPaymentSuccess={() => {
-                                  loadBills();
-                                  toast.success('Payment completed successfully!');
-                                }}
-                              />
-                            )}
                             <button
                               onClick={() => {
                                 setSelectedBill(bill);

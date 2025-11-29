@@ -4,6 +4,7 @@ import {
   collection, 
   addDoc, 
   getDocs, 
+  getDoc,
   doc, 
   updateDoc, 
   deleteDoc, 
@@ -115,18 +116,37 @@ export const clientService = {
     try {
       const userId = getCurrentUserId();
       const clientRef = doc(db, COLLECTIONS.CLIENTS, id);
+      console.log('clientService.update called', { id, updates, userId });
       
-      // First verify the client belongs to the current user
-      const clientDoc = await getDocs(
-        query(
-          collection(db, COLLECTIONS.CLIENTS),
-          where('userId', '==', userId)
-        )
-      );
-      
-      const clientExists = clientDoc.docs.some(doc => doc.id === id);
-      if (!clientExists) {
-        throw new Error('Client not found or access denied');
+      // First verify the client belongs to the current user unless the current user is an admin
+      const currentUserProfile = await authService.getUserProfile(userId);
+      const isAdmin = currentUserProfile?.role === 'admin';
+
+      if (!isAdmin) {
+        // Get the existing client doc and check if current user is the owner
+        const existingClientDoc = await getDoc(clientRef);
+        if (!existingClientDoc.exists()) {
+          throw new Error('Client not found');
+        }
+        const data = existingClientDoc.data() as Partial<Client>;
+        // Allow update if the doc's userId equals the current user (owner)
+        // or if the doc has ownerId equals current user (older data may use ownerId)
+        const isOwner = data.userId === userId || (data as any).ownerId === userId;
+        if (!isOwner) {
+          console.log('clientService.update denied - owner mismatch', { userId, docUserId: data.userId, docOwnerId: (data as any).ownerId });
+          throw new Error('Client not found or access denied');
+        }
+      }
+      // Log the current client doc so we know who owns it
+      try {
+        const existingClientDoc = await getDoc(clientRef);
+        if (existingClientDoc.exists()) {
+          console.log('current client doc:', existingClientDoc.id, existingClientDoc.data());
+        } else {
+          console.log('client doc not found for id in update debug:', id);
+        }
+      } catch (e) {
+        console.error('Error reading client doc during update debug:', e);
       }
       
       await updateDoc(clientRef, {
@@ -143,18 +163,22 @@ export const clientService = {
   async delete(id: string): Promise<void> {
     try {
       const userId = getCurrentUserId();
-      
-      // First verify the client belongs to the current user
-      const clientDoc = await getDocs(
-        query(
-          collection(db, COLLECTIONS.CLIENTS),
-          where('userId', '==', userId)
-        )
-      );
-      
-      const clientExists = clientDoc.docs.some(doc => doc.id === id);
-      if (!clientExists) {
-        throw new Error('Client not found or access denied');
+      // Allow delete if user owns the client or is admin
+      const currentUserProfile = await authService.getUserProfile(userId);
+      const isAdmin = currentUserProfile?.role === 'admin';
+
+      if (!isAdmin) {
+        // First verify the client belongs to the current user
+        const clientDoc = await getDocs(
+          query(
+            collection(db, COLLECTIONS.CLIENTS),
+            where('userId', '==', userId)
+          )
+        );
+        const clientExists = clientDoc.docs.some(doc => doc.id === id);
+        if (!clientExists) {
+          throw new Error('Client not found or access denied');
+        }
       }
       
       await deleteDoc(doc(db, COLLECTIONS.CLIENTS, id));

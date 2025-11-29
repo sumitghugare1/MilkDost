@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { Plus, Search, Edit, Trash2, User, MapPin, Phone, Clock, IndianRupee, Users, TrendingUp, Star, Shield, CheckCircle, XCircle, Eye, Activity, UserCheck, Contact, UsersRound } from 'lucide-react';
 import { Client } from '@/types';
+import { useAuth } from '@/contexts/AuthContext';
 import { clientService } from '@/lib/firebaseServices';
 import { formatCurrency } from '@/lib/utils';
 import ClientForm from './ClientForm';
 import toast from 'react-hot-toast';
 
 export default function ClientManagement() {
+  const { userProfile, isDairyOwner } = useAuth();
   const [clients, setClients] = useState<Client[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
@@ -60,11 +62,14 @@ export default function ClientManagement() {
 
   const handleAddClient = () => {
     setEditingClient(null);
+    setLoading(false);
     setShowForm(true);
   };
 
   const handleEditClient = (client: Client) => {
+    console.log('Edit clicked - client:', client);
     setEditingClient(client);
+    setLoading(false);
     setShowForm(true);
   };
 
@@ -92,8 +97,8 @@ export default function ClientManagement() {
         toast.success('Client status updated');
       }
     } catch (error) {
-      toast.error('Failed to update client status');
       console.error('Error updating client:', error);
+      toast.error((error as any)?.message || 'Failed to update client status');
     } finally {
       setLoading(false);
     }
@@ -102,11 +107,14 @@ export default function ClientManagement() {
   const handleSaveClient = async (clientData: Omit<Client, 'id' | 'userId' | 'createdAt' | 'updatedAt'>) => {
     try {
       setLoading(true);
-      
+      console.log('handleSaveClient called, editingClient:', editingClient, 'clientData:', clientData);
       if (editingClient) {
         // Update existing client
-        await clientService.update(editingClient.id, clientData);
+        const res = await clientService.update(editingClient.id, clientData);
+        console.log('clientService.update completed', res);
         toast.success('Client updated successfully');
+        // Ensure client list is refreshed
+        await loadClients();
       } else {
         // Add new client
         await clientService.add(clientData);
@@ -115,9 +123,9 @@ export default function ClientManagement() {
       
       setShowForm(false);
       setEditingClient(null);
-    } catch (error) {
-      toast.error('Failed to save client');
+    } catch (error: any) {
       console.error('Error saving client:', error);
+      toast.error(error?.message || 'Failed to save client');
     } finally {
       setLoading(false);
     }
@@ -155,6 +163,7 @@ export default function ClientManagement() {
                 </p>
               </div>
             </div>
+            { !isDairyOwner && (
             <button
               onClick={handleAddClient}
               className="group relative bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl flex items-center space-x-3 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-105 overflow-hidden"
@@ -165,6 +174,7 @@ export default function ClientManagement() {
               </div>
               <span className="relative font-bold whitespace-nowrap">Add New Client</span>
             </button>
+            ) }
           </div>
 
           {/* Enhanced Search Bar */}
@@ -308,7 +318,7 @@ export default function ClientManagement() {
                   : 'Start building your customer base by adding your first client.'
                 }
               </p>
-              {!searchTerm && (
+              {!searchTerm && !isDairyOwner && (
                 <button
                   onClick={handleAddClient}
                   className="bg-gradient-to-br from-sage to-sage/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 font-bold inline-flex items-center space-x-2"
@@ -403,12 +413,12 @@ export default function ClientManagement() {
                     <div className="space-y-3 mb-4">
                       <div className="flex items-center space-x-2 text-sm">
                         <MapPin size={14} className="text-blue-500" />
-                        <span className="text-dark/70 font-medium truncate">{client.address}</span>
+                        <span className="text-dark/70 font-medium truncate">{client.address || 'Not provided'}</span>
                       </div>
                       
                       <div className="flex items-center space-x-2 text-sm">
                         <Phone size={14} className="text-green-500" />
-                        <span className="text-dark/70 font-medium">{client.phone}</span>
+                        <span className="text-dark/70 font-medium">{client.phone || 'Not provided'}</span>
                       </div>
                       
                       <div className="flex items-center space-x-2 text-sm">

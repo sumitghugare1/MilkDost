@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import { CreditCard, Loader2, CheckCircle } from 'lucide-react';
 import { Bill, Client, Payment, RazorpayPaymentData } from '@/types';
 import { RazorpayService } from '@/services/razorpayService';
@@ -23,6 +24,10 @@ export default function PaymentButton({
 }: PaymentButtonProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isPaid, setIsPaid] = useState(bill.isPaid);
+  const { isDairyOwner } = useAuth();
+
+  // Hide payment button completely for dairy owners
+  if (isDairyOwner) return null;
 
   const handlePayment = async () => {
     if (isPaid) {

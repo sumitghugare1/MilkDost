@@ -112,8 +112,8 @@ export default function UserAccountManagement() {
       const clientData = {
         userId: user.uid, // Owner's ID (MUST be set for queries to work)
         name: userToActivate.displayName,
-        address: userToActivate.address || 'Not provided',
-        phone: userToActivate.phone || 'Not provided',
+        address: userToActivate.address || '',
+        phone: userToActivate.phone || '',
         email: userToActivate.email,
         milkQuantity: 1, // Default 1 liter - owner can update later
         deliveryTime: '07:00 AM', // Default time - owner can update later

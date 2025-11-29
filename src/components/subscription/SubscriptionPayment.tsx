@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { RazorpayService } from '@/services/razorpayService';
 import { db } from '@/lib/firebase';
-import { collection, addDoc, doc, getDoc, query, where, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, query, where, getDocs, orderBy, limit, serverTimestamp } from 'firebase/firestore';
 import { formatCurrency } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
@@ -198,8 +198,8 @@ export default function SubscriptionPayment() {
         id: user.uid,
         userId: user.uid,
         name: userProfile.displayName,
-        address: userProfile.address || 'Not provided',
-        phone: userProfile.phone || 'Not provided',
+        address: userProfile.address || '',
+        phone: userProfile.phone || '',
         email: userProfile.email,
         milkQuantity: 0,
         deliveryTime: '',
@@ -213,7 +213,12 @@ export default function SubscriptionPayment() {
         mockBill,
         mockClient,
         async (paymentData) => {
-          try {
+            try {
+            // Defensive check similar to PaymentButton.tsx
+            if (!paymentData || !paymentData.razorpay_payment_id) {
+              throw new Error('Invalid payment data received');
+            }
+              console.log('Payment callback data:', paymentData);
             // Create subscription record
             const subscriptionData = {
               userId: user.uid,
@@ -224,14 +229,15 @@ export default function SubscriptionPayment() {
               planName: plan.name,
               amount: plan.price,
               status: 'active',
-              startDate: new Date(),
-              endDate: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)), // 30 days from now
+                startDate: new Date(),
+                endDate: new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)), // 30 days from now
               autoRenew: false,
-              paymentId: paymentData.razorpay_payment_id,
-              razorpayPaymentId: paymentData.razorpay_payment_id,
-              razorpayOrderId: paymentData.razorpay_order_id,
-              razorpaySignature: paymentData.razorpay_signature,
-              createdAt: new Date()
+                // Use null instead of undefined to avoid Firestore rejecting the document
+                paymentId: paymentData.razorpay_payment_id ?? null,
+                razorpayPaymentId: paymentData.razorpay_payment_id ?? null,
+                razorpayOrderId: paymentData.razorpay_order_id ?? null,
+                razorpaySignature: paymentData.razorpay_signature ?? null,
+                createdAt: serverTimestamp()
             };
 
             await addDoc(collection(db, 'subscriptions'), subscriptionData);

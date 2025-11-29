@@ -14,9 +14,10 @@ interface BillPreviewProps {
   onClose: () => void;
   onDownload: () => void;
   onPaymentSuccess?: () => void;
+  showPaymentButton?: boolean;
 }
 
-export default function BillPreview({ bill, client, onClose, onDownload, onPaymentSuccess }: BillPreviewProps) {
+export default function BillPreview({ bill, client, onClose, onDownload, onPaymentSuccess, showPaymentButton = true }: BillPreviewProps) {
   const [loading, setLoading] = useState(false);
 
   const months = [
@@ -91,8 +92,8 @@ DairyMate Team`;
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* Payment Button - Show if bill is not paid */}
-            {!bill.isPaid && (
+            {/* Payment Button - Show if bill is not paid and showPaymentButton is true */}
+            {!bill.isPaid && showPaymentButton && (
               <PaymentButton
                 bill={bill}
                 client={client}

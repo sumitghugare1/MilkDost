@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { ArrowLeft, Save, X } from 'lucide-react';
 import { Client } from '@/types';
 
@@ -23,57 +24,47 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
     isActive: client?.isActive ?? true
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  // No validation required; remove error state
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = 'Address is required';
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!/^\+?[1-9]\d{1,14}$/.test(formData.phone.replace(/\s+/g, ''))) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
-
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (formData.milkQuantity <= 0) {
-      newErrors.milkQuantity = 'Milk quantity must be greater than 0';
-    }
-
-    if (formData.rate <= 0) {
-      newErrors.rate = 'Rate must be greater than 0';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  // Validation removed: we allow all submissions and rely on backend checks
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
+    // Removed client-side validation, proceed with onSave
+    try {
+      console.log('ClientForm submit, data:', formData);
+      await onSave(formData);
+    } catch (error) {
+      console.error('ClientForm - onSave threw error:', error);
+      toast.error((error as any)?.message || 'Failed to save client. Please check console for details.');
     }
-
-    await onSave(formData);
   };
+
+  // Keep formData in sync if editing client changes while mounted
+  const nameInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    setFormData({
+      name: client?.name || '',
+      address: client?.address || '',
+      phone: client?.phone || '',
+      email: client?.email || '',
+      milkQuantity: client?.milkQuantity || 1,
+      deliveryTime: client?.deliveryTime || '07:00 AM',
+      rate: client?.rate || 45,
+      isActive: client?.isActive ?? true
+    });
+    // Focus first input after update
+    setTimeout(() => {
+      if (nameInputRef.current) {
+        nameInputRef.current.focus();
+      }
+    }, 20);
+  }, [client]);
 
   const handleInputChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
   };
 
   const timeOptions = [
@@ -86,7 +77,7 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
   ];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-cream/30 via-white to-sage/20 overflow-hidden z-50">
+    <div className="fixed inset-0 bg-gradient-to-br from-cream/30 via-white to-sage/20 overflow-hidden z-50 pointer-events-auto">
       <div className="h-full flex flex-col">
         <div className="flex-1 overflow-y-auto overscroll-contain p-4 pb-8 scrollbar-thin scrollbar-thumb-sage-300 scrollbar-track-transparent">
           <div className="max-w-4xl mx-auto">
@@ -137,14 +128,11 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.name ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    ref={nameInputRef}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="Enter client name"
                   />
-                  {errors.name && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.name}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
 
                 <div>
@@ -155,14 +143,10 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.phone ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="+91 98765 43210"
                   />
-                  {errors.phone && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.phone}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
 
                 <div className="md:col-span-2">
@@ -172,15 +156,11 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                   <textarea
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.address ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="Enter full address"
                     rows={3}
                   />
-                  {errors.address && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.address}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
 
                 <div>
@@ -191,14 +171,10 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                     type="email"
                     value={formData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.email ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="client@email.com"
                   />
-                  {errors.email && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.email}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
               </div>
             </div>
@@ -224,14 +200,10 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                     max="50"
                     value={formData.milkQuantity}
                     onChange={(e) => handleInputChange('milkQuantity', parseFloat(e.target.value) || 0)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.milkQuantity ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="2.0"
                   />
-                  {errors.milkQuantity && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.milkQuantity}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
 
                 <div>
@@ -259,14 +231,10 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
                     max="200"
                     value={formData.rate}
                     onChange={(e) => handleInputChange('rate', parseFloat(e.target.value) || 0)}
-                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 ${
-                      errors.rate ? 'border-red-300 bg-red-50' : 'border-[#2e2e2e]/20 bg-white'
-                    }`}
+                    className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#b5cbb7] focus:border-transparent transition-all duration-300 border-[#2e2e2e]/20 bg-white`}
                     placeholder="45"
                   />
-                  {errors.rate && (
-                    <p className="mt-2 text-sm text-red-600 font-medium">{errors.rate}</p>
-                  )}
+                  {/* validation removed */}
                 </div>
               </div>
             </div>
@@ -337,7 +305,8 @@ export default function ClientForm({ client, onSave, onCancel, loading }: Client
               <button
                 type="submit"
                 disabled={loading}
-                className="group px-6 py-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 text-[#f3efe6] rounded-xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                onClick={() => console.log('ClientForm Submit clicked, loading:', loading)}
+                className="group px-6 py-3 bg-gradient-to-br from-[#2e2e2e] to-[#2e2e2e]/80 text-[#f3efe6] rounded-xl hover:shadow-xl transition-all duration-300 flex items-center space-x-3 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 pointer-events-auto"
               >
                 <Save size={18} className="group-hover:scale-110 transition-transform duration-300" />
                 <span className="font-bold">{loading ? 'Saving...' : (client ? 'Update Client' : 'Add Client')}</span>
