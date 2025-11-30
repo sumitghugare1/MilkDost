@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ComponentType } from 'react';
 import { 
   Users, 
   Building2, 
@@ -34,6 +34,15 @@ export default function AdminDashboard() {
     activeSubscriptions: 0
   });
   const [loading, setLoading] = useState(true);
+
+  // Small helper to display an icon inside a colored circular badge.
+  const IconBadge = ({ Icon, gradient = 'bg-gradient-to-br from-indigo-500 to-purple-600', size = 20, className = '' }: { Icon: ComponentType<any>, gradient?: string, size?: number, className?: string }) => {
+    return (
+      <div className={`p-3 rounded-full shadow-md inline-flex items-center justify-center ${gradient}`}>
+        <Icon size={size} className={`text-white ${className}`} aria-hidden="true" />
+      </div>
+    );
+  };
 
   useEffect(() => {
     loadStats();
@@ -102,9 +111,7 @@ export default function AdminDashboard() {
         {/* Total Dairy Owners */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg shadow-md">
-              <Building2 size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={Building2} gradient="bg-gradient-to-br from-indigo-500 to-purple-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">{stats.totalDairyOwners}</p>
               <p className="text-sm text-gray-600 font-medium">Total Owners</p>
@@ -119,15 +126,13 @@ export default function AdminDashboard() {
         {/* Total Clients */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg shadow-md">
-              <Users size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={Users} gradient="bg-gradient-to-br from-blue-500 to-cyan-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">{stats.totalClients}</p>
               <p className="text-sm text-gray-600 font-medium">Total Clients</p>
             </div>
           </div>
-          <div className="text-sm text-slate-300 pt-3 border-t border-slate-700">
+          <div className="text-sm text-gray-700 pt-3 border-t border-gray-200">
             Across all dairy owners
           </div>
         </div>
@@ -135,9 +140,7 @@ export default function AdminDashboard() {
         {/* Monthly Revenue */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg shadow-md">
-              <IndianRupee size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={IndianRupee} gradient="bg-gradient-to-br from-emerald-500 to-green-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.monthlyRevenue)}</p>
               <p className="text-sm text-gray-600 font-medium">Monthly Revenue</p>
@@ -151,15 +154,13 @@ export default function AdminDashboard() {
         {/* Active Subscriptions */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-lg shadow-md">
-              <UserCheck size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={UserCheck} gradient="bg-gradient-to-br from-purple-500 to-indigo-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">{stats.activeSubscriptions}</p>
               <p className="text-sm text-gray-600 font-medium">Active Plans</p>
             </div>
           </div>
-          <div className="text-sm text-slate-300 pt-3 border-t border-slate-700">
+          <div className="text-sm text-gray-700 pt-3 border-t border-gray-200">
             Paid subscriptions
           </div>
         </div>
@@ -167,9 +168,7 @@ export default function AdminDashboard() {
         {/* Growth Rate */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg shadow-md">
-              <TrendingUp size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={TrendingUp} gradient="bg-gradient-to-br from-orange-500 to-red-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">+15%</p>
               <p className="text-sm text-gray-600 font-medium">Growth Rate</p>
@@ -183,9 +182,7 @@ export default function AdminDashboard() {
         {/* System Health */}
         <div className="bg-white border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-all duration-200 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <div className="p-3 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-lg shadow-md">
-              <Activity size={20} className="text-white" />
-            </div>
+            <IconBadge Icon={Activity} gradient="bg-gradient-to-br from-teal-500 to-cyan-600" size={20} />
             <div className="text-right">
               <p className="text-3xl font-bold text-gray-900">99.9%</p>
               <p className="text-sm text-gray-600 font-medium">Uptime</p>

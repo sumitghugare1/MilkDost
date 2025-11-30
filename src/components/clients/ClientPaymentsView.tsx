@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CreditCard, Calendar, IndianRupee, CheckCircle, TrendingUp, Search, DollarSign } from 'lucide-react';
+import IconBadge from '@/components/common/IconBadge';
 import { Payment } from '@/types';
 import { paymentService } from '@/lib/firebaseServices';
 import { useAuth } from '@/contexts/AuthContext';
@@ -100,9 +101,9 @@ export default function ClientPaymentsView() {
         {/* Header */}
         <div className="bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-dark to-dark/90" className="p-3 rounded-xl shadow-lg flex-shrink-0" ariaLabel="Payment History">
               <CreditCard size={28} className="text-cream flex-shrink-0" />
-            </div>
+            </IconBadge>
             <div>
               <h1 className="text-2xl font-bold text-dark">Payment History</h1>
               <p className="text-dark/70">Track all your payment transactions</p>
@@ -118,9 +119,9 @@ export default function ClientPaymentsView() {
               <p className="text-dark/70 text-sm font-medium">Total Payments</p>
               <p className="text-3xl font-black text-dark">{totalPayments}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-indigo-500 to-indigo-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Payments">
               <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -130,9 +131,9 @@ export default function ClientPaymentsView() {
               <p className="text-dark/70 text-sm font-medium">Total Amount</p>
               <p className="text-2xl font-black text-sage">{formatCurrency(totalAmount)}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-emerald-500 to-green-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Amount">
               <IndianRupee size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -142,9 +143,9 @@ export default function ClientPaymentsView() {
               <p className="text-dark/70 text-sm font-medium">Average Payment</p>
               <p className="text-2xl font-black text-sage">{formatCurrency(averagePayment)}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-teal-500 to-cyan-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Average Payment">
               <TrendingUp size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
       </div>
@@ -233,9 +234,9 @@ export default function ClientPaymentsView() {
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                  <IconBadge gradientClass="bg-gradient-to-br from-emerald-500 to-green-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Completed">
                     <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
-                  </div>
+                  </IconBadge>
                   
                   <div>
                     <div className="flex items-center space-x-2 mb-2">

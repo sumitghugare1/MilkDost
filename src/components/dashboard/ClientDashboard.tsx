@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, type ComponentType } from 'react';
 import { 
   Calendar, 
   FileText, 
@@ -42,12 +42,16 @@ interface StatCardProps {
 }
 
 function StatCard({ title, value, icon: Icon, iconBgClass = 'bg-gradient-to-br from-sage to-sage/90', subtitle }: StatCardProps) {
+  const IconBadge = ({ Icon, gradient = iconBgClass, size = 32 }: { Icon: ComponentType<any>, gradient?: string, size?: number }) => (
+    <div className={`w-14 h-14 flex items-center justify-center rounded-xl ${gradient} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+      <Icon size={size} className="text-white stroke-2" />
+    </div>
+  );
+
   return (
     <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-sage/20 group hover:shadow-2xl transition-all duration-300">
       <div className="flex items-center justify-between mb-4">
-        <div className={`w-14 h-14 flex items-center justify-center p-3 rounded-xl ${iconBgClass} shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-          <Icon size={32} className="text-white stroke-2" />
-        </div>
+        <IconBadge Icon={Icon} gradient={iconBgClass} size={32} />
         <div className="text-right">
           <p className="text-2xl font-bold text-dark">{value}</p>
           <p className="text-sm text-dark/70">{title}</p>
@@ -195,8 +199,11 @@ export default function ClientDashboard() {
         <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 sm:p-8 shadow-xl border border-sage/20 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex items-center space-x-4">
-              <div className="p-4 bg-gradient-to-br from-sage to-sage/90 rounded-2xl shadow-lg">
-                <User className="text-white stroke-2" size={32} />
+              <div className="p-0">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 shadow-xl flex items-center justify-center">
+                  {/* use initials for the user in the avatar for a cleaner UI */}
+                  <span className="text-white font-extrabold text-xl">{(userProfile?.displayName || 'NA').split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase()}</span>
+                </div>
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-dark">
@@ -209,7 +216,9 @@ export default function ClientDashboard() {
                     <span className="text-sm font-medium">{userProfile?.businessName}</span>
                   </div>
                   <div className="flex items-center space-x-1 text-sage">
-                    <Calendar size={16} className="text-sage stroke-2" />
+                    <div className="w-8 h-8 flex items-center justify-center rounded-md bg-gradient-to-br from-gray-100 to-gray-50 border border-sage/20">
+                      <Calendar size={14} className="text-sage stroke-2" />
+                    </div>
                     <span className="text-sm font-medium">
                       {new Date().toLocaleDateString('en-IN', { 
                         weekday: 'long', 
@@ -218,6 +227,10 @@ export default function ClientDashboard() {
                         day: 'numeric' 
                       })}
                     </span>
+                  </div>
+                  {/* small NA pill on the right to match user's request (can be replaced with actual data) */}
+                  <div className="ml-3 inline-flex items-center px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">
+                    <span className="text-xs font-semibold text-slate-700">Na</span>
                   </div>
                 </div>
               </div>
@@ -255,7 +268,7 @@ export default function ClientDashboard() {
             title="Recent Deliveries"
             value={stats?.recentDeliveries || 0}
             icon={Truck}
-            iconBgClass="bg-gradient-to-br from-sage to-sage/90"
+            iconBgClass="bg-gradient-to-br from-green-500 to-green-600"
             subtitle="Last 7 days"
           />
           
@@ -271,7 +284,7 @@ export default function ClientDashboard() {
             title="This Month"
             value={new Date().toLocaleDateString('en-IN', { month: 'long' })}
             icon={Calendar}
-            iconBgClass="bg-gradient-to-br from-sage to-sage/90"
+            iconBgClass="bg-gradient-to-br from-indigo-500 to-indigo-600"
             subtitle="Current billing period"
           />
         </div>
@@ -282,9 +295,11 @@ export default function ClientDashboard() {
           <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-dark flex items-center space-x-2">
-                <FileText className="text-sage stroke-2" size={24} />
-                <span>Recent Bills</span>
-              </h2>
+                  <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 shadow-md">
+                    <FileText className="text-white stroke-2" size={18} />
+                  </div>
+                  <span>Recent Bills</span>
+                </h2>
             </div>
             
             <div className="space-y-4">
@@ -297,16 +312,20 @@ export default function ClientDashboard() {
                         {new Date(bill.createdAt).toLocaleDateString('en-IN')} • {bill.month}/{bill.year}
                       </p>
                     </div>
-                    <div className="text-right">
+                      <div className="text-right">
                       <p className="font-bold text-dark">{formatCurrency(bill.totalAmount)}</p>
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-2">
                         {bill.isPaid ? (
-                          <CheckCircle size={16} className="text-sage stroke-2" />
+                          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600">
+                            <CheckCircle size={12} className="text-white" />
+                          </div>
                         ) : (
-                          <Clock size={16} className="text-sage/70 stroke-2" />
+                          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-600">
+                            <Clock size={12} className="text-white" />
+                          </div>
                         )}
                         <span className={`text-xs font-medium ${
-                          bill.isPaid ? 'text-sage' : 'text-sage/70'
+                          bill.isPaid ? 'text-green-600' : 'text-amber-600'
                         }`}>
                           {bill.isPaid ? 'Paid' : 'Pending'}
                         </span>
@@ -327,7 +346,9 @@ export default function ClientDashboard() {
           <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-dark flex items-center space-x-2">
-                <Truck className="text-sage stroke-2" size={24} />
+                <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600 shadow-md">
+                  <Truck className="text-white stroke-2" size={18} />
+                </div>
                 <span>Recent Deliveries</span>
               </h2>
             </div>
@@ -343,14 +364,18 @@ export default function ClientDashboard() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-2">
                         {delivery.isDelivered ? (
-                          <CheckCircle size={16} className="text-sage stroke-2" />
+                          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-green-600">
+                            <CheckCircle size={12} className="text-white" />
+                          </div>
                         ) : (
-                          <Clock size={16} className="text-sage/70 stroke-2" />
+                          <div className="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-amber-500 to-amber-600">
+                            <Clock size={12} className="text-white" />
+                          </div>
                         )}
                         <span className={`text-xs font-medium ${
-                          delivery.isDelivered ? 'text-sage' : 'text-sage/70'
+                          delivery.isDelivered ? 'text-green-600' : 'text-amber-600'
                         }`}>
                           {delivery.isDelivered ? 'Delivered' : 'Pending'}
                         </span>

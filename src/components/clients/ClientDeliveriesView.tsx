@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Truck, Calendar, Package, CheckCircle, Clock, TrendingUp, Search, Filter } from 'lucide-react';
+import IconBadge from '@/components/common/IconBadge';
 import { Delivery } from '@/types';
 import { deliveryService } from '@/lib/firebaseServices';
 import { useAuth } from '@/contexts/AuthContext';
@@ -70,9 +71,9 @@ export default function ClientDeliveriesView() {
         {/* Header */}
         <div className="bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-dark to-dark/90" className="p-3 rounded-xl shadow-lg flex-shrink-0" ariaLabel="My Deliveries">
               <Truck size={28} className="text-cream flex-shrink-0" />
-            </div>
+            </IconBadge>
             <div>
               <h1 className="text-2xl font-bold text-dark">My Deliveries</h1>
               <p className="text-dark/70">Track your milk delivery history</p>
@@ -88,9 +89,9 @@ export default function ClientDeliveriesView() {
               <p className="text-dark/70 text-sm font-medium">Total Deliveries</p>
               <p className="text-3xl font-black text-dark">{totalDeliveries}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-indigo-500 to-indigo-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Deliveries">
               <Package size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -100,9 +101,9 @@ export default function ClientDeliveriesView() {
               <p className="text-dark/70 text-sm font-medium">Delivered</p>
               <p className="text-3xl font-black text-sage">{deliveredCount}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-emerald-500 to-green-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Delivered">
               <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -112,9 +113,9 @@ export default function ClientDeliveriesView() {
               <p className="text-dark/70 text-sm font-medium">Pending</p>
               <p className="text-3xl font-black text-dark">{pendingCount}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-amber-500 to-orange-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Pending">
               <Clock size={24} className="text-cream stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -124,9 +125,9 @@ export default function ClientDeliveriesView() {
               <p className="text-dark/70 text-sm font-medium">Total Quantity</p>
               <p className="text-3xl font-black text-sage">{totalQuantity}L</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-blue-500 to-cyan-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Quantity">
               <TrendingUp size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
       </div>
@@ -187,13 +188,13 @@ export default function ClientDeliveriesView() {
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-3 rounded-xl flex-shrink-0 ${delivery.isDelivered ? 'bg-sage/20' : 'bg-dark/10'}`}>
+                    <IconBadge gradientClass={delivery.isDelivered ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-amber-500 to-amber-600'} className="p-2 w-10 h-10 rounded-xl flex-shrink-0" ariaLabel={delivery.isDelivered ? 'Delivered' : 'Pending'}>
                       {delivery.isDelivered ? (
-                        <CheckCircle size={24} className="text-sage stroke-2 flex-shrink-0" />
+                        <CheckCircle size={18} className="text-white stroke-2 flex-shrink-0" />
                       ) : (
-                        <Clock size={24} className="text-dark stroke-2 flex-shrink-0" />
+                        <Clock size={18} className="text-white stroke-2 flex-shrink-0" />
                       )}
-                    </div>
+                    </IconBadge>
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
                         <Calendar size={16} className="text-dark/40 flex-shrink-0" />

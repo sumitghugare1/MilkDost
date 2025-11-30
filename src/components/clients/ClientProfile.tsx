@@ -16,6 +16,7 @@ import {
   Building2,
   Calendar
 } from 'lucide-react';
+import IconBadge from '@/components/common/IconBadge';
 import toast from 'react-hot-toast';
 
 export default function ClientProfile() {
@@ -115,9 +116,10 @@ export default function ClientProfile() {
         <div className="bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-3">
-              <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg">
-                <User size={28} className="text-white stroke-2" />
-              </div>
+              {/** Large avatar with initials using indigo-violet gradient */}
+              <IconBadge gradientClass="bg-gradient-to-br from-indigo-500 to-violet-600" className="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center" ariaLabel="Profile avatar">
+                <span className="text-white font-extrabold text-xl">{(userProfile.displayName || 'NA').split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase()}</span>
+              </IconBadge>
               <div>
                 <h1 className="text-2xl font-bold text-dark">My Profile</h1>
                 <p className="text-dark/70">Manage your account information</p>
@@ -140,17 +142,13 @@ export default function ClientProfile() {
         <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className={`p-3 rounded-xl ${
-                userProfile.isActive 
-                  ? 'bg-green-100' 
-                  : 'bg-orange-100'
-              }`}>
+              <IconBadge gradientClass={userProfile.isActive ? 'bg-gradient-to-br from-green-100 to-green-200' : 'bg-gradient-to-br from-amber-100 to-amber-200'} className="p-3 rounded-xl">
                 {userProfile.isActive ? (
                   <CheckCircle size={24} className="text-green-600 stroke-2" />
                 ) : (
                   <Clock size={24} className="text-orange-600 stroke-2" />
                 )}
-              </div>
+              </IconBadge>
               <div>
                 <h3 className="text-lg font-bold text-dark">
                   Account {userProfile.isActive ? 'Active' : 'Pending Activation'}
@@ -180,9 +178,11 @@ export default function ClientProfile() {
           <div className="space-y-6">
             {/* Display Name */}
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <User size={16} className="inline mr-2 stroke-2" />
-                Full Name
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-sage/10" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Full Name Icon">
+                  <User size={18} className="text-sage stroke-2" />
+                </IconBadge>
+                <span>Full Name</span>
               </label>
               {isEditing ? (
                 <input
@@ -202,9 +202,11 @@ export default function ClientProfile() {
 
             {/* Email (Read-only) */}
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <Mail size={16} className="inline mr-2 stroke-2" />
-                Email Address
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-indigo-50" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Email Icon">
+                  <Mail size={12} className="text-indigo-600 stroke-2" />
+                </IconBadge>
+                <span>Email Address</span>
               </label>
               <div className="px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
                 <p className="text-dark/70">{userProfile.email}</p>
@@ -214,9 +216,11 @@ export default function ClientProfile() {
 
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <Phone size={16} className="inline mr-2 stroke-2" />
-                Phone Number
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-teal-50" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Phone Icon">
+                  <Phone size={12} className="text-teal-600 stroke-2" />
+                </IconBadge>
+                <span>Phone Number</span>
               </label>
               {isEditing ? (
                 <input
@@ -236,9 +240,11 @@ export default function ClientProfile() {
 
             {/* Address */}
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <MapPin size={16} className="inline mr-2 stroke-2" />
-                Address
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-sage/10" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Address Icon">
+                  <MapPin size={12} className="text-sage stroke-2" />
+                </IconBadge>
+                <span>Address</span>
               </label>
               {isEditing ? (
                 <textarea
@@ -258,9 +264,11 @@ export default function ClientProfile() {
 
             {/* Business Name (Optional) */}
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <Building2 size={16} className="inline mr-2 stroke-2" />
-                Business/Company Name (Optional)
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-amber-50" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Business Icon">
+                  <Building2 size={12} className="text-amber-600 stroke-2" />
+                </IconBadge>
+                <span>Business/Company Name (Optional)</span>
               </label>
               {isEditing ? (
                 <input
@@ -313,9 +321,11 @@ export default function ClientProfile() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-dark/70 mb-2">
-                <Calendar size={16} className="inline mr-2 stroke-2" />
-                Member Since
+              <label className="block text-sm font-medium text-dark/70 mb-2 flex items-center">
+                <IconBadge gradientClass="bg-indigo-50" className="inline-flex w-6 h-6 rounded-md p-1 mr-2" ariaLabel="Member Since Icon">
+                  <Calendar size={12} className="text-indigo-600 stroke-2" />
+                </IconBadge>
+                <span>Member Since</span>
               </label>
               <div className="px-4 py-3 bg-sage/5 rounded-xl">
                 <p className="text-dark font-medium">

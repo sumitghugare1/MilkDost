@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Receipt, Calendar, IndianRupee, CheckCircle, XCircle, Clock, Download, Search, CreditCard, Loader2 } from 'lucide-react';
+import IconBadge from '@/components/common/IconBadge';
 import { Bill, Client } from '@/types';
 import { billService, clientService } from '@/lib/firebaseServices';
 import { useAuth } from '@/contexts/AuthContext';
@@ -100,9 +101,9 @@ export default function ClientBillsView() {
         {/* Header */}
         <div className="bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-dark to-dark/90" className="p-3 rounded-xl shadow-lg flex-shrink-0" ariaLabel="My Bills">
               <Receipt size={28} className="text-cream flex-shrink-0" />
-            </div>
+            </IconBadge>
             <div>
               <h1 className="text-2xl font-bold text-dark">My Bills</h1>
               <p className="text-dark/70">View and track all your billing history</p>
@@ -118,9 +119,9 @@ export default function ClientBillsView() {
               <p className="text-dark/70 text-sm font-medium">Total Bills</p>
               <p className="text-3xl font-black text-dark">{totalBills}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-indigo-500 to-indigo-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Bills">
               <Receipt size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -130,9 +131,9 @@ export default function ClientBillsView() {
               <p className="text-dark/70 text-sm font-medium">Paid Bills</p>
               <p className="text-3xl font-black text-sage">{paidBills}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-emerald-500 to-green-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Paid Bills">
               <CheckCircle size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -142,9 +143,9 @@ export default function ClientBillsView() {
               <p className="text-dark/70 text-sm font-medium">Total Paid</p>
               <p className="text-2xl font-black text-sage">{formatCurrency(totalPaid)}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-sage to-sage/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-emerald-500 to-green-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Total Paid">
               <IndianRupee size={24} className="text-white stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
 
@@ -154,9 +155,9 @@ export default function ClientBillsView() {
               <p className="text-dark/70 text-sm font-medium">Pending Amount</p>
               <p className="text-2xl font-black text-dark">{formatCurrency(totalPending)}</p>
             </div>
-            <div className="p-3 bg-gradient-to-br from-dark to-dark/90 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+            <IconBadge gradientClass="bg-gradient-to-br from-amber-500 to-orange-600" className="p-3 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300 flex-shrink-0" ariaLabel="Pending Amount">
               <XCircle size={24} className="text-cream stroke-2 flex-shrink-0" />
-            </div>
+            </IconBadge>
           </div>
         </div>
       </div>
@@ -207,13 +208,13 @@ export default function ClientBillsView() {
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-xl ${bill.isPaid ? 'bg-sage/20' : 'bg-dark/10'}`}>
+                  <IconBadge gradientClass={bill.isPaid ? 'bg-gradient-to-br from-green-500 to-green-600' : 'bg-gradient-to-br from-amber-500 to-amber-600'} className="p-2 w-10 h-10 rounded-xl flex-shrink-0" ariaLabel={bill.isPaid ? 'Paid' : 'Pending'}>
                     {bill.isPaid ? (
-                      <CheckCircle size={24} className="text-sage stroke-2" />
+                      <CheckCircle size={18} className="text-white stroke-2" />
                     ) : (
-                      <Clock size={24} className="text-dark stroke-2" />
+                      <Clock size={18} className="text-white stroke-2" />
                     )}
-                  </div>
+                  </IconBadge>
                   
                   <div>
                     <div className="flex items-center space-x-2 mb-1">

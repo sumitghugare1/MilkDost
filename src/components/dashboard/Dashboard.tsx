@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ComponentType } from 'react';
 import { 
   Users, Truck, FileText, IndianRupee, CheckCircle, XCircle, Plus, TrendingUp, 
   Calendar, Activity, Award, AlertTriangle, Zap, BarChart3, Heart, Milk, 
@@ -38,7 +38,12 @@ interface StatCardProps {
   subtitle?: string;
 }
 
-function StatCard({ title, value, icon: Icon, color, subtitle }: StatCardProps) {
+function StatCard({ title, value, icon: Icon, color = 'bg-gradient-to-br from-dark to-dark/90', subtitle }: StatCardProps) {
+  const IconBadge = ({ Icon, gradient = color, size = 28 }: { Icon: ComponentType<any>, gradient?: string, size?: number }) => (
+    <div className={`p-4 rounded-2xl ${gradient} shadow-lg transition-all duration-300 inline-flex items-center justify-center`}> 
+      <Icon size={size} className="text-cream" />
+    </div>
+  );
   return (
     <div className="group relative bg-white/95 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-sage/20 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden">
       {/* Animated background gradient */}
@@ -50,10 +55,8 @@ function StatCard({ title, value, icon: Icon, color, subtitle }: StatCardProps) 
       
       <div className="relative space-y-4">
         {/* Icon and trend indicator */}
-        <div className="flex items-center justify-between">
-          <div className="p-4 rounded-2xl bg-gradient-to-br from-dark to-dark/90 shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
-            <Icon size={28} className="text-cream" />
-          </div>
+          <div className="flex items-center justify-between">
+          <IconBadge Icon={Icon} gradient={color} size={28} />
           <div className="flex items-center space-x-1 text-sage">
             <TrendingUp size={14} className="animate-pulse" />
             <span className="text-xs font-bold">+5%</span>
@@ -100,8 +103,10 @@ function QuickAction({ title, description, icon: Icon, onClick, color }: QuickAc
       
       <div className="relative flex items-center space-x-4">
         {/* Enhanced icon container */}
-        <div className="p-3 rounded-xl bg-gradient-to-br from-dark to-dark/90 shadow-lg flex-shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500">
-          <Icon size={22} className="text-cream" />
+        <div className="flex-shrink-0">
+          <div className={`p-2 rounded-xl ${color || 'bg-gradient-to-br from-dark to-dark/90'} shadow-lg flex-shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500`}> 
+            <Icon size={22} className="text-cream" />
+          </div>
         </div>
         
         <div className="flex-1 min-w-0">
@@ -263,8 +268,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         <div className="bg-gradient-to-r from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 sm:p-8 shadow-xl border border-sage/20 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div className="flex items-center space-x-4">
-              <div className="p-4 bg-gradient-to-br from-dark to-dark/90 rounded-2xl shadow-lg">
-                <Milk className="text-cream" size={32} />
+              <div className="p-0">
+                <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-gradient-to-br from-dark to-dark/90 shadow-lg">
+                  <Milk className="text-cream" size={32} />
+                </div>
               </div>
               <div>
                 <div className="flex items-center space-x-2 mb-2">
@@ -353,7 +360,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             title="Total Clients"
             value={stats?.totalClients || 0}
             icon={Users}
-            color=""
+            color="bg-gradient-to-br from-blue-500 to-blue-600"
             subtitle="Active customers"
           />
           
@@ -361,7 +368,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             title="Today's Deliveries"
             value={stats ? `${stats.completedDeliveries}/${stats.completedDeliveries + stats.pendingDeliveries}` : '0/0'}
             icon={Truck}
-            color=""
+            color="bg-gradient-to-br from-green-500 to-green-600"
             subtitle={stats ? `${stats.pendingDeliveries} pending` : 'No deliveries'}
           />
           
@@ -369,7 +376,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             title="Monthly Revenue"
             value={formatCurrency(stats?.monthlyRevenue || 0)}
             icon={IndianRupee}
-            color=""
+            color="bg-gradient-to-br from-amber-500 to-amber-600"
             subtitle="This month's earnings"
           />
           
@@ -377,7 +384,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
             title="Active Buffaloes"
             value={stats?.activeBuffaloes || 0}
             icon={Heart}
-            color=""
+            color="bg-gradient-to-br from-rose-500 to-rose-600"
             subtitle="Healthy animals"
           />
         </div>
@@ -387,7 +394,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-3xl p-6 mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="p-3 bg-blue-500 rounded-2xl shadow-lg">
+                <div className="w-12 h-12 flex items-center justify-center rounded-2xl bg-blue-500 shadow-lg">
                   <Database className="text-white" size={24} />
                 </div>
                 <div>
@@ -433,9 +440,11 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 {/* Milk Production Card */}
                 <div className="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-blue-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Milk size={24} className="text-white" />
-                    </div>
+                    <div className="p-0">
+                          <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <Milk size={24} className="text-white" />
+                          </div>
+                        </div>
                     <div className="text-right">
                       <div className="flex items-center space-x-1 text-blue-600">
                         <Droplets size={14} />
@@ -453,8 +462,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 {/* Deliveries Card */}
                 <div className="group bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-green-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <Truck size={24} className="text-white" />
+                    <div className="p-0">
+                      <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <Truck size={24} className="text-white" />
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center space-x-1 text-green-600">
@@ -473,8 +484,10 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 {/* Pending Collections Card */}
                 <div className="group bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-amber-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                      <IndianRupee size={24} className="text-white" />
+                    <div className="p-0">
+                      <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                        <IndianRupee size={24} className="text-white" />
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center space-x-1 text-amber-600">
@@ -514,7 +527,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   description="Register new customer with delivery preferences"
                   icon={Users}
                   onClick={() => onNavigate('clients')}
-                  color=""
+                  color="bg-gradient-to-br from-blue-500 to-blue-600"
                 />
                 
                 <QuickAction
@@ -522,7 +535,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   description="Mark deliveries and manage routes"
                   icon={Truck}
                   onClick={() => onNavigate('deliveries')}
-                  color=""
+                  color="bg-gradient-to-br from-green-500 to-green-600"
                 />
                 
                 <QuickAction
@@ -530,7 +543,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   description="Create monthly bills with automated calculations"
                   icon={FileText}
                   onClick={() => onNavigate('billing')}
-                  color=""
+                  color="bg-gradient-to-br from-amber-500 to-amber-600"
                 />
                 
                 <QuickAction
@@ -538,7 +551,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                   description="Monitor health and feeding schedules"
                   icon={Heart}
                   onClick={() => onNavigate('buffalo')}
-                  color=""
+                  color="bg-gradient-to-br from-rose-500 to-rose-600"
                 />
               </div>
             </div>
