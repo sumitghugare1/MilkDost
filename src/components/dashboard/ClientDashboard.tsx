@@ -18,9 +18,9 @@ import {
   MapPin
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { billService, deliveryService, paymentService } from '@/lib/firebaseServices';
+import { billService, deliveryService, paymentService, clientService } from '@/lib/firebaseServices';
 import { formatCurrency } from '@/lib/utils';
-import { Bill, Delivery, Payment } from '@/types';
+import { Bill, Delivery, Payment, Client } from '@/types';
 import ClientAccountStatus from '@/components/clients/ClientAccountStatus';
 import toast from 'react-hot-toast';
 
@@ -70,6 +70,10 @@ export default function ClientDashboard() {
   const [recentBills, setRecentBills] = useState<Bill[]>([]);
   const [recentDeliveries, setRecentDeliveries] = useState<Delivery[]>([]);
   const [recentPayments, setRecentPayments] = useState<Payment[]>([]);
+  const [clientProfile, setClientProfile] = useState<Client | null>(null);
+  const [milkQuantity, setMilkQuantity] = useState<number | ''>('');
+  const [deliveryTime, setDeliveryTime] = useState<string>('');
+  const [savingPreferences, setSavingPreferences] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -93,6 +97,18 @@ export default function ClientDashboard() {
         deliveryService.getByClientId(user.uid), // Get deliveries for this client
         paymentService.getByClientId(user.uid) // Get payments for this client
       ]);
+
+      // Fetch the client profile doc for the current user (so we can show defaults like milkQuantity and deliveryTime)
+      try {
+        const profile = await clientService.getClientProfile(user.uid);
+        if (profile) {
+          setClientProfile(profile);
+          setMilkQuantity(profile.milkQuantity ?? '');
+          setDeliveryTime(profile.deliveryTime ?? '');
+        }
+      } catch (error) {
+        console.error('Error fetching client profile', error);
+      }
 
       // Calculate stats
       const totalBills = bills.length;
@@ -237,6 +253,66 @@ export default function ClientDashboard() {
             </div>
           </div>
         </div>
+        {/* Delivery Preferences - allow clients to update their default quantity and delivery time */}
+        {userProfile?.role === 'client' && (
+          <div className="bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-lg rounded-3xl p-6 sm:p-8 shadow-xl border border-sage/20 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-dark flex items-center space-x-2">
+                <div className="w-9 h-9 flex items-center justify-center rounded-lg bg-gradient-to-br from-yellow-400 to-yellow-500 shadow-md">
+                  <Clock className="text-white stroke-2" size={18} />
+                </div>
+                <span>Delivery Preferences</span>
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+              <div>
+                <label className="block text-sm text-dark/70 mb-1">Quantity (Liters)</label>
+                <input
+                  type="number"
+                  value={milkQuantity ?? ''}
+                  onChange={(e) => setMilkQuantity(e.target.value === '' ? '' : Number(e.target.value))}
+                  className="w-full rounded-lg border border-sage/20 px-3 py-2 bg-white/90"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-dark/70 mb-1">Delivery Time</label>
+                <input
+                  type="text"
+                  placeholder="e.g. 08:00 AM"
+                  value={deliveryTime}
+                  onChange={(e) => setDeliveryTime(e.target.value)}
+                  className="w-full rounded-lg border border-sage/20 px-3 py-2 bg-white/90"
+                />
+              </div>
+
+              <div className="sm:col-span-1">
+                <button
+                  onClick={async () => {
+                    if (!user) return;
+                    setSavingPreferences(true);
+                    try {
+                      await clientService.update(user.uid, {
+                        milkQuantity: Number(milkQuantity) || 0,
+                        deliveryTime: deliveryTime || ''
+                      } as Partial<Client>);
+                      toast.success('Preferences saved');
+                    } catch (error) {
+                      console.error('Error saving preferences:', error);
+                      toast.error('Failed to save preferences');
+                    } finally {
+                      setSavingPreferences(false);
+                    }
+                  }}
+                  className="inline-flex items-center space-x-2 px-4 py-2 rounded-lg bg-sage text-white font-semibold hover:shadow-md"
+                >
+                  <span>{savingPreferences ? 'Saving...' : 'Save Preferences'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">

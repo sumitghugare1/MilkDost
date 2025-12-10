@@ -24,9 +24,10 @@ service cloud.firestore {
       allow create: if request.auth != null && (
         request.auth.uid == request.resource.data.userId || isAdmin()
       );
-      // Allow read/update/delete for admins or the owner
+      // Allow read/update/delete for admins, the owner, or the client whose doc ID equals their auth UID
+      // (This supports client-managed updates when the document ID is the client's auth UID)
       allow read, update, delete: if request.auth != null && (
-        isAdmin() || resource.data.userId == request.auth.uid
+        isAdmin() || resource.data.userId == request.auth.uid || document == request.auth.uid
       );
     }
     

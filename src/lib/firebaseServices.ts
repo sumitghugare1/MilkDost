@@ -131,7 +131,9 @@ export const clientService = {
         const data = existingClientDoc.data() as Partial<Client>;
         // Allow update if the doc's userId equals the current user (owner)
         // or if the doc has ownerId equals current user (older data may use ownerId)
-        const isOwner = data.userId === userId || (data as any).ownerId === userId;
+        // Also allow update if the client document's ID equals the current user's UID
+        // This supports scenarios where client document IDs are the client's auth UID
+        const isOwner = data.userId === userId || (data as any).ownerId === userId || id === userId;
         if (!isOwner) {
           console.log('clientService.update denied - owner mismatch', { userId, docUserId: data.userId, docOwnerId: (data as any).ownerId });
           throw new Error('Client not found or access denied');
@@ -157,6 +159,29 @@ export const clientService = {
       console.error('Error updating client:', error);
       throw error;
     }
+  },
+
+  // Get single client profile by id
+  async getById(id: string): Promise<Client | null> {
+    try {
+      const docRef = doc(db, COLLECTIONS.CLIENTS, id);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists()) return null;
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        ...data,
+        createdAt: convertTimestamp(data.createdAt),
+        updatedAt: convertTimestamp(data.updatedAt)
+      } as Client;
+    } catch (error) {
+      console.error('Error fetching client by id:', error);
+      throw error;
+    }
+  },
+  // Alias for getById for clearer method name
+  async getClientProfile(id: string): Promise<Client | null> {
+    return await this.getById(id);
   },
 
   // Delete client (only if user owns it)
